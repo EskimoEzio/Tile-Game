@@ -11,12 +11,6 @@ public class TurnManager : MonoBehaviour
     public int turnNumber { get; private set; } // this keeps trackk of turn number. a turn is defined as 1 round of the paly + enemy making an action
     private int actionsTaken = 0; // this keeps track of the number of actions performed, its purpose is that int actions/2 is the turn number. This makes for an easy way of keeping track of the number of turns while ignoring if the player or enemy went first
 
-    /*
-    public enum Turn
-    {
-        Player,
-        Enemy
-    }*/
 
     public GameTypes.Turn CurrentTurn { get; private set; } // this tracks the whose turn it is. It changes between player and enemy in both single and multi player
 
@@ -67,7 +61,7 @@ public class TurnManager : MonoBehaviour
         {
             CurrentTurn = GameTypes.Turn.Player;
         }
-        //print(CurrentTurn + "'s Turn");
+        print(CurrentTurn + "'s Turn");
         actionsTaken++;
         turnNumber = 1 + actionsTaken / 2;
         //print(turnNumber);

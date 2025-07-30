@@ -7,12 +7,11 @@ public class HandManager : MonoBehaviour
     [SerializeField] private List<BlockData> library = new List<BlockData>();
     [SerializeField] private GameObject blockPrefab;
 
-    // Hand Height = -2 - this may need to be adapted for different shaped grids. e.g. tall
-    // middle of hand depends on where the grid is
+    public GameTypes.Team handTeam; //This is the team that the hand belongs to
 
     private List<GameObject> hand = new List<GameObject>();
     private BoxCollider2D handCollider;
-    private int maxHandSize = 10;
+    private int maxHandSize = 3;
     [SerializeField] private float blockGap = 0.1f;
     [SerializeField] private float gridHandGap = 0.3f;
     
@@ -45,16 +44,40 @@ public class HandManager : MonoBehaviour
 
     private void Start()
     {
-        //This sets the hand to the correct x position as well as y position. SO far this only works for the players hand not the enemy
-        transform.position = new Vector2((float)GridManager.Instance.gridWidth / 2 - 0.5f, - 1 - gridHandGap);
+        PositionHand();
         DrawBlock(startingHandSize);
     }
 
+    void PositionHand()
+    {
+        float xPos = (float)GridManager.Instance.gridWidth / 2 - 0.5f;
+
+        float yPos = 0;
+
+        if(handTeam == GameTypes.Team.Player)
+        {
+            yPos = -1 - gridHandGap;
+        }
+        else if(handTeam == GameTypes.Team.Enemy)
+        {
+            yPos = GridManager.Instance.gridHeight + 0 + gridHandGap;
+        }
+        else
+        {
+            Debug.LogError("Hands team is neither player nor enemy");
+        }
+
+
+        //This sets the hand to the correct x position as well as y position. SO far this only works for the players hand not the enemy
+        transform.position = new Vector2(xPos, yPos);
+        
+    }
 
 
     void PlayerTurn(GameTypes.Turn turn)
     {
-        if(turn != GameTypes.Turn.Player)
+        
+        if(!GameUtilities.CheckTurnMatchTeam(turn, handTeam)) // if the turn does not match the hand's team
         {
             return;
         }
@@ -69,7 +92,7 @@ public class HandManager : MonoBehaviour
 
     public void AddToHand(GameObject block, Vector2 mouseScreenPos = default)
     {
-        if(hand.Count + 1 > maxHandSize)
+        if(hand.Count >= maxHandSize)
         {
             // hand is full - figure out what i will actually do in the scenario
             print("Hand is Full!");
@@ -78,7 +101,7 @@ public class HandManager : MonoBehaviour
         int targetIndex = hand.Count;
 
         Vector2 mouseWorldPos = mainCam.ScreenToWorldPoint(mouseScreenPos);
-        if (handCollider.OverlapPoint(mouseWorldPos))
+        if (handCollider.OverlapPoint(mouseWorldPos)) // only rearrange hand if mouse is over the han collider. Otherwise add the block to the end
         {
             // if the mouse is in the hand collider (may need to make this cover the entire bottom of the screen) then loop through the list to find the first block that the mouse is to the left of, then set the target index to that block's index
             for(int i = 0; i < hand.Count; i++)
@@ -142,6 +165,7 @@ public class HandManager : MonoBehaviour
     void DrawBlock(int quant = 1) // this is a simple draw function that draws a random block each turn, it picks from a list called library, but it is random and does not behave like an actual library
     {
 
+
         // draw 3 at the star of the game
         for (int i = 0; i < quant; i++)
         {
@@ -150,7 +174,7 @@ public class HandManager : MonoBehaviour
             GameObject newBlock = Instantiate<GameObject>(blockPrefab, new Vector2(20, 20), Quaternion.identity);
             BlockController blockController = newBlock.GetComponent<BlockController>();
 
-            blockController.InitialiseBlock(library[randIndex]);
+            blockController.InitialiseBlock(library[randIndex], handTeam);
 
             AddToHand(newBlock);
         }

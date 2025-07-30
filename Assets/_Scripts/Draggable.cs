@@ -7,8 +7,10 @@ public class DraggableTile : MonoBehaviour
 {
 
     private Camera mainCam;
-    private HandManager hand;
+    private List<HandManager> allHands;
+    private HandManager ownerHand;
 
+    private BlockController blockController;
 
     private LayerMask placeableLayers; // This layermask holds all of the places where a block could be dragged to
 
@@ -17,15 +19,6 @@ public class DraggableTile : MonoBehaviour
     private bool canBeDragged = true;
 
     private float zOffset = -1f; // this is the lift when moving a block
-
-
-    private void Awake()
-    {
-        mainCam = Camera.main;
-        hand = FindAnyObjectByType<HandManager>();
-        placeableLayers = LayerMask.GetMask("Tile", "Hand");
-
-    }
 
 
     // when the block is enabled, subscribe the appropriate methods to the "OnMouse" events, this is so that they are triggered
@@ -46,6 +39,32 @@ public class DraggableTile : MonoBehaviour
     }
 
 
+    private void Awake()
+    {
+        mainCam = Camera.main;
+        //hand = FindAnyObjectByType<HandManager>();
+        //placeableLayers = LayerMask.GetMask("Tile", "Hand");
+        placeableLayers = LayerMask.GetMask("Tile");
+
+        allHands = new List<HandManager>(FindObjectsByType<HandManager>(FindObjectsSortMode.None));
+        blockController = GetComponent<BlockController>();
+
+    }
+
+
+    private void Start()
+    {
+        
+        // Assign the correct hand to ownerHand
+        foreach(HandManager hand in allHands)
+        {
+            if(hand.handTeam == blockController.CurrentTeam)
+            {
+                ownerHand = hand;
+            }
+        }
+    }
+
     void HandleMouseDown(Vector2 screenPos)
     {
         // if cannot be dragged (currently this is only when on a tile) then return (do not pick upt the tile)
@@ -53,25 +72,24 @@ public class DraggableTile : MonoBehaviour
         {
             return;
         }
-        if (TryGetComponent<BlockController>(out BlockController block))
+
+        if (blockController.IsPlaced)
         {
-            if (block.IsPlaced)
-            {
-                canBeDragged = false;
-                return;
-            }
-            
-            if (!GameUtilities.CheckTurnMatchTeam(TurnManager.Instance.ActivePlayer, block.CurrentTeam)) // this compares the Active player to the target block to see if they should be able to click it
-            {
-                return;
-            }
+            canBeDragged = false;
+            return;
         }
+            
+        if (!GameUtilities.CheckTurnMatchTeam(TurnManager.Instance.ActivePlayer, blockController.CurrentTeam)) // this compares the Active player to the target block to see if they should be able to click it
+        {
+            return;
+        }
+
         
         Vector3 worldPos = mainCam.ScreenToWorldPoint(screenPos);
         if (GetComponent<Collider2D>().OverlapPoint(worldPos))
         {
             isDragging = true;
-            hand.RemoveFromHand(gameObject);
+            ownerHand.RemoveFromHand(gameObject);
 
             // if you are dragging it, change the z by a small amount so that it shows above other blocks
             worldPos.z = zOffset;
@@ -98,10 +116,9 @@ public class DraggableTile : MonoBehaviour
         Vector2 worldPos = mainCam.ScreenToWorldPoint(screenPos);
 
 
-        if(TurnManager.Instance.CurrentTurn != GameTypes.Turn.Player)
+        if(!GameUtilities.CheckTurnMatchTeam(TurnManager.Instance.ActivePlayer, blockController.CurrentTeam)) // if the block does not match the turn put this into ownerHand
         {
-            
-            hand.AddToHand(gameObject, screenPos);
+            ownerHand.AddToHand(gameObject, screenPos);
             return;
         }
 
@@ -113,16 +130,17 @@ public class DraggableTile : MonoBehaviour
         if(targetCollider == null)
         {
             //if the block is not held over anything in the layermask, then return it to your hand
-            hand.AddToHand(gameObject, screenPos);
+            ownerHand.AddToHand(gameObject, screenPos);
             return;
         }
-        //print(targetCollider.gameObject.name);
+      
 
         GameObject targetObject = targetCollider.gameObject;
-
+ 
         //check if hovering a tile
         if(targetObject.TryGetComponent<Tile>(out Tile tile))
         {
+
             //Check if the block can be placed on the tile, ATM this will just be checking if it is empty
             if(tile.TileContents == null)
             {
@@ -134,12 +152,13 @@ public class DraggableTile : MonoBehaviour
             else
             {
                 // if the tile is not empty, add the tile to your hand
-                hand.AddToHand(gameObject, screenPos);
+                ownerHand.AddToHand(gameObject, screenPos);
             }
         }
-        else if(targetObject.TryGetComponent<HandManager>(out HandManager hand))
+        else if(targetObject.TryGetComponent<HandManager>(out HandManager hand)) //Seemingly unecessary
         {
-            hand.AddToHand(gameObject);
+           
+            //hand.AddToHand(gameObject);
         }
 
     }

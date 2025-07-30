@@ -50,13 +50,19 @@ public class BlockController : MonoBehaviour
 
     }
 
-
-    public void InitialiseBlock(BlockData newData = null)
+    /// <summary>
+    /// Set up the block & assign it's team.
+    /// </summary>
+    /// <param name="newData"></param>
+    /// <param name="team"></param>
+    public void InitialiseBlock(BlockData newData = null, GameTypes.Team team = GameTypes.Team.Player)
     {
         if(newData != null)
         {
             BlockData = newData;
         }
+
+        CurrentTeam = team;
 
         // Assign the power values based on the values in the BockData scriptable object
         PowerDict = new Dictionary<Vector2, int>()
@@ -68,6 +74,8 @@ public class BlockController : MonoBehaviour
         };
 
         artHolderRenderer.sprite = BlockData.Sprite;
+
+        SetBlockColour();
     }
 
 

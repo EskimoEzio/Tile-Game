@@ -28,6 +28,20 @@ public class GameManager : MonoBehaviour
 
     }
 
+    private void Start()
+    {
+        if (IsMultiplayer) // All of the special things that need to be done if it is multiplayer
+        {
+            //Disable Enemy manager as it is not needed in multiplayer
+            FindAnyObjectByType<EnemyManager>().gameObject.SetActive(false);
+
+            //Create the Enemy Hand
+            GameObject enemyHand = Instantiate(FindAnyObjectByType<HandManager>().gameObject); // I may be able to combine this and the folling line, but i have seperated for clarity
+            HandManager enemyHandManager = enemyHand.GetComponent<HandManager>();
+            enemyHandManager.handTeam = GameTypes.Team.Enemy;
+        }
+    }
+
 
 
     private void EndTurn(GameTypes.Turn turn)
@@ -36,11 +50,16 @@ public class GameManager : MonoBehaviour
 
         if (IsMultiplayer)
         {
-            print("PLAYER 1: " + playerScore + ", ENEMY 2: " + enemyScore);
+            print("Blue: " + playerScore + ", Red: " + enemyScore);
+        }
+        else
+        {
+            print("PLAYER: " + playerScore + ", ENEMY: " + enemyScore);
+
         }
 
 
-        print("PLAYER: " + playerScore + ", ENEMY: " + enemyScore);
+        
 
     }
 
@@ -72,11 +91,11 @@ public class GameManager : MonoBehaviour
         {
             if (playerScore > enemyScore)
             {
-                print("Player 1 Wins With a Score of " + playerScore);
+                print("Blue Wins With a Score of " + playerScore);
             }
             else if (enemyScore > playerScore)
             {
-                print("Player 2 Wins With a Score of " + enemyScore);
+                print("Red Wins With a Score of " + enemyScore);
             }
             else
             {

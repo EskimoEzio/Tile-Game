@@ -17,7 +17,7 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] private float prePlaceDelay = 0.6f;
     [SerializeField] private float postPlaceDelay = 0.1f;
 
-    // SCORING VALUES
+    // SCORING VALUES - this may be separated into a scirptable object system to make different feeling enemies
     [SerializeField] private float baseCaptureValue = 100;
     [SerializeField] private float captureStrengthBonus = 0.2f;
     [SerializeField] private float overKillPenalty = 0.1f;
@@ -45,7 +45,6 @@ public class EnemyManager : MonoBehaviour
 
         if (turn == GameTypes.Turn.Enemy)
         {
-            //StartCoroutine(EnemyTurn(turn));
             CoroutineRegistry.RunAndTrack(this, EnemyTurn(turn));
         }
         
@@ -80,8 +79,8 @@ public class EnemyManager : MonoBehaviour
         blockObject = Instantiate(blockPrefab, spawnLocation, Quaternion.identity);        
         nextBlockController = blockObject.GetComponent<BlockController>();
         
-        nextBlockController.InitialiseBlock(nextBlock);
-        nextBlockController.ChangeTeam(); //this is currently called to make the enemy's blocks on the correct team, this may have to be changed
+        nextBlockController.InitialiseBlock(nextBlock, GameTypes.Team.Enemy);
+        //nextBlockController.ChangeTeam(); //this is currently called to make the enemy's blocks on the correct team, this may have to be changed
 
 
         PowerDict = new Dictionary<Vector2, int>()

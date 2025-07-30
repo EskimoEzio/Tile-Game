@@ -65,14 +65,15 @@ public class Tile : MonoBehaviour
         // it causes the mouse to either hit (when using scale of 1) or miss (when using smaller scale) both colliders
         // I will fix this later, but it is not important now
 
-        if (TurnManager.Instance.CurrentTurn != GameTypes.Turn.Player) // I will only highlight tiles if it is the players turn. Later this will be expanded to only if the block can be placed on the tile
+        
+        if (TurnManager.Instance.CurrentTurn != GameTypes.Turn.Player && !GameManager.Instance.IsMultiplayer) // I will only highlight tiles if it is the players turn. However, this only applies in singleplayer.
         {
             return;
         }
 
 
         Vector2 worldPos = mainCam.ScreenToWorldPoint(screenPosition);
-        if (col.OverlapPoint(worldPos)&& TileContents == null) //only highlight empty tiles
+        if (col.OverlapPoint(worldPos)&& TileContents == null) //only highlight empty tiles. Eventually this will only highlght tiles that can be placed on
         {
             HighlightTile();
         }
