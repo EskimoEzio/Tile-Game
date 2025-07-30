@@ -18,8 +18,6 @@ public class HandManager : MonoBehaviour
 
     Camera mainCam;
 
-    private int gridWidth;
-
     [SerializeField] private int startingHandSize = 3;
 
 
@@ -47,8 +45,7 @@ public class HandManager : MonoBehaviour
     private void Start()
     {
         //This sets the hand to the correct x position
-        gridWidth = GridManager.Instance.gridWidth;
-        transform.position = new Vector2((float)gridWidth / 2 - 0.5f, transform.position.y);
+        transform.position = new Vector2((float)GridManager.Instance.gridWidth / 2 - 0.5f, transform.position.y);
         DrawBlock(startingHandSize);
     }
 

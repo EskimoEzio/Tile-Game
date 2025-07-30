@@ -44,7 +44,12 @@ public class GridManager : MonoBehaviour
             }
         }
 
-        Camera.main.transform.position = new Vector3(gridWidth / 2 - 0.5f, gridHeight / 2 - 0.5f, -10);
+        //Set camera position based on grid location
+        float xpos = gridWidth / 2 - 0.5f;  // this sets the x position in line with the middle of the grid with .5 offset so the camera is in the middle
+        float ypos = gridHeight / 2 - 0.5f; // same as above
+        float zpos = -10; // make sure that the camera is above everything else
+
+        Camera.main.transform.position = new Vector3(xpos, ypos, zpos);
     }
 
 

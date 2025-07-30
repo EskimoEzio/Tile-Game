@@ -5,6 +5,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
+    public bool IsMultiplayer;
 
     private int playerScore;
 
@@ -24,6 +25,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+
     }
 
 
@@ -31,6 +33,12 @@ public class GameManager : MonoBehaviour
     private void EndTurn(TurnManager.Turn turn)
     {
         (int playerScore, int enemyScore) = CalcScores();
+
+        if (IsMultiplayer)
+        {
+            print("PLAYER 1: " + playerScore + ", ENEMY 2: " + enemyScore);
+        }
+
 
         print("PLAYER: " + playerScore + ", ENEMY: " + enemyScore);
 
@@ -59,6 +67,23 @@ public class GameManager : MonoBehaviour
     void GameOver()
     {
         (int playerScore, int enemyScore) = CalcScores();
+
+        if (IsMultiplayer)
+        {
+            if (playerScore > enemyScore)
+            {
+                print("Player 1 Wins With a Score of " + playerScore);
+            }
+            else if (enemyScore > playerScore)
+            {
+                print("Player 2 Wins With a Score of " + enemyScore);
+            }
+            else
+            {
+                print("It's a Tie!");
+            }
+        }
+
 
         if (playerScore > enemyScore)
         {

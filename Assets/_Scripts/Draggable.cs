@@ -61,7 +61,7 @@ public class DraggableTile : MonoBehaviour
                 return;
             }
             
-            if (block.CurrentTeam == BlockController.Team.Enemy) //this will need to be changed to  allow 1v1 multiplayer - maybe by changing it to check if blocks team = current turn's team
+            if (!GameUtilities.CheckTurnMatchTeam(TurnManager.Instance.ActivePlayer, block.CurrentTeam)) // this compares the Active player to the target block to see if they should be able to click it
             {
                 return;
             }

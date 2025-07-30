@@ -17,7 +17,9 @@ public class TurnManager : MonoBehaviour
         Enemy
     }
 
-    public Turn CurrentTurn { get; private set; }
+    public Turn CurrentTurn { get; private set; } // this tracks the whose turn it is. It changes between player and enemy in both single and multi player
+
+    public Turn ActivePlayer { get; private set; } // this keeps track of which HUMAN player has control, the second is still referred to as the enemy. In singleplayer, it is always "Player"
 
     // This event takes a parameter of the new turn - e.g. if the player's turn is ending, the parameter will be enemy turn
     public event Action<Turn> OnTurnChanged;
@@ -35,6 +37,8 @@ public class TurnManager : MonoBehaviour
 
         //turnNumber = 1;
         //print(CurrentTurn + "'s Turn");
+
+        ActivePlayer = Turn.Player; // by default the player goes first
 
     }
 
@@ -67,6 +71,13 @@ public class TurnManager : MonoBehaviour
         turnNumber = 1 + actionsTaken / 2;
         //print(turnNumber);
 
+        if (GameManager.Instance.IsMultiplayer) // the active player only changes if there are two players
+        {
+            ActivePlayer = CurrentTurn;
+        }
+        
+        
+        
         OnTurnChanged?.Invoke(CurrentTurn);       
     }
 
