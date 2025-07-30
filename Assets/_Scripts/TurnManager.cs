@@ -11,18 +11,19 @@ public class TurnManager : MonoBehaviour
     public int turnNumber { get; private set; } // this keeps trackk of turn number. a turn is defined as 1 round of the paly + enemy making an action
     private int actionsTaken = 0; // this keeps track of the number of actions performed, its purpose is that int actions/2 is the turn number. This makes for an easy way of keeping track of the number of turns while ignoring if the player or enemy went first
 
+    /*
     public enum Turn
     {
         Player,
         Enemy
-    }
+    }*/
 
-    public Turn CurrentTurn { get; private set; } // this tracks the whose turn it is. It changes between player and enemy in both single and multi player
+    public GameTypes.Turn CurrentTurn { get; private set; } // this tracks the whose turn it is. It changes between player and enemy in both single and multi player
 
-    public Turn ActivePlayer { get; private set; } // this keeps track of which HUMAN player has control, the second is still referred to as the enemy. In singleplayer, it is always "Player"
+    public GameTypes.Turn ActivePlayer { get; private set; } // this keeps track of which HUMAN player has control, the second is still referred to as the enemy. In singleplayer, it is always "Player"
 
     // This event takes a parameter of the new turn - e.g. if the player's turn is ending, the parameter will be enemy turn
-    public event Action<Turn> OnTurnChanged;
+    public event Action<GameTypes.Turn> OnTurnChanged;
 
 
     private void Awake()
@@ -38,7 +39,7 @@ public class TurnManager : MonoBehaviour
         //turnNumber = 1;
         //print(CurrentTurn + "'s Turn");
 
-        ActivePlayer = Turn.Player; // by default the player goes first
+        ActivePlayer = GameTypes.Turn.Player; // by default the player goes first
 
     }
 
@@ -58,13 +59,13 @@ public class TurnManager : MonoBehaviour
         }
 
         
-        if(CurrentTurn == Turn.Player)
+        if(CurrentTurn == GameTypes.Turn.Player)
         {
-            CurrentTurn = Turn.Enemy;
+            CurrentTurn = GameTypes.Turn.Enemy;
         }
         else
         {
-            CurrentTurn = Turn.Player;
+            CurrentTurn = GameTypes.Turn.Player;
         }
         //print(CurrentTurn + "'s Turn");
         actionsTaken++;

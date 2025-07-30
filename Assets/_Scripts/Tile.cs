@@ -65,7 +65,7 @@ public class Tile : MonoBehaviour
         // it causes the mouse to either hit (when using scale of 1) or miss (when using smaller scale) both colliders
         // I will fix this later, but it is not important now
 
-        if (TurnManager.Instance.CurrentTurn != TurnManager.Turn.Player) // I will only highlight tiles if it is the players turn. Later this will be expanded to only if the block can be placed on the tile
+        if (TurnManager.Instance.CurrentTurn != GameTypes.Turn.Player) // I will only highlight tiles if it is the players turn. Later this will be expanded to only if the block can be placed on the tile
         {
             return;
         }

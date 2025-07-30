@@ -40,10 +40,10 @@ public class EnemyManager : MonoBehaviour
 
 
 
-    void StartEnemyTurn(TurnManager.Turn turn)
+    void StartEnemyTurn(GameTypes.Turn turn)
     {
 
-        if (turn == TurnManager.Turn.Enemy)
+        if (turn == GameTypes.Turn.Enemy)
         {
             //StartCoroutine(EnemyTurn(turn));
             CoroutineRegistry.RunAndTrack(this, EnemyTurn(turn));
@@ -52,7 +52,7 @@ public class EnemyManager : MonoBehaviour
     }
 
 
-    IEnumerator EnemyTurn(TurnManager.Turn turn)
+    IEnumerator EnemyTurn(GameTypes.Turn turn)
     {
         
 
@@ -176,7 +176,7 @@ public class EnemyManager : MonoBehaviour
             {
 
                 // if the defending block is on the same team as the attacking block, then do not try to attack
-                if (targetBlockController.CurrentTeam == BlockController.Team.Enemy)
+                if (targetBlockController.CurrentTeam == GameTypes.Team.Enemy)
                 {
                     score += CalcWastedPowerScore(dirPow.Value);
                     continue;

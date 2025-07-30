@@ -57,7 +57,7 @@ public class SpikeManager : MonoBehaviour
 
         SetRowPositions();
 
-        if(blockController.CurrentTeam == BlockController.Team.Player)
+        if(blockController.CurrentTeam == GameTypes.Team.Player)
         {
             SetSpikeRowColour(blockController.PlayerColour);
         }
@@ -98,7 +98,7 @@ public class SpikeManager : MonoBehaviour
 
     void HandleTeamChange(BlockController blockCon) //this should always be the same as my cached BlockController variable
     {
-        if(blockController.CurrentTeam == BlockController.Team.Player)
+        if(blockController.CurrentTeam == GameTypes.Team.Player)
         {
             SetSpikeRowColour(blockController.PlayerColour);
         }

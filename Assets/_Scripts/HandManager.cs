@@ -14,6 +14,7 @@ public class HandManager : MonoBehaviour
     private BoxCollider2D handCollider;
     private int maxHandSize = 10;
     [SerializeField] private float blockGap = 0.1f;
+    [SerializeField] private float gridHandGap = 0.3f;
     
 
     Camera mainCam;
@@ -44,16 +45,16 @@ public class HandManager : MonoBehaviour
 
     private void Start()
     {
-        //This sets the hand to the correct x position
-        transform.position = new Vector2((float)GridManager.Instance.gridWidth / 2 - 0.5f, transform.position.y);
+        //This sets the hand to the correct x position as well as y position. SO far this only works for the players hand not the enemy
+        transform.position = new Vector2((float)GridManager.Instance.gridWidth / 2 - 0.5f, - 1 - gridHandGap);
         DrawBlock(startingHandSize);
     }
 
 
 
-    void PlayerTurn(TurnManager.Turn turn)
+    void PlayerTurn(GameTypes.Turn turn)
     {
-        if(turn != TurnManager.Turn.Player)
+        if(turn != GameTypes.Turn.Player)
         {
             return;
         }

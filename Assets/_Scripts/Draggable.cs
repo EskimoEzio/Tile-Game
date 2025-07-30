@@ -98,7 +98,7 @@ public class DraggableTile : MonoBehaviour
         Vector2 worldPos = mainCam.ScreenToWorldPoint(screenPos);
 
 
-        if(TurnManager.Instance.CurrentTurn != TurnManager.Turn.Player)
+        if(TurnManager.Instance.CurrentTurn != GameTypes.Turn.Player)
         {
             
             hand.AddToHand(gameObject, screenPos);

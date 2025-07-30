@@ -30,8 +30,7 @@ public class BlockController : MonoBehaviour
 
     public Dictionary<Vector2, int> PowerDict { get; private set; } // this dictionary holds the power of each block in a given direction, represented by a Vector2 of that direction
 
-    public enum Team { Player, Enemy }
-    public Team CurrentTeam { get; private set; }
+    public GameTypes.Team CurrentTeam { get; private set; }
 
     public bool IsPlaced { get; private set; }
 
@@ -201,7 +200,7 @@ public class BlockController : MonoBehaviour
     /// </summary>
     public void ChangeTeam() //this is currently called to make the enemy's blocks on the correct team, this may have to be changed as it is broadcasting events that may be needed elsewhere
     {
-        CurrentTeam = ToggleTeam(CurrentTeam);
+        CurrentTeam = GameUtilities.ToggleTeam(CurrentTeam);
         
         SetBlockColour();
         // do anything else related to changing team
@@ -255,28 +254,12 @@ public class BlockController : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, 0, 0); // finally ensure that the rotation is completly reset
     }
 
-  
-
-    public Team ToggleTeam(Team curTeam) //this methd is purely for changing the enum between enemy & player, so that i don't have to write the whole thing
-    {
-        if(curTeam == Team.Player)
-        {
-            return Team.Enemy;
-        } 
-        else if(curTeam == Team.Enemy)
-        {
-            return Team.Player;
-        }
-        else
-        {
-            Debug.LogError("current team is not player or enemy");
-            return curTeam;
-        }
-    }
+ 
+    
 
     private void SetBlockColour()
     {
-        if (CurrentTeam == Team.Player)
+        if (CurrentTeam == GameTypes.Team.Player)
         {
             blockRenderer.color = PlayerColour;
         }

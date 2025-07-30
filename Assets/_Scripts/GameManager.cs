@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
 
 
 
-    private void EndTurn(TurnManager.Turn turn)
+    private void EndTurn(GameTypes.Turn turn)
     {
         (int playerScore, int enemyScore) = CalcScores();
 
@@ -118,7 +118,7 @@ public class GameManager : MonoBehaviour
             
             if(posTile.Value.TileContents.TryGetComponent<BlockController>(out BlockController blockController))
             {                
-                if(blockController.CurrentTeam == BlockController.Team.Player)
+                if(blockController.CurrentTeam == GameTypes.Team.Player)
                 {
                     playerScore++;
                 }
