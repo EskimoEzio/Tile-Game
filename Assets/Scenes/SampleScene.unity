@@ -177,6 +177,7 @@ MonoBehaviour:
   blockGap: 0.2
   gridHandGap: 0.3
   startingHandSize: 3
+  luck: 0
 --- !u!61 &265441988
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -593,8 +594,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ceb9a06ac8496f947a485cce83c4e11a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridWidth: 5
-  gridHeight: 5
+  gridWidth: 2
+  gridHeight: 2
   tilePrefab: {fileID: 6665331470428692705, guid: d9e2218782936154699bcaad94554cd7, type: 3}
 --- !u!1 &1491616887
 GameObject:

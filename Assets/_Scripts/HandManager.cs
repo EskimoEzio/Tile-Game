@@ -20,6 +20,8 @@ public class HandManager : MonoBehaviour
 
     [SerializeField] private int startingHandSize = 3;
 
+    public int luck = 0;
+
 
     private void OnEnable()
     {
@@ -39,11 +41,14 @@ public class HandManager : MonoBehaviour
 
         mainCam = Camera.main;
         
+        
     }
 
 
     private void Start()
     {
+        luck = 0; //this needs to be set to 0, becuase of when the hand is cloned, it copies the initial luck
+
         PositionHand();
         DrawBlock(startingHandSize);
     }
@@ -164,7 +169,7 @@ public class HandManager : MonoBehaviour
     
     void DrawBlock(int quant = 1) // this is a simple draw function that draws a random block each turn, it picks from a list called library, but it is random and does not behave like an actual library
     {
-
+        // if ever i want to make an ondraw event, i think it should instead be called inside the loop. so that draw3 is treated as 3 sets of draw 1. Although this may need to change
 
         // draw 3 at the star of the game
         for (int i = 0; i < quant; i++)
@@ -177,10 +182,33 @@ public class HandManager : MonoBehaviour
             blockController.InitialiseBlock(library[randIndex], handTeam);
 
             AddToHand(newBlock);
+
+            TrackLuck(blockController);
         }
 
         
     }
+
+    void TrackLuck(BlockController blockCon) //This is a mostly useless function that will count the total number of spikes drawn
+    {
+
+        foreach(KeyValuePair<Vector2, int> dirPow in blockCon.PowerDict)
+        {
+            luck += dirPow.Value;
+
+            //print(handTeam + data.BlockName + ": " + dirPow.Value);
+        }
+        
+
+        /*
+        foreach(int pow in data.PowerValues)
+        {
+            luck += pow;
+        }
+        */
+        //print(handTeam + "'s luck: " + luck + ":" + this.gameObject.name);
+    }
+
 
 
 }

@@ -10,5 +10,4 @@ public class BlockData : ScriptableObject
     public int[] PowerValues = new int[4]; // these values are N,E,S,W (so starting north and working clockwise
 
 
-
 }

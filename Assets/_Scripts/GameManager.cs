@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
 
         if (IsMultiplayer)
         {
-            print("Blue: " + playerScore + ", Red: " + enemyScore);
+            //print("Blue: " + playerScore + ", Red: " + enemyScore);
         }
         else
         {
@@ -99,25 +99,32 @@ public class GameManager : MonoBehaviour
             }
             else
             {
+                print("It's a Tie!!");
+            }
+
+            ShowLuck();
+        }
+        else //Singleplayer
+        {
+            if (playerScore > enemyScore)
+            {
+                print("You Win!!! With a Score of " + playerScore);
+            }
+            else if (enemyScore > playerScore)
+            {
+                print("You Lose, With a Score of " + playerScore);
+            }
+            else
+            {
                 print("It's a Tie!");
             }
         }
 
 
-        if (playerScore > enemyScore)
-        {
-            print("You Win!!! With a Score of " + playerScore);
-        }
-        else if (enemyScore > playerScore)
-        {
-            print("You Lose, With a Score of " + playerScore);
-        }
-        else
-        {
-            print("It's a Tie!");
-        }
-    }
+        
 
+        
+    }
 
     /// <summary>
     /// This updates the scores at the end of each round and when the game ends
@@ -151,5 +158,50 @@ public class GameManager : MonoBehaviour
         return (playerScore, enemyScore);
     }
 
-    
+ 
+    private void ShowLuck() // this is not necessary at all, it is just a fun function to calc approximate luck
+    {
+        int playerLuck = 0;
+        int enemyLuck = 0;
+
+
+        List<HandManager> hands = new List<HandManager>(FindObjectsByType<HandManager>(FindObjectsSortMode.None));
+
+        foreach (HandManager hand in hands)
+        {
+
+            if(hand.handTeam == GameTypes.Team.Player)
+            {
+                playerLuck = hand.luck;
+            }
+            else if (hand.handTeam == GameTypes.Team.Enemy)
+            {
+                enemyLuck = hand.luck;
+            }
+        }
+        
+        //print("Blue Luck: " + playerLuck + " Enemy Luck: " + enemyLuck);
+
+        float luckPercentage = 0f;
+        if (playerLuck > enemyLuck)
+        {
+            luckPercentage = ((float)playerLuck / (float)enemyLuck) - 1f;
+            luckPercentage = Mathf.Round(luckPercentage * 100);
+
+            print("Blue's Luck was " + luckPercentage + "% Better");
+        }
+        else if(enemyLuck > playerLuck)
+        {
+            luckPercentage = ((float)playerLuck / (float)enemyLuck) - 1f;
+            luckPercentage = Mathf.Round(luckPercentage * 100);
+            print("Red's's Luck was " + luckPercentage + "% Better");
+        }
+        else
+        {
+            print("No Luck Involved!");
+        }
+
+
+    }
+
 }
