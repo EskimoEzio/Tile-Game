@@ -180,7 +180,7 @@ public class GameManager : MonoBehaviour
             }
         }
         
-        //print("Blue Luck: " + playerLuck + " Enemy Luck: " + enemyLuck);
+        print("Blue Luck: " + playerLuck + " Enemy Luck: " + enemyLuck);
 
         float luckPercentage = 0f;
         if (playerLuck > enemyLuck)
@@ -192,7 +192,7 @@ public class GameManager : MonoBehaviour
         }
         else if(enemyLuck > playerLuck)
         {
-            luckPercentage = ((float)playerLuck / (float)enemyLuck) - 1f;
+            luckPercentage = ((float)enemyLuck / (float)playerLuck) - 1f;
             luckPercentage = Mathf.Round(luckPercentage * 100);
             print("Red's's Luck was " + luckPercentage + "% Better");
         }
