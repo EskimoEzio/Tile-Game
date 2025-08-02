@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 646e434ff1c50854e959755b287c92c3, type: 3}
-  m_Name: Up4Down0Hori2
+  m_Name: 1111
   m_EditorClassIdentifier: 
-  BlockName: Turtle
-  Sprite: {fileID: 1435558958, guid: 748dbb09c30783f4eb2c51cf3bedca50, type: 3}
-  PowerValues: 04000000020000000000000002000000
+  BlockName: Slime
+  Sprite: {fileID: 630964578, guid: 748dbb09c30783f4eb2c51cf3bedca50, type: 3}
+  PowerValues: 01000000010000000100000001000000

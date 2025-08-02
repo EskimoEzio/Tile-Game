@@ -81,13 +81,17 @@ public class BlockController : MonoBehaviour
 
     private void BaseBlockPlaced()
     {
-        //at this point the block has already been added to the tile. By default the next thing is begining the attack. No extra work required
 
-        OnAttack?.Invoke(this);
+        //at this point the block has already been added to the tile. By default the next thing is targeting. No extra work required
+        IsPlaced = true;
+
+        OnAttack?.Invoke(this); // Will is still use these events? probably, but this will be moved from here (BlockPlace)
     }
 
-    private void BaseTarget()
+    private void BaseTarget() // by default look at all sides with spikes, return a list of any adjacent enemy blocks 
     {
+
+        List<(BlockController target,Vector2 direction)> targetsAndDirections = new(); //this has to be a list of tuples, becuase i may eventually want to have functionality which which would require non unique keys which cant be don in a dictionary. 
 
         foreach (KeyValuePair<Vector2, int> dirPow in PowerDict) // this is for checking attacks in every direction
         {
@@ -112,22 +116,36 @@ public class BlockController : MonoBehaviour
                     continue;
                 }
 
-                
+
+                targetsAndDirections.Add((targetBlockController, dirPow.Key));
 
             }
-
-            
-
         }
+
+        // START ATTACK
+        BaseAttack(targetsAndDirections);
+
     }
 
 
-    private void BaseAttack(BlockController targetBlock, Vector2 attackDir)
+    private void BaseAttack(List<(BlockController target, Vector2 direction)> targetsAndDirections)
     {
-        
-        if (PowerDict[attackDir] > targetBlock.PowerDict[attackDir * -1]) 
+
+        foreach((BlockController target, Vector2 direction) targetAndDir in targetsAndDirections)
         {
-            targetBlock.GetDefeated(attackDir);
+            int power = PowerDict[targetAndDir.direction];
+
+            if(power == 0)
+            {
+                continue;
+            }
+
+            if (power > targetAndDir.target.PowerDict[targetAndDir.direction * -1])
+            {
+                targetAndDir.target.GetCaptured(targetAndDir.direction); //capture if power is higher
+            }
+
+
         }
 
     }
@@ -187,7 +205,7 @@ public class BlockController : MonoBehaviour
             {
                 //print(BlockData.BlockName + " beats " + targetBlockController.BlockData.BlockName);
                 //targetBlockController.ChangeTeam();
-                targetBlockController.GetDefeated(dir);
+                targetBlockController.GetCaptured(dir);
             }
             else if (power < targetBlockController.PowerDict[dir * -1])
             {
@@ -217,10 +235,10 @@ public class BlockController : MonoBehaviour
     }
 
     /// <summary>
-    /// Defeats this block, changing its team and flipping it
+    /// Captures this block, changing its team and flipping it
     /// </summary>
     /// <param name="attackDir">The direction the of the attack</param>
-    public void GetDefeated(Vector2 attackDir)
+    public void GetCaptured(Vector2 attackDir)
     {
         // as it is now, becuase the blocks are 2D and have no depth, you cannot distinguish flipping left or right, however i am making it change so that when i later switch to a 3d block it will be easier
 

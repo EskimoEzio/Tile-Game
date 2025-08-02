@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 646e434ff1c50854e959755b287c92c3, type: 3}
-  m_Name: Right1Rest0
+  m_Name: 0100
   m_EditorClassIdentifier: 
   BlockName: Chicken
   Sprite: {fileID: -12993086, guid: 748dbb09c30783f4eb2c51cf3bedca50, type: 3}

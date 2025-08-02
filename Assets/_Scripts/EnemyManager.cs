@@ -17,7 +17,8 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] private float prePlaceDelay = 0.6f;
     [SerializeField] private float postPlaceDelay = 0.1f;
 
-    // SCORING VALUES - this may be separated into a scirptable object system to make different feeling enemies
+
+    // SCORING VALUES - this may be separated into a scirptable object system to make different feeling enemies - These values along with the socring formula are very provisional
     [SerializeField] private float baseCaptureValue = 100;
     [SerializeField] private float captureStrengthBonus = 0.2f;
     [SerializeField] private float overKillPenalty = 0.1f;
@@ -108,7 +109,7 @@ public class EnemyManager : MonoBehaviour
             }
         }
 
-        //evaluate all empty tiles - each tile will get a score based on what it can capture, and where its remaining power is
+        //evaluate all empty tiles - each tile will get a score based on what it can GameTypes.Teame, and where its remaining power is
 
         foreach(KeyValuePair<Vector2, Tile> tile in emptyTiles)
         {
@@ -184,13 +185,13 @@ public class EnemyManager : MonoBehaviour
                 if (dirPow.Value > targetBlockController.PowerDict[dirPow.Key * -1]) //if it wins in the given directon
                 {
                     //print(gameObject.name + " beats " + targetBlockController.gameObject.name);
-                    //score += BaseCaptureValue * (1+(CaptureStrengthBonus* targetBlockController.PowerDict[dirPow.Key * -1]));
+                    //score += BaseGameTypes.TeameValue * (1+(GameTypes.TeameStrengthBonus* targetBlockController.PowerDict[dirPow.Key * -1]));
 
                     score += CalcCaptureScore(dirPow.Value, targetBlockController.PowerDict[dirPow.Key * -1]);
 
 
                 }
-                else // does not capture
+                else // does not GameTypes.Teame
                 {
                     score += CalcWastedPowerScore(dirPow.Value);
 
@@ -210,7 +211,7 @@ public class EnemyManager : MonoBehaviour
 
     private float CalcCaptureScore(int attackingPower, int defendingPower)
     {
-        return baseCaptureValue * (1 + captureStrengthBonus * defendingPower - overKillPenalty * (attackingPower-1 - defendingPower));
+        return baseCaptureValue * (1 + captureStrengthBonus * defendingPower - overKillPenalty * (attackingPower - 1 - defendingPower));
     }
 
     private float CalcWastedPowerScore(int wastedPower)

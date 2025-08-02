@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 646e434ff1c50854e959755b287c92c3, type: 3}
-  m_Name: All1
+  m_Name: 1531
   m_EditorClassIdentifier: 
-  BlockName: Slime
-  Sprite: {fileID: 630964578, guid: 748dbb09c30783f4eb2c51cf3bedca50, type: 3}
-  PowerValues: 01000000010000000100000001000000
+  BlockName: Cat
+  Sprite: {fileID: 1287677828, guid: 748dbb09c30783f4eb2c51cf3bedca50, type: 3}
+  PowerValues: 01000000050000000300000001000000
