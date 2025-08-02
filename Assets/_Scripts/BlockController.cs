@@ -11,9 +11,9 @@ public class BlockController : MonoBehaviour
     public event Action<BlockController> OnTeamChanged;
 
 
-    public event Action<BlockController> OnBlockPlaced;
-    public event Action<BlockController> OnAttack; // the actions that happen when the block "attacks" - not necessarily damage - i think this will usually just be trigger OnHits - The Attack windup??
-    public event Action<BlockController, BlockController> OnHit; //when the attack hits what does it do (deal damage, buff/debuff etc.)
+    //public event Action<BlockController> OnBlockPlaced;
+    //public event Action<BlockController> OnAttack; // the actions that happen when the block "attacks" - not necessarily damage - i think this will usually just be trigger OnHits - The Attack windup??
+    //public event Action<BlockController, BlockController> OnHit; //when the attack hits what does it do (deal damage, buff/debuff etc.)
     //public event Action<BlockController> OnGetHit; //when hit by an attack how does this block respond - this event may not be necessary as i can just have two parameters in the OnHit event
 
 
@@ -85,7 +85,7 @@ public class BlockController : MonoBehaviour
         //at this point the block has already been added to the tile. By default the next thing is targeting. No extra work required
         IsPlaced = true;
 
-        OnAttack?.Invoke(this); // Will is still use these events? probably, but this will be moved from here (BlockPlace)
+        //OnAttack?.Invoke(this); // Will is still use these events? probably, but this will be moved from here (BlockPlace)
     }
 
     private void BaseTarget() // by default look at all sides with spikes, return a list of any adjacent enemy blocks 
@@ -142,11 +142,17 @@ public class BlockController : MonoBehaviour
 
             if (power > targetAndDir.target.PowerDict[targetAndDir.direction * -1])
             {
-                targetAndDir.target.GetCaptured(targetAndDir.direction); //capture if power is higher
+                targetAndDir.target.GetCaptured(targetAndDir.direction); //capture if power is higher-
             }
 
 
         }
+
+    }
+
+
+    private void BaseGetHit()
+    {
 
     }
 
@@ -156,9 +162,11 @@ public class BlockController : MonoBehaviour
     {
         IsPlaced = true;
 
-        OnBlockPlaced?.Invoke(this);
+        //OnBlockPlaced?.Invoke(this); //Not currently used
 
+        BaseBlockPlaced();
 
+        /*
         //this is the default targeting, adjacent, orthogonal, range 1
 
         foreach(KeyValuePair<Vector2, int> dirPow in PowerDict) // this is for checking attacks in every direction
@@ -169,7 +177,7 @@ public class BlockController : MonoBehaviour
                 Attack(tilePos, dirPow.Key, dirPow.Value);
             }
             
-        }
+        }*/
 
 
     }
