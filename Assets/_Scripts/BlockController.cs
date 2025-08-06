@@ -83,12 +83,14 @@ public class BlockController : MonoBehaviour
     {
 
         //at this point the block has already been added to the tile. By default the next thing is targeting. No extra work required
-        IsPlaced = true;
+        IsPlaced = true; //this may not need to be set in this funciton as I am setting it before this is called. 
+
+        BaseTarget();
 
         //OnAttack?.Invoke(this); // Will is still use these events? probably, but this will be moved from here (BlockPlace)
     }
 
-    private void BaseTarget() // by default look at all sides with spikes, return a list of any adjacent enemy blocks 
+    private void BaseTarget() // by default look at all sides with spikes, creates a list of any adjacent enemy blocks and passes this to the attack function
     {
 
         List<(BlockController target,Vector2 direction)> targetsAndDirections = new(); //this has to be a list of tuples, becuase i may eventually want to have functionality which which would require non unique keys which cant be don in a dictionary. 
@@ -123,6 +125,7 @@ public class BlockController : MonoBehaviour
         }
 
         // START ATTACK
+        print("Start Attack against: " + targetsAndDirections.Count);
         BaseAttack(targetsAndDirections);
 
     }
@@ -140,20 +143,30 @@ public class BlockController : MonoBehaviour
                 continue;
             }
 
-            if (power > targetAndDir.target.PowerDict[targetAndDir.direction * -1])
-            {
-                targetAndDir.target.GetCaptured(targetAndDir.direction); //capture if power is higher-
-            }
-
+            targetAndDir.target.BaseGetHit(targetAndDir.direction * -1, power); // This calls the "get hit" function on the target block. The target is the one that decides if it gets captured. This could maybe ue used later to trigger events
 
         }
-
     }
 
-
-    private void BaseGetHit()
+    /// <summary>
+    /// This returns true if the targeted block was captured. 
+    /// </summary>
+    /// <param name="defendingDir">This is the direction of the defending block, usually the opposite to the attack direction</param>
+    /// <param name="attackPower">The Power of the attack</param>
+    /// <returns></returns>
+    public bool BaseGetHit(Vector2 defendingDir, int attackPower) //I am not certain i want this to return a value, I will have to think about this a bit more
     {
 
+        if (attackPower > PowerDict[defendingDir])
+        {
+            GetCaptured(defendingDir);
+            return true; //the block was captured
+        }
+        else
+        {
+            // Not captured (the hit failed)
+            return false;
+        }
     }
 
 
@@ -166,7 +179,7 @@ public class BlockController : MonoBehaviour
 
         BaseBlockPlaced();
 
-        /*
+        /* the below code should be unnecessary with the new system as this is handled separately
         //this is the default targeting, adjacent, orthogonal, range 1
 
         foreach(KeyValuePair<Vector2, int> dirPow in PowerDict) // this is for checking attacks in every direction
@@ -245,12 +258,12 @@ public class BlockController : MonoBehaviour
     /// <summary>
     /// Captures this block, changing its team and flipping it
     /// </summary>
-    /// <param name="attackDir">The direction the of the attack</param>
-    public void GetCaptured(Vector2 attackDir)
+    /// <param name="defendingDir">The direction the of the defending side</param>
+    public void GetCaptured(Vector2 defendingDir)
     {
         // as it is now, becuase the blocks are 2D and have no depth, you cannot distinguish flipping left or right, however i am making it change so that when i later switch to a 3d block it will be easier
 
-        Vector2 rotationAxis = -Vector2.Perpendicular(attackDir);
+        Vector2 rotationAxis = -Vector2.Perpendicular(-defendingDir);
 
         //StartCoroutine(BlockFlip(rotationAxis));
         CoroutineRegistry.RunAndTrack(this, BlockFlip(rotationAxis), true);

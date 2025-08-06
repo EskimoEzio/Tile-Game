@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            print("PLAYER: " + playerScore + ", ENEMY: " + enemyScore);
+            //print("PLAYER: " + playerScore + ", ENEMY: " + enemyScore);
 
         }
 
