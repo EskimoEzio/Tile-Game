@@ -11,10 +11,10 @@ public class BlockController : MonoBehaviour
     public event Action<BlockController> OnTeamChanged;
 
 
-    //public event Action<BlockController> OnBlockPlaced;
-    //public event Action<BlockController> OnAttack; // the actions that happen when the block "attacks" - not necessarily damage - i think this will usually just be trigger OnHits - The Attack windup??
-    //public event Action<BlockController, BlockController> OnHit; //when the attack hits what does it do (deal damage, buff/debuff etc.)
-    //public event Action<BlockController> OnGetHit; //when hit by an attack how does this block respond - this event may not be necessary as i can just have two parameters in the OnHit event
+    //public static event Action<BlockController> OnAnyBlockPlaced;
+    //public static event Action<BlockController> OnAnyBlockTarget;
+    //public static event Action<BlockController> OnAnyBlockAttack;
+    //public static event Action<BlockController> OnAnyBlockGetHit; 
 
 
 
@@ -179,67 +179,7 @@ public class BlockController : MonoBehaviour
 
         BaseBlockPlaced();
 
-        /* the below code should be unnecessary with the new system as this is handled separately
-        //this is the default targeting, adjacent, orthogonal, range 1
-
-        foreach(KeyValuePair<Vector2, int> dirPow in PowerDict) // this is for checking attacks in every direction
-        {
-
-            if(dirPow.Value != 0)
-            {
-                Attack(tilePos, dirPow.Key, dirPow.Value);
-            }
-            
-        }*/
-
-
     }
-
-    private void Attack(Vector2 tilePos, Vector2 dir, int power)
-    {
-        // check if the tiles dict (in grid manager) does not contain the current tile + offset (if it exists)
-        if (!GridManager.Instance.Tiles.ContainsKey(tilePos + dir))
-        {
-            //print(tilePos + dirPow.Key + ": does not exist");
-            return;
-        }
-
-        // check if the tile is empty
-        if (GridManager.Instance.Tiles[tilePos + dir].TileContents == null)
-        {
-            //print(tilePos + dirPow.Key + ": is empty");
-            return;
-        }
-
-        // if the tile contains a gameobject with block controller then proceed with checks
-        if (GridManager.Instance.Tiles[tilePos + dir].TileContents.TryGetComponent<BlockController>(out BlockController targetBlockController))
-        {
-            // if the defending block is on the same team as the attacking block, then do not try to attack
-            if (targetBlockController.CurrentTeam == CurrentTeam)
-            {
-                //print(targetBlockController.BlockData.BlockName + " is on the same team");
-                return;
-            }
-
-            // this is the check of the power of new block in dir, compared to pow of old block in opposite dir (new block attacks up, old bolck defends down)
-            if (power > targetBlockController.PowerDict[dir * -1]) //this is set so that ties do not count as wins
-            {
-                //print(BlockData.BlockName + " beats " + targetBlockController.BlockData.BlockName);
-                //targetBlockController.ChangeTeam();
-                targetBlockController.GetCaptured(dir);
-            }
-            else if (power < targetBlockController.PowerDict[dir * -1])
-            {
-                //print(gameObject.name + " loses to " + targetBlockController.gameObject.name);
-            }
-            else
-            {
-                //print("It's a Tie");
-            }
-
-        }
-    }
-
 
 
     /// <summary>
