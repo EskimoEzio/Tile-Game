@@ -4,7 +4,7 @@ public class RangedUpgrade: IBlockUpgrade
 {
 
 
-    void OnPlace()
+    void Target()
     {
 
     }

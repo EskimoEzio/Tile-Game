@@ -12,9 +12,13 @@ public class BlockController : MonoBehaviour
 
 
     //public static event Action<BlockController> OnAnyBlockPlaced;
-    //public static event Action<BlockController> OnAnyBlockTarget;
+    //public static event Action<BlockController> OnAnyBlockTarget; - i don't know if i need a target event, this may only be necessary if i decude to use events to handle the upgrades
     //public static event Action<BlockController> OnAnyBlockAttack;
     //public static event Action<BlockController> OnAnyBlockGetHit; 
+    //public event Action<BlockController> OnBlockPlaced;
+    //public event Action<BlockController> OnBlockTarget;
+    //public event Action<BlockController> OnBlockAttack;
+    //public event Action<BlockController> OnBlockGetHit; 
 
 
 
@@ -38,6 +42,12 @@ public class BlockController : MonoBehaviour
     public Color PlayerColour = Color.blue;
 
     [SerializeField] private float flipSpeed = 360f;
+
+
+
+    //STATS
+    public int attackRange = 1; 
+
 
 
     private void Awake()
@@ -98,17 +108,36 @@ public class BlockController : MonoBehaviour
         foreach (KeyValuePair<Vector2, int> dirPow in PowerDict) // this is for checking attacks in every direction
         {
 
-            if (dirPow.Value == 0) // no attack if there is no power on that side
+            if (dirPow.Value == 0) // no check if there is no power on that side
             {
                 continue;
             }
+
+
 
             Vector2 targetLocation = (Vector2)transform.position + dirPow.Key;
+            bool targetAquired = false;
 
-            if (!GridManager.Instance.Tiles.ContainsKey(targetLocation) || GridManager.Instance.Tiles[targetLocation].TileContents == null) //if tile doesnt exist || or is empty
+            for(int i = 0; i < attackRange; i++) //if it finds a non-empty tile within range, make that the new target location 
+            {
+                targetLocation += dirPow.Key * i;
+                if (!GridManager.Instance.Tiles.ContainsKey(targetLocation)) //if tile doesnt exist check next direction
+                {
+                    continue;
+                }
+
+                if (GridManager.Instance.Tiles[targetLocation].TileContents != null) 
+                {
+                    targetAquired = true;
+                    break;
+                }
+            }
+
+            if (!targetAquired) // if no tragets were found in range
             {
                 continue;
             }
+
 
 
             if (GridManager.Instance.Tiles[targetLocation].TileContents.TryGetComponent<BlockController>(out BlockController targetBlockController))
@@ -124,9 +153,11 @@ public class BlockController : MonoBehaviour
             }
         }
 
-        // START ATTACK
-        print("Start Attack against: " + targetsAndDirections.Count);
-        BaseAttack(targetsAndDirections);
+        // Start Attack if there are targets
+        if(targetsAndDirections.Count != 0)
+        {
+            BaseAttack(targetsAndDirections);
+        }
 
     }
 
@@ -147,6 +178,13 @@ public class BlockController : MonoBehaviour
 
         }
     }
+
+
+    private void BaseHit() // this handles each individual hit, the attack function applies this to every target
+    {
+
+    }
+
 
     /// <summary>
     /// This returns true if the targeted block was captured. 

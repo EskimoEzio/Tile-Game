@@ -6,6 +6,7 @@ public class UpgradeManager : MonoBehaviour
 {
 
     private List<IBlockUpgrade> blockUpgrades = new();
+    private List<ITargetUpgrade> targetUpgrades = new();
 
 
 
@@ -13,5 +14,8 @@ public class UpgradeManager : MonoBehaviour
     {
         blockUpgrades.Add(upgrade);
     }
+
+
+
 
 }
