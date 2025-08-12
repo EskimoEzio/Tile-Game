@@ -89,6 +89,13 @@ public class BlockController : MonoBehaviour
     }
 
 
+
+    private void Action() // This is the function that will handle the full attack process. It is triggered after the block is placed - Figure out if i want to do this or if i want to simply call the next step at the end of the current step
+    {
+
+    }
+
+
     private void BaseBlockPlaced()
     {
 
@@ -100,44 +107,40 @@ public class BlockController : MonoBehaviour
         //OnAttack?.Invoke(this); // Will is still use these events? probably, but this will be moved from here (BlockPlace)
     }
 
-    private void BaseTarget() // by default look at all sides with spikes, creates a list of any adjacent enemy blocks and passes this to the attack function
+    public void BaseTarget() // by default look at all sides with spikes, creates a list of any adjacent enemy blocks and passes this to the attack function
     {
+
+        List<Vector2> directions = new List<Vector2> { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
 
         List<(BlockController target,Vector2 direction)> targetsAndDirections = new(); //this has to be a list of tuples, becuase i may eventually want to have functionality which which would require non unique keys which cant be don in a dictionary. 
 
-        foreach (KeyValuePair<Vector2, int> dirPow in PowerDict) // this is for checking attacks in every direction
+        foreach (Vector2 direction in directions) // this is for checking attacks in every direction
         {
 
-            if (dirPow.Value == 0) // no check if there is no power on that side
-            {
-                continue;
-            }
 
-
-
-            Vector2 targetLocation = (Vector2)transform.position + dirPow.Key;
+            Vector2 targetLocation = (Vector2)transform.position + direction;
             bool targetAquired = false;
 
             for(int i = 0; i < attackRange; i++) //if it finds a non-empty tile within range, make that the new target location 
             {
-                targetLocation += dirPow.Key * i;
-                if (!GridManager.Instance.Tiles.ContainsKey(targetLocation)) //if tile doesnt exist check next direction
+                targetLocation += direction * i;
+                if (!GridManager.Instance.Tiles.ContainsKey(targetLocation)) 
                 {
                     continue;
                 }
 
-                if (GridManager.Instance.Tiles[targetLocation].TileContents != null) 
+                if (GridManager.Instance.Tiles[targetLocation].TileContents != null)
                 {
                     targetAquired = true;
                     break;
                 }
             }
 
-            if (!targetAquired) // if no tragets were found in range
+
+            if (!targetAquired) // if no tragets were found in range check next direction
             {
                 continue;
             }
-
 
 
             if (GridManager.Instance.Tiles[targetLocation].TileContents.TryGetComponent<BlockController>(out BlockController targetBlockController))
@@ -148,7 +151,7 @@ public class BlockController : MonoBehaviour
                 }
 
 
-                targetsAndDirections.Add((targetBlockController, dirPow.Key));
+                targetsAndDirections.Add((targetBlockController, direction));
 
             }
         }
@@ -162,7 +165,7 @@ public class BlockController : MonoBehaviour
     }
 
 
-    private void BaseAttack(List<(BlockController target, Vector2 direction)> targetsAndDirections)
+    public void BaseAttack(List<(BlockController target, Vector2 direction)> targetsAndDirections)
     {
 
         foreach((BlockController target, Vector2 direction) targetAndDir in targetsAndDirections)
