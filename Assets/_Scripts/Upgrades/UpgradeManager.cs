@@ -10,8 +10,19 @@ public class UpgradeManager : MonoBehaviour
 
     private List<IBlockUpgrade> blockUpgrades = new();
     
+    //Target
     private List<ITargetUpgrade> targetUpgrades = new(); // I may end up changing this as I don't know if i want targeting to factor in extra details. Ignore for now as this is mostly focusing on targeting allies
     private ITargetReplacementUpgrade targetReplacementUpgrade; //this is also stored seperatley as you can only have 1 and I want to make sure i keep track of that
+
+
+    //Attack
+    private List<IAttackUpgrade> attackUpgrades = new();
+
+
+    //Attack Condition
+    private List<IAttackConditionUpgrade> conditionUpgrades = new();
+    public bool OverwriteBaseAllyCheck { get; private set; } = false;
+    public bool OverwriteBaseNilPowerCheck { get; private set; } = false;
 
 
 
@@ -25,6 +36,7 @@ public class UpgradeManager : MonoBehaviour
     {
         blockUpgrades.Add(upgrade);
 
+        // I am not using a switch statement becuase I am planning for upgrades to be able to be multiple types, so every one needs to be checked per upgrade
         if(upgrade is ITargetUpgrade targetUpgrade)
         {
             if(targetUpgrade is ITargetReplacementUpgrade replacementUpgrade)
@@ -37,10 +49,19 @@ public class UpgradeManager : MonoBehaviour
             targetUpgrades.Add(targetUpgrade);
         }
 
+        if (upgrade is IAttackUpgrade attackUpgrade)
+        {
+            attackUpgrades.Add(attackUpgrade);
+        }
+
+        if( upgrade is IAttackConditionUpgrade conditionUpgrade)
+        {
+            conditionUpgrades.Add(conditionUpgrade);
+        }
     }
 
 
-    void CheckTargetUpgrades() // Atm this is only checks target replacement
+    public void CheckTargetUpgrades() // Atm this is only checks target replacement
     {
         if(targetUpgrades.Count == 0) // if there are no target upgrades
         {
@@ -57,10 +78,52 @@ public class UpgradeManager : MonoBehaviour
         {
             blockController.BaseTarget();
         }
+    }
 
-
+    public void CheckAttackUpgrades() // Atm this does nothing, as there are no attack upgrades
+    {
+        if (attackUpgrades.Count == 0) // if there are no upgrades
+        {
+            blockController.BaseTarget();
+            return;
+        }
+        else
+        {
+            print("There is an attack upgrade");
+        }
 
     }
 
+    public bool CheckAttackConditionUpgrades(BlockController targetBlockController) // I may choose to separate atack conditions so that they arte not a subset of attackUpgrades as i suspect they will be handled completly differently
+    {
+        foreach (IAttackUpgrade attackUpgrade in attackUpgrades)
+        {
+            if (attackUpgrade is IAttackConditionUpgrade conditionUpgrade)
+            {
+                
+                if (conditionUpgrade.OverwriteAllyCheck)
+                {
+                    OverwriteBaseAllyCheck = true;
+                }
+
+                if (conditionUpgrade.OverwriteNilPowerCheck)
+                {
+                    OverwriteBaseNilPowerCheck = true;
+                }
+
+
+                if(!conditionUpgrade.CheckCanAttack(blockController, targetBlockController)) // if any of the checks fail, the attack will fail
+                {
+                    return false;
+                }
+
+            }
+        }
+
+        
+
+
+        return true; // if it gets to this point, that means that none of the checks in the upgrades have failed
+    }
 
 }

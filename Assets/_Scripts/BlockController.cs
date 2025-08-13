@@ -15,12 +15,13 @@ public class BlockController : MonoBehaviour
     //public static event Action<BlockController> OnAnyBlockTarget; - i don't know if i need a target event, this may only be necessary if i decude to use events to handle the upgrades
     //public static event Action<BlockController> OnAnyBlockAttack;
     //public static event Action<BlockController> OnAnyBlockGetHit; 
-    //public event Action<BlockController> OnBlockPlaced;
-    //public event Action<BlockController> OnBlockTarget;
-    //public event Action<BlockController> OnBlockAttack;
-    //public event Action<BlockController> OnBlockGetHit; 
+    //public event Action<BlockController> OnThisBlockPlaced;
+    //public event Action<BlockController> OnThisBlockTarget;
+    //public event Action<BlockController> OnThisBlockAttack;
+    //public event Action<BlockController> OnThisBlockGetHit; 
 
 
+    private UpgradeManager upgradeManager;
 
     public BlockData BlockData { get; private set; }
     [SerializeField] private BlockData defaultData;
@@ -45,6 +46,9 @@ public class BlockController : MonoBehaviour
 
 
 
+    private List<(BlockController target, Vector2 direction)> targetsAndDirections = new();  //this has to be a list of tuples, becuase i may eventually want to have functionality which which would require non unique keys which cant be don in a dictionary. 
+
+
     //STATS
     public int attackRange = 1; 
 
@@ -55,6 +59,7 @@ public class BlockController : MonoBehaviour
         blockRenderer = GetComponent<SpriteRenderer>();
         artHolderRenderer = artHolderObject.GetComponent<SpriteRenderer>();
         BlockData = defaultData;
+        upgradeManager = GetComponent<UpgradeManager>();
 
         InitialiseBlock();
 
@@ -95,6 +100,55 @@ public class BlockController : MonoBehaviour
 
     }
 
+    public void PlaceBlock(Vector2 tilePos)
+    {
+        IsPlaced = true;
+        //OnAnyBlockPlaced?.Invoke(this); //Not currently used
+        BaseBlockPlaced();
+    }
+
+    private void Target() // This is the targeting step, it will be triggered by an event
+    {
+
+        upgradeManager.CheckTargetUpgrades(); // if there is a replacement upgrade, do that instead
+        //OnAnyBlockTarget?.Invoke(this); //Not currently used
+        Attack();
+    }
+
+
+    private void Attack() // This is the function that deicdes if each target should get hit or not
+    {
+        upgradeManager.CheckAttackUpgrades(); // upgrades that should happen just before the attack
+
+        foreach ((BlockController target, Vector2 direction) targetAndDir in targetsAndDirections)
+        {
+
+            if (!upgradeManager.CheckAttackConditionUpgrades(targetAndDir.target)) // if it fails the upgrade checks
+            {
+                continue;
+            }
+
+
+            // Default Checks - these are handled differently to the replacement of targeting, becuse they are very simple and there are very few of them
+            if(!upgradeManager.OverwriteBaseAllyCheck && CurrentTeam == targetAndDir.target.CurrentTeam) // if the ally check has not been overwritten & if they are on the same team, continue
+            {
+                continue;
+            }
+
+            int power = PowerDict[targetAndDir.direction]; //power is onyl important at this point
+
+            if (!upgradeManager.OverwriteBaseNilPowerCheck && power == 0) // if the NilPower check has not been overwritten and if power is 0. This prevents sides with 0 power from hitting blocks
+            {
+                continue;
+            }
+
+            targetAndDir.target.BaseGetHit(targetAndDir.direction * -1, power); // This calls the "get hit" function on the target block. The target is the one that decides if it gets captured. This could maybe ue used later to trigger events
+
+        }
+
+
+    }
+
 
     private void BaseBlockPlaced()
     {
@@ -102,17 +156,17 @@ public class BlockController : MonoBehaviour
         //at this point the block has already been added to the tile. By default the next thing is targeting. No extra work required
         IsPlaced = true; //this may not need to be set in this funciton as I am setting it before this is called. 
 
-        BaseTarget();
-
+        //BaseTarget();
+        Target();
         //OnAttack?.Invoke(this); // Will is still use these events? probably, but this will be moved from here (BlockPlace)
     }
 
-    public void BaseTarget() // by default look at all sides with spikes, creates a list of any adjacent enemy blocks and passes this to the attack function
+    public void BaseTarget() // this resets the targetsAndDirections list then adds the targets (the adjacent blocks within attack range)
     {
 
         List<Vector2> directions = new List<Vector2> { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
 
-        List<(BlockController target,Vector2 direction)> targetsAndDirections = new(); //this has to be a list of tuples, becuase i may eventually want to have functionality which which would require non unique keys which cant be don in a dictionary. 
+        targetsAndDirections = new(); //this has to be a list of tuples, becuase i may eventually want to have functionality which which would require non unique keys which cant be don in a dictionary. 
 
         foreach (Vector2 direction in directions) // this is for checking attacks in every direction
         {
@@ -137,7 +191,7 @@ public class BlockController : MonoBehaviour
             }
 
 
-            if (!targetAquired) // if no tragets were found in range check next direction
+            if (!targetAquired) // if no targets were found in range check next direction
             {
                 continue;
             }
@@ -145,21 +199,10 @@ public class BlockController : MonoBehaviour
 
             if (GridManager.Instance.Tiles[targetLocation].TileContents.TryGetComponent<BlockController>(out BlockController targetBlockController))
             { 
-                if (targetBlockController.CurrentTeam == CurrentTeam) // if the defending block is on the same team as the attacking block, then do not try to attack
-                {
-                    continue;
-                }
-
 
                 targetsAndDirections.Add((targetBlockController, direction));
 
             }
-        }
-
-        // Start Attack if there are targets
-        if(targetsAndDirections.Count != 0)
-        {
-            BaseAttack(targetsAndDirections);
         }
 
     }
@@ -197,7 +240,7 @@ public class BlockController : MonoBehaviour
     /// <returns></returns>
     public bool BaseGetHit(Vector2 defendingDir, int attackPower) //I am not certain i want this to return a value, I will have to think about this a bit more
     {
-
+        print("gethit");
         if (attackPower > PowerDict[defendingDir])
         {
             GetCaptured(defendingDir);
@@ -212,15 +255,7 @@ public class BlockController : MonoBehaviour
 
 
 
-    public void PlaceBlock(Vector2 tilePos)
-    {
-        IsPlaced = true;
 
-        //OnBlockPlaced?.Invoke(this); //Not currently used
-
-        BaseBlockPlaced();
-
-    }
 
 
     /// <summary>
@@ -228,6 +263,7 @@ public class BlockController : MonoBehaviour
     /// </summary>
     public void ChangeTeam() //this is currently called to make the enemy's blocks on the correct team, this may have to be changed as it is broadcasting events that may be needed elsewhere
     {
+        
         CurrentTeam = GameUtilities.ToggleTeam(CurrentTeam);
         
         SetBlockColour();
