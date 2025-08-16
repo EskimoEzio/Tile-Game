@@ -128,6 +128,7 @@ public class BlockController : MonoBehaviour
                 continue;
             }
 
+            print(upgradeManager.OverwriteBaseAllyCheck);
 
             // Default Checks - these are handled differently to the replacement of targeting, becuse they are very simple and there are very few of them
             if(!upgradeManager.OverwriteBaseAllyCheck && CurrentTeam == targetAndDir.target.CurrentTeam) // if the ally check has not been overwritten & if they are on the same team, continue

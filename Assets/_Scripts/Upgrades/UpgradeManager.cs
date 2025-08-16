@@ -8,7 +8,7 @@ public class UpgradeManager : MonoBehaviour
     private BlockController blockController;
 
 
-    private List<IBlockUpgrade> blockUpgrades = new();
+    private List<BlockUpgrade> blockUpgrades = new();
     
     //Target
     private List<ITargetUpgrade> targetUpgrades = new(); // I may end up changing this as I don't know if i want targeting to factor in extra details. Ignore for now as this is mostly focusing on targeting allies
@@ -20,7 +20,7 @@ public class UpgradeManager : MonoBehaviour
 
 
     //Attack Condition
-    private List<IAttackConditionUpgrade> conditionUpgrades = new();
+    private List<IAttackConditionUpgrade> attackConditionUpgrades = new();
     public bool OverwriteBaseAllyCheck { get; private set; } = false;
     public bool OverwriteBaseNilPowerCheck { get; private set; } = false;
 
@@ -31,8 +31,15 @@ public class UpgradeManager : MonoBehaviour
         blockController = GetComponent<BlockController>();
     }
 
+    private void Start()
+    {
 
-    private void AddUpgrade(IBlockUpgrade upgrade)
+        AddUpgrade(new OnlyHitAllyUpgrade());
+
+    }
+
+
+    private void AddUpgrade(BlockUpgrade upgrade)
     {
         blockUpgrades.Add(upgrade);
 
@@ -54,9 +61,9 @@ public class UpgradeManager : MonoBehaviour
             attackUpgrades.Add(attackUpgrade);
         }
 
-        if( upgrade is IAttackConditionUpgrade conditionUpgrade)
+        if( upgrade is IAttackConditionUpgrade attackConditionUpgrade)
         {
-            conditionUpgrades.Add(conditionUpgrade);
+            attackConditionUpgrades.Add(attackConditionUpgrade);
         }
     }
 
@@ -94,30 +101,33 @@ public class UpgradeManager : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// This returns true if all attack conditons within the upgrades have been met
+    /// </summary>
+    /// <param name="targetBlockController"></param>
+    /// <returns></returns>
     public bool CheckAttackConditionUpgrades(BlockController targetBlockController) // I may choose to separate atack conditions so that they arte not a subset of attackUpgrades as i suspect they will be handled completly differently
     {
-        foreach (IAttackUpgrade attackUpgrade in attackUpgrades)
+        foreach (IAttackConditionUpgrade conditionUpgrade in attackConditionUpgrades)
         {
-            if (attackUpgrade is IAttackConditionUpgrade conditionUpgrade)
+
+            print(conditionUpgrade.OverwriteAllyCheck);
+            if (conditionUpgrade.OverwriteAllyCheck)
             {
-                
-                if (conditionUpgrade.OverwriteAllyCheck)
-                {
-                    OverwriteBaseAllyCheck = true;
-                }
-
-                if (conditionUpgrade.OverwriteNilPowerCheck)
-                {
-                    OverwriteBaseNilPowerCheck = true;
-                }
-
-
-                if(!conditionUpgrade.CheckCanAttack(blockController, targetBlockController)) // if any of the checks fail, the attack will fail
-                {
-                    return false;
-                }
-
+                OverwriteBaseAllyCheck = true;
             }
+
+            if (conditionUpgrade.OverwriteNilPowerCheck)
+            {
+                OverwriteBaseNilPowerCheck = true;
+            }
+
+
+            if (!conditionUpgrade.CheckCanAttack(blockController, targetBlockController)) // if any of the checks fail, the attack will fail
+            {
+                return false;
+            }
+
         }
 
         

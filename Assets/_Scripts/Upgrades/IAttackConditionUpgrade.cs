@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public interface IAttackConditionUpgrade : IBlockUpgrade
+public interface IAttackConditionUpgrade
 {
     // These are upgrades that affect if a block should attack a target block
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class MortarUpgrade: ITargetReplacementUpgrade
+public class MortarUpgrade: BlockUpgrade, ITargetReplacementUpgrade
 {
     // this will have to increase the range, by at least 1 and then will directly attack that tile
 
