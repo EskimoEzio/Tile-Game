@@ -103,15 +103,18 @@ public class BlockController : MonoBehaviour
     public void PlaceBlock(Vector2 tilePos)
     {
         IsPlaced = true;
-        //OnAnyBlockPlaced?.Invoke(this); //Not currently used
-        BaseBlockPlaced();
+
+        if (upgradeManager.CheckPlaceUpgrades()) // if all upgrades allow continuing targeting
+        {
+            Target();
+        }
     }
 
-    private void Target() // This is the targeting step, it will be triggered by an event
+    public void Target() // This is the targeting step, it will be triggered by an event
     {
 
         upgradeManager.CheckTargetUpgrades(); // if there is a replacement upgrade, do that instead
-        //OnAnyBlockTarget?.Invoke(this); //Not currently used
+
         Attack();
     }
 
@@ -150,17 +153,6 @@ public class BlockController : MonoBehaviour
 
     }
 
-
-    private void BaseBlockPlaced()
-    {
-
-        //at this point the block has already been added to the tile. By default the next thing is targeting. No extra work required
-        IsPlaced = true; //this may not need to be set in this funciton as I am setting it before this is called. 
-
-        //BaseTarget();
-        Target();
-        //OnAttack?.Invoke(this); // Will is still use these events? probably, but this will be moved from here (BlockPlace)
-    }
 
     public void BaseTarget() // this resets the targetsAndDirections list then adds the targets (the adjacent blocks within attack range)
     {

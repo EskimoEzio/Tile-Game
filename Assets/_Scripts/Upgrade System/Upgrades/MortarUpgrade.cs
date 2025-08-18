@@ -6,11 +6,12 @@ using UnityEngine;
 
 public class MortarUpgrade: BlockUpgrade, ITargetReplacementUpgrade
 {
-    // this will have to increase the range, by at least 1 and then will directly attack that tile
+    // this will have to increase the range, by at least 1 and then will directly attack that tile - to do this i need to implement the stat system
 
     public void Target(BlockController blockController)
     {
         
+
         List<Vector2> directions = new List<Vector2> { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
 
         List<(BlockController target, Vector2 direction)> targetsAndDirections = new(); //this has to be a list of tuples, becuase i may eventually want to have functionality which which would require non unique keys which cant be don in a dictionary. 
