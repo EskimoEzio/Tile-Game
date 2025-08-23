@@ -2,13 +2,12 @@ using UnityEngine;
 
 public interface IPlaceUpgrade
 {
-    // This is just a marker interface atm
-    // add a priority system
+    int placeBehaviourPriority { get;} //this determines the order upgrades are executed. +5 => first, -5 => last. There is only "get" because the "private set" will be declared in each upgrade
 
-    bool preventInitialTargeting { get; set; }
+    bool preventInitialTargeting { get; } //There is only "get" because the "private set" will be declared in each upgrade
 
 
-    void PlaceBehaviour(); //rename this
+    void PlaceBehaviour(); // maybe rename this
 
 
 }

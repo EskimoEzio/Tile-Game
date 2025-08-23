@@ -196,17 +196,8 @@ public class HandManager : MonoBehaviour
         {
             luck += dirPow.Value;
 
-            //print(handTeam + data.BlockName + ": " + dirPow.Value);
         }
         
-
-        /*
-        foreach(int pow in data.PowerValues)
-        {
-            luck += pow;
-        }
-        */
-        //print(handTeam + "'s luck: " + luck + ":" + this.gameObject.name);
     }
 
 

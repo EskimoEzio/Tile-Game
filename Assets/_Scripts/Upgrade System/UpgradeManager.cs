@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq; // This is necessary for the sorting of the lists by two values
 public class UpgradeManager : MonoBehaviour
 {
 
@@ -33,13 +34,12 @@ public class UpgradeManager : MonoBehaviour
         blockController = GetComponent<BlockController>();
     }
 
-    private void Start()
+    private void Start() //this is just for testing ATM
     {
 
-        if(blockController.BlockData.BlockName == "Knight")
-        {
-            AddUpgrade(new AttackDelay());
-        }
+        AddUpgrade(new BetrayalUpgrade());
+        AddUpgrade(new AttackDelay());
+
 
     }
 
@@ -47,12 +47,17 @@ public class UpgradeManager : MonoBehaviour
     private void AddUpgrade(BlockUpgrade upgrade)
     {
         blockUpgrades.Add(upgrade);
-        upgrade.blockController = blockController;
+        upgrade.BlockController = blockController;
 
         // I am not using a switch statement becuase I am planning for upgrades to be able to be multiple types, so every one needs to be checked per upgrade
         if (upgrade is IPlaceUpgrade placeUpgrade)
         {
             placeUpgrades.Add(placeUpgrade);
+
+            placeUpgrades = placeUpgrades // This sorts the list by priority bracket, then by block ID (within brackets)
+                .OrderByDescending(u => u.placeBehaviourPriority)
+                .ThenBy(u => (u as BlockUpgrade)?.UpgradeID ?? int.MaxValue) // the extra is needed as the UpgradeID is in the base class, not the Interface
+                .ToList();
         }
 
         

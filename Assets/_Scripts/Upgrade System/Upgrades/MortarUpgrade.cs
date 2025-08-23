@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class MortarUpgrade: BlockUpgrade, ITargetReplacementUpgrade
 {
+    public override int UpgradeID => 2;
+
     // this will have to increase the range, by at least 1 and then will directly attack that tile - to do this i need to implement the stat system
 
     public void Target(BlockController blockController)

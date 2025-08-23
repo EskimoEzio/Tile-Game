@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class OnlyHitAllyUpgrade : BlockUpgrade, IAttackConditionUpgrade
 {
+    public override int UpgradeID => 0;
+
     public bool OverwriteAllyCheck { get; set; } = true;
     public bool OverwriteNilPowerCheck { get; set; } = false;
 
