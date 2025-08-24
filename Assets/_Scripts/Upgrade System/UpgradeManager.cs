@@ -34,15 +34,6 @@ public class UpgradeManager : MonoBehaviour
         blockController = GetComponent<BlockController>();
     }
 
-    private void Start() //this is just for testing ATM
-    {
-
-        AddUpgrade(new BetrayalUpgrade());
-        AddUpgrade(new AttackDelay());
-
-
-    }
-
 
     private void AddUpgrade(BlockUpgrade upgrade)
     {

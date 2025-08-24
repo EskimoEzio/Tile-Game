@@ -75,7 +75,7 @@ public class EnemyManager : MonoBehaviour
 
     private void ChooseBlock() 
     {
-        nextBlock = hand[(TurnManager.Instance.turnNumber - 1) % hand.Count]; // this uses a fixed order. I can easily make it a random order of the current hand, but will leave it like this for now
+        nextBlock = hand[Random.Range(0, hand.Count)];
 
         blockObject = Instantiate(blockPrefab, spawnLocation, Quaternion.identity);        
         nextBlockController = blockObject.GetComponent<BlockController>();

@@ -13,12 +13,9 @@ public class MortarUpgrade: BlockUpgrade, ITargetReplacementUpgrade
     public void Target(BlockController blockController)
     {
         
-
-        List<Vector2> directions = new List<Vector2> { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
-
         List<(BlockController target, Vector2 direction)> targetsAndDirections = new(); //this has to be a list of tuples, becuase i may eventually want to have functionality which which would require non unique keys which cant be don in a dictionary. 
 
-        foreach (Vector2 direction in directions) // this is for checking attacks in every direction
+        foreach (Vector2 direction in GameTypes.Directions) // this is for checking attacks in every direction
         {
 
 

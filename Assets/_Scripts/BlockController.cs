@@ -82,10 +82,10 @@ public class BlockController : MonoBehaviour
         // Assign the power values based on the values in the BockData scriptable object
         PowerDict = new Dictionary<Vector2, int>()
         {
-            { Vector2.up,  BlockData.PowerValues[0] },
-            { Vector2.right, BlockData.PowerValues[1] },
-            { Vector2.down, BlockData.PowerValues[2] },
-            { Vector2.left, BlockData.PowerValues[3] }
+            { GameTypes.Directions[0],  BlockData.PowerValues[0] },
+            { GameTypes.Directions[1], BlockData.PowerValues[1] },
+            { GameTypes.Directions[2], BlockData.PowerValues[2] },
+            { GameTypes.Directions[3], BlockData.PowerValues[3] }
         };
 
         artHolderRenderer.sprite = BlockData.Sprite;
@@ -93,12 +93,6 @@ public class BlockController : MonoBehaviour
         SetBlockColour();
     }
 
-
-
-    private void Action() // This is the function that will handle the full attack process. It is triggered after the block is placed - Figure out if i want to do this or if i want to simply call the next step at the end of the current step
-    {
-
-    }
 
     public void PlaceBlock(Vector2 tilePos)
     {
@@ -126,12 +120,11 @@ public class BlockController : MonoBehaviour
         foreach ((BlockController target, Vector2 direction) targetAndDir in targetsAndDirections)
         {
 
-            if (!upgradeManager.CheckAttackConditionUpgrades(targetAndDir.target)) // if it fails the upgrade checks
+            if (!upgradeManager.CheckAttackConditionUpgrades(targetAndDir.target)) // if it fails the upgrade can attack checks
             {
                 continue;
             }
 
-            print(upgradeManager.OverwriteBaseAllyCheck);
 
             // Default Checks - these are handled differently to the replacement of targeting, becuse they are very simple and there are very few of them
             if(!upgradeManager.OverwriteBaseAllyCheck && CurrentTeam == targetAndDir.target.CurrentTeam) // if the ally check has not been overwritten & if they are on the same team, continue
@@ -157,11 +150,9 @@ public class BlockController : MonoBehaviour
     public void BaseTarget() // this resets the targetsAndDirections list then adds the targets (the adjacent blocks within attack range)
     {
 
-        List<Vector2> directions = new List<Vector2> { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
-
         targetsAndDirections = new(); //this has to be a list of tuples, becuase i may eventually want to have functionality which which would require non unique keys which cant be don in a dictionary. 
 
-        foreach (Vector2 direction in directions) // this is for checking attacks in every direction
+        foreach (Vector2 direction in GameTypes.Directions) // this is for checking attacks in every direction
         {
 
 
@@ -233,7 +224,6 @@ public class BlockController : MonoBehaviour
     /// <returns></returns>
     public bool BaseGetHit(Vector2 defendingDir, int attackPower) //I am not certain i want this to return a value, I will have to think about this a bit more
     {
-        print("gethit");
         if (attackPower > PowerDict[defendingDir])
         {
             GetCaptured(defendingDir);
