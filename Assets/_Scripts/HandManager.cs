@@ -25,12 +25,12 @@ public class HandManager : MonoBehaviour
 
     private void OnEnable()
     {
-        TurnManager.Instance.OnTurnChanged += PlayerTurn;
+        TurnManager.Instance.OnTurnStarted += StartTurn;
     }
 
     private void OnDisable()
     {
-        TurnManager.Instance.OnTurnChanged -= PlayerTurn;
+        TurnManager.Instance.OnTurnStarted -= StartTurn;
     }
 
 
@@ -79,7 +79,7 @@ public class HandManager : MonoBehaviour
     }
 
 
-    void PlayerTurn(GameTypes.Turn turn)
+    void StartTurn(GameTypes.Turn turn)
     {
         
         if(!GameUtilities.CheckTurnMatchTeam(turn, handTeam)) // if the turn does not match the hand's team
@@ -167,7 +167,7 @@ public class HandManager : MonoBehaviour
     }
 
     
-    void DrawBlock(int quant = 1) // this is a simple draw function that draws a random block each turn, it picks from a list called library, but it is random and does not behave like an actual library
+    void DrawBlock(int quant = 1) // this is a simple draw function that draws a random block, it picks from a list called library, but it is random and does not behave like an actual library
     {
         // if ever i want to make an ondraw event, i think it should instead be called inside the loop. so that draw3 is treated as 3 sets of draw 1. Although this may need to change
 

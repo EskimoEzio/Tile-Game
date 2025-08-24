@@ -32,4 +32,21 @@ public static class GameUtilities
         }
     }
 
+    public static GameTypes.Turn ToggleTurn(GameTypes.Turn curTurn) //this metohd is purely for changing the enum between enemy & player
+    {
+        if (curTurn == GameTypes.Turn.Player)
+        {
+            return GameTypes.Turn.Enemy;
+        }
+        else if (curTurn == GameTypes.Turn.Enemy)
+        {
+            return GameTypes.Turn.Player;
+        }
+        else
+        {
+            Debug.LogError("current turn is not player or enemy");
+            return curTurn;
+        }
+    }
+
 }

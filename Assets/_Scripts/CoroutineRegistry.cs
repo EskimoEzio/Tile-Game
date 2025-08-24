@@ -14,7 +14,7 @@ public static class CoroutineRegistry
     /// This is the function that should be used for starting coroutines. It keeps track of all active coroutines in a static list
     /// </summary>
     /// <param name="owner">This is the MonoBehaviour script that started the coroutine. Usually use "this"</param>
-    /// <param name="routine">This is th coroutine that will be started and tracked. Input the parameters like normal</param>
+    /// <param name="routine">This is the coroutine that will be started and tracked. Input the parameters like normal</param>
     /// <param name="shouldBlockEndTurn">If ths coroutine should delay the end of a turn, set this to true</param>
     /// <returns></returns>
     public static Coroutine RunAndTrack(MonoBehaviour owner, IEnumerator routine, bool shouldBlockEndTurn = false)
@@ -47,6 +47,11 @@ public static class CoroutineRegistry
     }
 
     public static List<TrackedCoroutine> GetActiveCoroutines() => activeCoroutines;  // this is a simpler way
+    
+    /// <summary>
+    /// Returns true if any coroutines are currently preventing the turn from ending
+    /// </summary>
+    /// <returns></returns>
     public static bool CheckEndTurnBlocked()
     {
 

@@ -13,35 +13,32 @@ public class AttackDelay: BlockUpgrade, IPlaceUpgrade
     private bool subscribed;
     public int turnDelay = 1;
     private int remainingTurns;
-    GameTypes.Turn initialTurn; //this keeps track of whose turn the block should ativate on
 
     // This upgrade causes the block to wait n turns before targeting and then attacking.
-    // The block will attack at the start of the turn, before you can make an action. for this purpose waiting 1 turn will cause it to activate on the players next turn. this may change when i standardise turn/round terminology
+    // The block will attack at the start of the turn, before you can make an action. for this purpose waiting 1 turn will cause it to activate at the start of the enemies turn. waiting 2 will cause it to attack at the start of players next turn
 
 
-    private void SubscribeToTurnChange() 
+    private void Subscribe() 
     {
         if (subscribed) return;
-        TurnManager.Instance.OnTurnChanged += CheckTurnsRemaining;
+        TurnManager.Instance.OnTurnStarted += CheckTurnsRemaining;
         subscribed = true;
     }
 
-    private void UnsubscribeFromTurnChange()
+    private void Unsubscribe()
     {
         if (!subscribed) return;
-        TurnManager.Instance.OnTurnChanged -= CheckTurnsRemaining;
+        TurnManager.Instance.OnTurnStarted -= CheckTurnsRemaining;
         subscribed = false;
     }
 
 
     public void PlaceBehaviour()
     {
-        Debug.Log("Attack Delay");
         remainingTurns = turnDelay;
-        initialTurn = TurnManager.Instance.CurrentTurn;
 
         // start checking for turn change
-        SubscribeToTurnChange();
+        Subscribe();
 
     }
 
@@ -50,16 +47,14 @@ public class AttackDelay: BlockUpgrade, IPlaceUpgrade
     void CheckTurnsRemaining(GameTypes.Turn turn)
     {
 
-        if(initialTurn == turn)
-        {
-            remainingTurns--;
+        remainingTurns--;
 
-            if(remainingTurns <= 0)
-            {
-                UnsubscribeFromTurnChange();
-                BlockController.Target();  // by default when the delay is over, it will continue to targeting (followed by attacking)
-            }
+        if (remainingTurns <= 0)
+        {
+            Unsubscribe();
+            BlockController.Target();  // by default when the delay is over, it will continue to targeting (followed by attacking)
         }
+
     }
     
 

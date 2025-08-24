@@ -31,12 +31,12 @@ public class EnemyManager : MonoBehaviour
 
     private void OnEnable()
     {
-        TurnManager.Instance.OnTurnChanged += StartEnemyTurn;
+        TurnManager.Instance.OnTurnStarted += StartEnemyTurn;
     }
 
     private void OnDisable()
     {
-        TurnManager.Instance.OnTurnChanged -= StartEnemyTurn;
+        TurnManager.Instance.OnTurnStarted -= StartEnemyTurn;
     }
 
 

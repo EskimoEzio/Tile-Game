@@ -12,12 +12,12 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
-        TurnManager.Instance.OnTurnChanged += EndTurn;
+        TurnManager.Instance.OnTurnEnded += EndTurn;
     }
 
     private void OnDisable()
     {
-        TurnManager.Instance.OnTurnChanged -= EndTurn;
+        TurnManager.Instance.OnTurnEnded -= EndTurn;
     }
 
 
@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour
 
 
     /// <summary>
-    /// This function checks if the grid is full at the end of a turn. If so the game will end and it will output the winner. This is done before the OnTurnChanged event is broadcast
+    /// This function checks if the grid is full at the end of a turn. If so the game will end and it will output the winner.
     /// </summary>
     public bool CheckGameOver()
     {
