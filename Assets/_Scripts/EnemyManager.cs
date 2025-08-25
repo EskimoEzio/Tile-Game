@@ -7,6 +7,9 @@ public class EnemyManager : MonoBehaviour
 
     [SerializeField] private List<BlockData> hand = new List<BlockData>();
 
+    public int EnemyMaxActions = 1;
+
+
     private BlockData nextBlock; //currently, i am iterating through the list
     private Dictionary<Vector2, int> PowerDict;
     private BlockController nextBlockController;
@@ -46,27 +49,32 @@ public class EnemyManager : MonoBehaviour
 
         if (turn == GameTypes.Turn.Enemy)
         {
-            CoroutineRegistry.RunAndTrack(this, EnemyTurn(turn));
+            CoroutineRegistry.RunAndTrack(this, EnemyTurn());
         }
         
     }
 
 
-    IEnumerator EnemyTurn(GameTypes.Turn turn)
+    IEnumerator EnemyTurn()
     {
-        
 
-        ChooseBlock(); // select the block that will be placed
+        for( int i = 0; i < EnemyMaxActions; i++)
+        {
+            ChooseBlock(); // select the block that will be placed
 
-        Vector2 targetPos = ChooseTile(); // select where the block wil be placed
+            Vector2 targetPos = ChooseTile(); // select where the block wil be placed
 
-        yield return new WaitForSeconds(prePlaceDelay);
+            yield return new WaitForSeconds(prePlaceDelay);
 
-        GridManager.Instance.Tiles[targetPos].gameObject.GetComponent<Tile>().AddToTile(blockObject); // access the Tile component and add the block to the target tile
+            GridManager.Instance.Tiles[targetPos].gameObject.GetComponent<Tile>().AddToTile(blockObject); // access the Tile component and add the block to the target tile
 
-        yield return new WaitForSeconds(postPlaceDelay);
+            yield return new WaitForSeconds(postPlaceDelay);
 
-        TurnManager.Instance.EndTurn();
+            TurnManager.Instance.CompleteAction();
+
+            
+
+        }
 
     }
 

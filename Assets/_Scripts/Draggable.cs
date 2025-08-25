@@ -147,7 +147,7 @@ public class DraggableTile : MonoBehaviour
                 tile.AddToTile(gameObject);
                 canBeDragged = false;
 
-                TurnManager.Instance.EndTurn();
+                TurnManager.Instance.CompleteAction();
             }
             else
             {
