@@ -89,7 +89,6 @@ public class EnemyManager : MonoBehaviour
         nextBlockController = blockObject.GetComponent<BlockController>();
         
         nextBlockController.InitialiseBlock(nextBlock, GameTypes.Team.Enemy);
-        //nextBlockController.ChangeTeam(); //this is currently called to make the enemy's blocks on the correct team, this may have to be changed
 
 
         PowerDict = new Dictionary<Vector2, int>()

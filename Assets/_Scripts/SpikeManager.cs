@@ -27,17 +27,6 @@ public class SpikeManager : MonoBehaviour
 
 
 
-    private void OnEnable()
-    {
-        blockController.OnTeamChanged += HandleTeamChange;
-    }
-
-    private void OnDisable()
-    {
-        blockController.OnTeamChanged -= HandleTeamChange;
-    }
-
-
     private void Awake()
     {
         blockObject = this.transform.parent.gameObject;
@@ -95,21 +84,7 @@ public class SpikeManager : MonoBehaviour
         }
     }
 
-
-    void HandleTeamChange(BlockController blockCon) //this should always be the same as my cached BlockController variable
-    {
-        if(blockController.CurrentTeam == GameTypes.Team.Player)
-        {
-            SetSpikeRowColour(blockController.PlayerColour);
-        }
-        else
-        {
-            SetSpikeRowColour(blockController.EnemyColour);
-        }
-
-    }
-
-    void SetSpikeRowColour(Color spikeRowColour)
+    public void SetSpikeRowColour(Color spikeRowColour)
     {
         //print(spikeRowColour);
         for (int i = 0; i < spikeRowManagers.Length; i++)

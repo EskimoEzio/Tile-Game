@@ -8,9 +8,7 @@ using UnityEngine;
 public class BlockController : MonoBehaviour
 {
 
-    public event Action<BlockController> OnTeamChanged;
-
-
+    //public event Action<BlockController> OnTeamChanged;
     //public static event Action<BlockController> OnAnyBlockPlaced;
     //public static event Action<BlockController> OnAnyBlockTarget; - i don't know if i need a target event, this may only be necessary if i decude to use events to handle the upgrades
     //public static event Action<BlockController> OnAnyBlockAttack;
@@ -22,6 +20,9 @@ public class BlockController : MonoBehaviour
 
 
     private UpgradeManager upgradeManager;
+
+    [SerializeField] private GameObject spikeHolder;
+    private SpikeManager spikeManager;
 
     public BlockData BlockData { get; private set; }
     [SerializeField] private BlockData defaultData;
@@ -60,9 +61,14 @@ public class BlockController : MonoBehaviour
         artHolderRenderer = artHolderObject.GetComponent<SpriteRenderer>();
         BlockData = defaultData;
         upgradeManager = GetComponent<UpgradeManager>();
+        spikeManager = spikeHolder.GetComponent<SpikeManager>();
+        
 
-        InitialiseBlock();
+    }
 
+    private void Start()
+    {
+        InitialiseBlock(null, CurrentTeam);
     }
 
     /// <summary>
@@ -250,8 +256,6 @@ public class BlockController : MonoBehaviour
         CurrentTeam = GameUtilities.ToggleTeam(CurrentTeam);
         
         SetBlockColour();
-        // do anything else related to changing team
-        OnTeamChanged?.Invoke(this); //this broadcasts that this blockController has changed team, with the new team as a parameter
 
     }
 
@@ -265,7 +269,6 @@ public class BlockController : MonoBehaviour
 
         Vector2 rotationAxis = -Vector2.Perpendicular(-defendingDir);
 
-        //StartCoroutine(BlockFlip(rotationAxis));
         CoroutineRegistry.RunAndTrack(this, BlockFlip(rotationAxis), true);
     }
 
@@ -309,10 +312,12 @@ public class BlockController : MonoBehaviour
         if (CurrentTeam == GameTypes.Team.Player)
         {
             blockRenderer.color = PlayerColour;
+            spikeManager.SetSpikeRowColour(PlayerColour);
         }
         else
         {
             blockRenderer.color = EnemyColour;
+            spikeManager.SetSpikeRowColour(EnemyColour);
         }
     }
 

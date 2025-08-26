@@ -1843,6 +1843,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c476eb9dce0b4c84b843ae7772c91b3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spikeHolder: {fileID: 4125823815424058145}
   defaultData: {fileID: 11400000, guid: f1c3884f07a322e408b6a368fdf56dee, type: 2}
   spikeObject: {fileID: 6855899389649300720, guid: bba684c74744d8047b6cc830e2352932, type: 3}
   artHolderObject: {fileID: 8047785823241295496}

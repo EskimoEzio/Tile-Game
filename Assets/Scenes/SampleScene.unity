@@ -306,6 +306,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fa4974b98e5c7cf4e8c0f2e226dfa7e2, type: 2}
   - {fileID: 11400000, guid: fd71c2ad4f30ca24192b0c12b5813aa9, type: 2}
   - {fileID: 11400000, guid: fd776988862a4964db7769aa88e93a18, type: 2}
+  EnemyMaxActions: 1
   blockPrefab: {fileID: 7122137912856460361, guid: df82d0d1940e2434c800a6996f89a1ed, type: 3}
   prePlaceDelay: 0.4
   postPlaceDelay: 0.2

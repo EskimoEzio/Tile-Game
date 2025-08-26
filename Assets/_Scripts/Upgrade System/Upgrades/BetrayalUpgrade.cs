@@ -8,18 +8,47 @@ public class BetrayalUpgrade : BlockUpgrade, IPlaceUpgrade
     public bool preventInitialTargeting { get; private set; } = false;
 
 
+    private bool subscribed;
+    public int turnDelay = 2; // this means by default it will change on your next turn
+    private int remainingTurns;
 
-
-    // After n turns, change team. 0 means change team instantly. 
+    // After n turns, at the end of the turn, change team. 0 means change team at the end of the current turn 
     // ATM this onyl does instant change as i need to standardise terminology surrounding turns
 
+    private void Subscribe()
+    {
+        if (subscribed) return;
+        TurnManager.Instance.OnTurnEnded += CheckTurnsRemaining;
+        subscribed = true;
+    }
+    private void Unsubscribe()
+    {
+        if (!subscribed) return;
+        TurnManager.Instance.OnTurnEnded -= CheckTurnsRemaining;
+        subscribed = false;
+    }
 
 
     public void PlaceBehaviour() // This is on pause until I change the change team logic
     {
+        remainingTurns = turnDelay;
 
-        Debug.Log("Betrayal");
+        // start checking for turn change
+        Subscribe();
+    }
 
+    
+
+    void CheckTurnsRemaining(GameTypes.Turn turn)
+    {
+
+        remainingTurns--;
+
+        if (remainingTurns <= 0)
+        {
+            Unsubscribe();
+            BlockController.Target();  // by default when the delay is over, it will continue to targeting (followed by attacking)
+        }
 
     }
 
