@@ -245,35 +245,48 @@ public class BlockController : MonoBehaviour
 
 
 
-
+    #region Team Management
 
     /// <summary>
-    /// This changes the blocks current team. It should not be called directly
+    /// This changes the blocks current team & flips it
     /// </summary>
-    public void ChangeTeam() //this is currently called to make the enemy's blocks on the correct team, this may have to be changed as it is broadcasting events that may be needed elsewhere
+    public void ChangeTeam(Vector2 defendingDir = default) //this is currently called to make the enemy's blocks on the correct team, this may have to be changed as it is broadcasting events that may be needed elsewhere
     {
         
+        if(defendingDir == default)
+        {
+            defendingDir = Vector2.down;
+        }
+
         CurrentTeam = GameUtilities.ToggleTeam(CurrentTeam);
-        
-        SetBlockColour();
+
+        CoroutineRegistry.RunAndTrack(this, BlockFlip(defendingDir), true);
 
     }
 
     /// <summary>
-    /// Captures this block, changing its team and flipping it
+    /// Captures this block, changing its team & flips it
     /// </summary>
     /// <param name="defendingDir">The direction the of the defending side</param>
-    public void GetCaptured(Vector2 defendingDir)
+    public void GetCaptured(Vector2 defendingDir) // Is this function necessary now? I may just be able to use the chage team funciton
     {
         // as it is now, becuase the blocks are 2D and have no depth, you cannot distinguish flipping left or right, however i am making it change so that when i later switch to a 3d block it will be easier
+        // Trigger onCaptured event
 
-        Vector2 rotationAxis = -Vector2.Perpendicular(-defendingDir);
+        ChangeTeam(defendingDir);
 
-        CoroutineRegistry.RunAndTrack(this, BlockFlip(rotationAxis), true);
     }
 
-    IEnumerator BlockFlip(Vector2 axis)
+    /// <summary>
+    /// This handles the flip animation & colourchange when a block changes team. It should not be called directly.
+    /// </summary>
+    /// <param name="defDir">The defending direction</param>
+    /// <returns></returns>
+    IEnumerator BlockFlip(Vector2 defDir)
     {
+
+        Vector2 axis = -Vector2.Perpendicular(-defDir);
+
         float amountRotated = 0f;
         
         while (amountRotated < 90f)
@@ -287,8 +300,8 @@ public class BlockController : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(0, 0, 0); // set rotation to 0 temporarily to makehte next step easier
         transform.Rotate(axis, -90); // the amount is minus, because i am getting it ready for the second portion, by flipping it halfway, so that i only have to do 180 total
-        
-        ChangeTeam();
+
+        SetBlockColour();
 
         amountRotated = 0;
 
@@ -304,9 +317,6 @@ public class BlockController : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, 0, 0); // finally ensure that the rotation is completly reset
     }
 
- 
-    
-
     private void SetBlockColour()
     {
         if (CurrentTeam == GameTypes.Team.Player)
@@ -320,6 +330,6 @@ public class BlockController : MonoBehaviour
             spikeManager.SetSpikeRowColour(EnemyColour);
         }
     }
-
+    #endregion
 
 }

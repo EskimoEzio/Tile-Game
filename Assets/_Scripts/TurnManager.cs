@@ -47,7 +47,7 @@ public class TurnManager : MonoBehaviour
     public void CompleteAction() // May rename this - ATM it doees not have anywhere to look for the number of actions per turn so it is just set to 1
     {
         ActionCount++;
-        CoroutineRegistry.RunAndTrack(this, WaitToFinishAction());
+        CoroutineRegistry.RunAndTrack(this, WaitToFinishAction(), false);
 
     }
     private IEnumerator WaitToFinishAction()

@@ -16,7 +16,7 @@ public static class CoroutineRegistry
     /// <param name="routine">This is the coroutine that will be started and tracked. Input the parameters like normal</param>
     /// <param name="shouldBlockGameplay">If this coroutine should delay the end of an action/turn, set this to true</param>
     /// <returns></returns>
-    public static Coroutine RunAndTrack(MonoBehaviour owner, IEnumerator routine, bool shouldBlockGameplay = false)
+    public static Coroutine RunAndTrack(MonoBehaviour owner, IEnumerator routine, bool shouldBlockGameplay)
     {
 
         Coroutine coroutine = owner.StartCoroutine(ExecuteAndTrackCoroutine(owner, routine, shouldBlockGameplay));

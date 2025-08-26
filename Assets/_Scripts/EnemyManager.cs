@@ -49,7 +49,7 @@ public class EnemyManager : MonoBehaviour
 
         if (turn == GameTypes.Turn.Enemy)
         {
-            CoroutineRegistry.RunAndTrack(this, EnemyTurn());
+            CoroutineRegistry.RunAndTrack(this, EnemyTurn(), false);
         }
         
     }

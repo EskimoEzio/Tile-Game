@@ -47,7 +47,7 @@ public class BetrayalUpgrade : BlockUpgrade, IPlaceUpgrade
         if (remainingTurns <= 0)
         {
             Unsubscribe();
-            BlockController.Target();  // by default when the delay is over, it will continue to targeting (followed by attacking)
+            BlockController.ChangeTeam(); // when delay is over, change team (do not attack)
         }
 
     }
