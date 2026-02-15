@@ -145,6 +145,8 @@ public class BlockController : MonoBehaviour
                 continue;
             }
 
+            spikeManager.SpikeAttackEffect();
+
             targetAndDir.target.BaseGetHit(targetAndDir.direction * -1, power); // This calls the "get hit" function on the target block. The target is the one that decides if it gets captured. This could maybe ue used later to trigger events
 
         }

@@ -92,4 +92,80 @@ public class SpikeManager : MonoBehaviour
             spikeRowManagers[i].SetSpikeColour(spikeRowColour);
         }
     }
+
+
+    public void SpikeAttackEffect()
+    {
+
+        CoroutineRegistry.RunAndTrack(this, SpikeMovement(), true);
+
+
+    }
+    
+    IEnumerator SpikeMovement()
+    {
+
+        float halfDuration = 0.1f;
+        float distance = 0.1f;
+        float elapsedTime = 0f;
+
+        // Caching the transforms can help with performance
+        Transform upT = upSpikes.transform;
+        Transform rightT = rightSpikes.transform;
+        Transform downT = downSpikes.transform;
+        Transform leftT = leftSpikes.transform;
+
+        Vector2 upStart = upT.localPosition;
+        Vector2 rightStart = rightT.localPosition;
+        Vector2 downStart = downT.localPosition;
+        Vector2 leftStart = leftT.localPosition;
+
+        Vector2 upEnd = upStart + Vector2.up * distance;
+        Vector2 rightEnd = rightStart + Vector2.right * distance;
+        Vector2 downEnd = downStart + Vector2.down * distance;
+        Vector2 leftEnd = leftStart + Vector2.left * distance;
+
+        while (elapsedTime < halfDuration)
+        {
+            elapsedTime += Time.deltaTime;
+
+            float lerpT = elapsedTime / halfDuration;
+
+            upT.localPosition = Vector2.Lerp(upStart, upEnd, lerpT * lerpT); // doing lerpT * lerpT wil make it slow to start and then thrust quickly
+            rightT.localPosition = Vector2.Lerp(rightStart, rightEnd, lerpT * lerpT);
+            downT.localPosition = Vector2.Lerp(downStart, downEnd, lerpT * lerpT);
+            leftT.localPosition = Vector2.Lerp(leftStart, leftEnd, lerpT * lerpT);
+
+            yield return null;
+        }
+        //just in case the end of the animation is missed
+        upT.localPosition = upEnd;
+        rightT.localPosition = rightEnd;
+        downT.localPosition = downEnd;
+        leftT.localPosition = leftEnd;
+
+        elapsedTime = 0;
+
+        while (elapsedTime < halfDuration)
+        {
+            elapsedTime += Time.deltaTime;
+
+            float lerpT = elapsedTime / halfDuration;
+
+            upT.localPosition = Vector2.Lerp(upEnd, upStart, lerpT);
+            rightT.localPosition = Vector2.Lerp(rightEnd, rightStart, lerpT);
+            downT.localPosition = Vector2.Lerp(downEnd, downStart, lerpT);
+            leftT.localPosition = Vector2.Lerp(leftEnd, leftStart, lerpT);
+
+            yield return null;
+        }
+
+        // ensure that the sikes are put in their original positions
+        upT.localPosition = upStart;
+        rightT.localPosition = rightStart;
+        downT.localPosition = downStart;
+        leftT.localPosition = leftStart;
+
+    }
+    
 }
