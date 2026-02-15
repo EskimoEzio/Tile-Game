@@ -8,7 +8,7 @@ public class MortarUpgrade: BlockUpgrade, ITargetReplacementUpgrade
 {
     public override int UpgradeID => 2;
 
-    // this will have to increase the range, by at least 1 and then will directly attack that tile - to do this i need to implement the stat system
+    // this does not change the range by itself, i want this to be handled i nthe future stat system
 
     public void Target(BlockController blockController)
     {
@@ -18,10 +18,8 @@ public class MortarUpgrade: BlockUpgrade, ITargetReplacementUpgrade
         foreach (Vector2 direction in GameTypes.Directions) // this is for checking attacks in every direction
         {
 
+            Vector2 targetLocation = (Vector2)blockController.gameObject.transform.position + direction * blockController.attackRange; // target location is exactly attack range away
 
-            Vector2 targetLocation = (Vector2)blockController.gameObject.transform.position + direction;
-
-            targetLocation += direction * blockController.attackRange; // target location is exactly attack range away
             if (!GridManager.Instance.Tiles.ContainsKey(targetLocation)) //if tile doesnt exist check next direction
             {
                 continue;

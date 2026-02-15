@@ -5,7 +5,7 @@ using UnityEngine;
 using System.Linq; // This is necessary for the sorting of the lists by two values
 public class UpgradeManager : MonoBehaviour
 {
-
+    #region Fields/Variables
     private BlockController blockController;
 
 
@@ -30,7 +30,7 @@ public class UpgradeManager : MonoBehaviour
     //Attack
     private List<IAttackUpgrade> attackUpgrades = new();
 
-
+    #endregion
 
     private void OnEnable()
     {
@@ -48,7 +48,7 @@ public class UpgradeManager : MonoBehaviour
     {
         blockController = GetComponent<BlockController>();
 
-        // AddUpgrade(new BetrayalUpgrade()); //this is a test for new upgrades
+        AddUpgrade(new MortarUpgrade()); //this is a test for new upgrades
     }
 
 
@@ -172,7 +172,6 @@ public class UpgradeManager : MonoBehaviour
     {
         if (attackUpgrades.Count == 0) // if there are no upgrades
         {
-            blockController.BaseTarget();
             return;
         }
         else

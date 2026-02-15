@@ -51,7 +51,7 @@ public class BlockController : MonoBehaviour
 
 
     //STATS
-    public int attackRange = 1;
+    public int attackRange { get; private set; } = 1;
     #endregion
 
 
@@ -188,7 +188,7 @@ public class BlockController : MonoBehaviour
 
     public void BaseTarget() // this resets the targetsAndDirections list then adds the targets (the adjacent blocks within attack range)
     {
-
+        print("base target");
         targetsAndDirections = new(); //this has to be a list of tuples, becuase i may eventually want to have functionality which which would require non unique keys which cant be don in a dictionary. 
         foreach (Vector2 direction in GameTypes.Directions) // this is for checking attacks in every direction
         {
