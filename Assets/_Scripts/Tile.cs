@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
 public class Tile : MonoBehaviour
 {
@@ -96,10 +98,9 @@ public class Tile : MonoBehaviour
         // I have made this into a method as there will be extra stuff to add to this later
         TileContents = block;
         block.transform.position = new Vector2(transform.position.x, transform.position.y);
-
+       
         // I input the position as this is matches the Vector2 key in the tile dictionary
         block.GetComponent<BlockController>().PlaceBlock(transform.position);
-
     }
 
 

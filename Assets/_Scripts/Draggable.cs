@@ -145,8 +145,8 @@ public class DraggableTile : MonoBehaviour
             if(tile.TileContents == null)
             {
                 tile.AddToTile(gameObject);
-                canBeDragged = false;
 
+                canBeDragged = false;              
                 TurnManager.Instance.CompleteAction();
             }
             else
@@ -162,6 +162,8 @@ public class DraggableTile : MonoBehaviour
         }
 
     }
+
+   
 
     void HandleMouseMove(Vector2 screenPos)
     {

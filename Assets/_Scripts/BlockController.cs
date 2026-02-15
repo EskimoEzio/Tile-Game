@@ -18,7 +18,7 @@ public class BlockController : MonoBehaviour
     //public event Action<BlockController> OnThisBlockAttack;
     //public event Action<BlockController> OnThisBlockGetHit; 
 
-
+    #region Fields/Variables
     private UpgradeManager upgradeManager;
 
     [SerializeField] private GameObject spikeHolder;
@@ -51,8 +51,8 @@ public class BlockController : MonoBehaviour
 
 
     //STATS
-    public int attackRange = 1; 
-
+    public int attackRange = 1;
+    #endregion
 
 
     private void Awake()
@@ -104,17 +104,49 @@ public class BlockController : MonoBehaviour
     {
         IsPlaced = true;
 
+        CoroutineRegistry.RunAndTrack(this, PlaceBehaviour(), true); // this handles shaking, place upgrades and and moves to targeting
+        
+    }
+
+    IEnumerator PlaceBehaviour() //Place shake, check place upgrades and move to targeting
+    {
+
+        float shakeDuration = 0.2f;
+        float magnitude = 0.1f;
+        Vector2 originalPos = transform.localPosition;
+        float timeElapsed = 0f;
+
+        while (timeElapsed < shakeDuration)
+        {
+            timeElapsed += Time.deltaTime;
+
+            // Calculate how far we can shake (decreases over time)
+            float percentComplete = timeElapsed / shakeDuration;
+            float damper = 1.0f - percentComplete;
+
+            // Move to a random spot within a circle
+            float x = UnityEngine.Random.Range(-1f, 1f) * magnitude * damper;
+            float y = UnityEngine.Random.Range(-1f, 1f) * magnitude * damper;
+
+            transform.localPosition = originalPos + new Vector2(x, y);
+
+            yield return null;
+        }
+
+        transform.localPosition = originalPos;
+
+        // --- PLACE UPGRADES AND TARGETING ---
         if (upgradeManager.CheckPlaceUpgrades()) // if all upgrades allow continuing targeting
         {
             Target();
         }
+
     }
+
 
     public void Target() // This is the targeting step, it will be triggered by an event
     {
-
         upgradeManager.CheckTargetUpgrades(); // if there is a replacement upgrade, do that instead
-
         Attack();
     }
 
@@ -128,9 +160,9 @@ public class BlockController : MonoBehaviour
 
             if (!upgradeManager.CheckAttackConditionUpgrades(targetAndDir.target)) // if it fails the upgrade can attack checks
             {
+ 
                 continue;
             }
-
 
             // Default Checks - these are handled differently to the replacement of targeting, becuse they are very simple and there are very few of them
             if(!upgradeManager.OverwriteBaseAllyCheck && CurrentTeam == targetAndDir.target.CurrentTeam) // if the ally check has not been overwritten & if they are on the same team, continue
@@ -144,7 +176,6 @@ public class BlockController : MonoBehaviour
             {
                 continue;
             }
-
             spikeManager.SpikeAttackEffect();
 
             targetAndDir.target.BaseGetHit(targetAndDir.direction * -1, power); // This calls the "get hit" function on the target block. The target is the one that decides if it gets captured. This could maybe ue used later to trigger events
@@ -159,7 +190,6 @@ public class BlockController : MonoBehaviour
     {
 
         targetsAndDirections = new(); //this has to be a list of tuples, becuase i may eventually want to have functionality which which would require non unique keys which cant be don in a dictionary. 
-
         foreach (Vector2 direction in GameTypes.Directions) // this is for checking attacks in every direction
         {
 
