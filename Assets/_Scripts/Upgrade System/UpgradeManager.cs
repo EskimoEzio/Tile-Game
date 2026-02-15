@@ -11,6 +11,9 @@ public class UpgradeManager : MonoBehaviour
 
     private List<BlockUpgrade> blockUpgrades = new();
 
+    //Turn Start
+    private List<ITurnStartUpgrade> turnStartUpgrades = new();
+
     //Place
     private List<IPlaceUpgrade> placeUpgrades = new();
 
@@ -29,9 +32,23 @@ public class UpgradeManager : MonoBehaviour
 
 
 
+    private void OnEnable()
+    {
+        TurnManager.Instance.OnTurnStarted += CheckTurnStartUpgrades;
+    }
+
+    private void OnDisable()
+    {
+        TurnManager.Instance.OnTurnStarted -= CheckTurnStartUpgrades;
+    }
+
+
+
     private void Awake()
     {
         blockController = GetComponent<BlockController>();
+
+        //AddUpgrade(new AttackDelay()); //this is a test for new upgrades
     }
 
 
@@ -41,6 +58,19 @@ public class UpgradeManager : MonoBehaviour
         upgrade.BlockController = blockController;
 
         // I am not using a switch statement becuase I am planning for upgrades to be able to be multiple types, so every one needs to be checked per upgrade
+
+        if (upgrade is ITurnStartUpgrade turnStartUpgrade)
+        {
+            turnStartUpgrades.Add(turnStartUpgrade);
+
+            turnStartUpgrades = turnStartUpgrades // This sorts the list by priority bracket, then by block ID (within brackets)
+                .OrderByDescending(u => u.turnStartBehaviourPriority)
+                .ThenBy(u => (u as BlockUpgrade)?.UpgradeID ?? int.MaxValue) // the extra is needed as the UpgradeID is in the base class, not the Interface
+                .ToList();
+        }
+
+
+
         if (upgrade is IPlaceUpgrade placeUpgrade)
         {
             placeUpgrades.Add(placeUpgrade);
@@ -51,7 +81,7 @@ public class UpgradeManager : MonoBehaviour
                 .ToList();
         }
 
-        
+
         if (upgrade is ITargetUpgrade targetUpgrade) // currently extra work is needed for target upgrades as target replacements are a subset of targetUpgrades
         {
             if (targetUpgrade is ITargetReplacementUpgrade replacementUpgrade)
@@ -82,8 +112,22 @@ public class UpgradeManager : MonoBehaviour
 
 
 
+
+    public void CheckTurnStartUpgrades(GameTypes.Turn turn)
+    {
+        foreach(ITurnStartUpgrade turnStartUpgrade in turnStartUpgrades)
+        {
+            if (turnStartUpgrade.isCurrentlyTrackingTurnStart)
+            {
+                turnStartUpgrade.TurnStartBehaviour(turn);
+            }
+            
+        }
+    }
+
+
     /// <summary>
-    /// Returns true if the block can proceed with targeting
+    /// Returns true if the block can proceed to targeting
     /// </summary>
     /// <returns></returns>
     public bool CheckPlaceUpgrades()
@@ -104,9 +148,6 @@ public class UpgradeManager : MonoBehaviour
         return !preventInitialTargeting;
 
     }
-
-
-
 
     public void CheckTargetUpgrades() // Atm this is only checks target replacement
     {
