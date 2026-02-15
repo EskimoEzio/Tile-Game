@@ -48,7 +48,7 @@ public class UpgradeManager : MonoBehaviour
     {
         blockController = GetComponent<BlockController>();
 
-        //AddUpgrade(new AttackDelay()); //this is a test for new upgrades
+        // AddUpgrade(new BetrayalUpgrade()); //this is a test for new upgrades
     }
 
 
