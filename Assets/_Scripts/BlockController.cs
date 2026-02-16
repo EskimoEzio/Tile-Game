@@ -51,7 +51,7 @@ public class BlockController : MonoBehaviour
 
 
     //STATS
-    public int attackRange { get; private set; } = 2;
+    public int attackRange { get; private set; } = 1;
     #endregion
 
 
@@ -211,7 +211,8 @@ public class BlockController : MonoBehaviour
     /// </summary>
     /// <param name="target">The target block</param>
     /// <param name="direction">The attack direction</param>
-    public void BaseAttack(BlockController target, Vector2 direction)
+    /// <param name="presetPower">If the attack should use a specific power instead of teh usual PowDict value</param>
+    public void BaseAttack(BlockController target, Vector2 direction, int? presetPower = null)
     {
         if (!upgradeManager.CheckAttackConditionUpgrades(target)) // if it fails the upgrade can attack checks
         {
@@ -224,7 +225,8 @@ public class BlockController : MonoBehaviour
             return;
         }
 
-        int power = PowerDict[direction]; //power is only important at this point
+
+        int power = presetPower?? PowerDict[direction]; // if a preset power has been input, then use this instead of the powerDict value
 
         if (!upgradeManager.OverwriteBaseNilPowerCheck && power == 0) // if the NilPower check has not been overwritten and if power is 0. This prevents sides with 0 power from hitting blocks
         {
@@ -240,10 +242,15 @@ public class BlockController : MonoBehaviour
 
     }
 
-
-    private void BaseOnHit(int power, Vector2 attackDir , BlockController defender) // this handles each individual hit, the attack function applies this to every target
+    /// <summary>
+    /// This is the function that actually hits the target, usually not called directly, unless wanting to hit without it being an attack
+    /// </summary>
+    /// <param name="power"></param>
+    /// <param name="attackDir"></param>
+    /// <param name="defender"></param>
+    public void BaseOnHit(int power, Vector2 attackDir , BlockController defender) // this handles each individual hit, the attack function applies this to every target
     {
-        bool didCapture = defender.BaseGetHit(attackDir * -1, power);
+        bool didCapture = defender.BaseGetHit(attackDir * -1, power, this);
 
         upgradeManager.CheckOnHitUpgrades(didCapture, power, attackDir, defender);
 
@@ -257,18 +264,21 @@ public class BlockController : MonoBehaviour
     /// <param name="defendingDir">This is the direction of the defending block, usually the opposite to the attack direction</param>
     /// <param name="attackPower">The Power of the attack</param>
     /// <returns></returns>
-    public bool BaseGetHit(Vector2 defendingDir, int attackPower) //I am not certain i want this to return a value, I will have to think about this a bit more
+    public bool BaseGetHit(Vector2 defendingDir, int attackPower, BlockController attacker) //I am not certain i want this to return a value, I will have to think about this a bit more
     {
-        if (attackPower > PowerDict[defendingDir])
+        bool isCaptured = attackPower > PowerDict[defendingDir]; //the defualt way of determining if is captured, ma be changed when I add upgrades that affect defense
+        
+        upgradeManager.CheckGetHitUpgrades(true, isCaptured, attackPower, defendingDir, attacker);
+        Debug.Log(BlockData.Sprite.name + " got hit at: " + Time.realtimeSinceStartupAsDouble);
+        
+
+        if (isCaptured)
         {
             GetCaptured(defendingDir);
-            return true; //the block was captured
         }
-        else
-        {
-            // Not captured (the hit failed)
-            return false;
-        }
+
+        upgradeManager.CheckGetHitUpgrades(false ,isCaptured, attackPower, defendingDir, attacker);
+        return isCaptured;
     }
 
 
@@ -288,6 +298,7 @@ public class BlockController : MonoBehaviour
         }
 
         CurrentTeam = GameUtilities.ToggleTeam(CurrentTeam);
+        print(BlockData.Sprite.name + " changed team");
 
         CoroutineRegistry.RunAndTrack(this, BlockFlip(defendingDir), true);
 

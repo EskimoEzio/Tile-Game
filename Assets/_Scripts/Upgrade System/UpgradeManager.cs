@@ -33,6 +33,11 @@ public class UpgradeManager : MonoBehaviour
     //OnHit
     private List<IOnHitUpgrade> onHitUpgrades = new();
 
+
+    //GetHit
+    private List<IGetHitUpgrade> getHitUpgrades = new();
+
+
     #endregion
 
     private void OnEnable()
@@ -51,7 +56,7 @@ public class UpgradeManager : MonoBehaviour
     {
         blockController = GetComponent<BlockController>();
 
-        //AddUpgrade(new TrampleUpgrade()); //this is a test for new upgrades
+        AddUpgrade(new RetalliateUpgrade()); //this is a test for new upgrades
     }
 
 
@@ -101,7 +106,7 @@ public class UpgradeManager : MonoBehaviour
         }
 
 
-        if( upgrade is IAttackConditionUpgrade attackConditionUpgrade)
+        if ( upgrade is IAttackConditionUpgrade attackConditionUpgrade)
         {
             attackConditionUpgrades.Add(attackConditionUpgrade);
         }
@@ -109,6 +114,11 @@ public class UpgradeManager : MonoBehaviour
         if (upgrade is IOnHitUpgrade onHitUpgrade)
         {
             onHitUpgrades.Add(onHitUpgrade);
+        }
+
+        if (upgrade is IGetHitUpgrade getHitUpgrade)
+        {
+            getHitUpgrades.Add(getHitUpgrade);
         }
 
     }
@@ -213,16 +223,24 @@ public class UpgradeManager : MonoBehaviour
     }
 
 
-    
     public void CheckOnHitUpgrades(bool didCapture, int attackPower, Vector2 attackDir, BlockController defender)
     {
-
         foreach (IOnHitUpgrade onHitUpgrade in onHitUpgrades)
         {
             onHitUpgrade.OnHitBehaviour(didCapture, attackPower, attackDir, defender);
-
         }
+    }
 
+
+    public void CheckGetHitUpgrades(bool isBeforeCapture, bool isCaptured, int attackPower, Vector2 defendDir, BlockController attacker)
+    {
+        foreach (IGetHitUpgrade getHitUpgrade in getHitUpgrades)
+        {
+            if(isBeforeCapture == getHitUpgrade.isBeforeCapture) //if the bool passed into hte function matches when the upgrade says it should apply then run the upgrade
+            {
+                getHitUpgrade.GetHitBehaviour(isCaptured, attackPower, defendDir, attacker);
+            }
+        }
     }
 
 }

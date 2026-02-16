@@ -12,6 +12,8 @@ public class TrampleUpgrade : BlockUpgrade, IOnHitUpgrade
 
         int excessPower = attackPower - defender.PowerDict[attackDir * -1];
 
+        Debug.Log(defender.BlockData.Sprite.name + " got hit! Excess power: " + excessPower);
+
         if(excessPower <= 0) return; // if there is no excess power return
 
 
@@ -27,7 +29,7 @@ public class TrampleUpgrade : BlockUpgrade, IOnHitUpgrade
 
         if (GridManager.Instance.Tiles[targetLocation].TileContents.TryGetComponent<BlockController>(out BlockController targetBlockController))
         {
-            BlockController.BaseAttack(targetBlockController, attackDir);
+            BlockController.BaseAttack(targetBlockController, attackDir, excessPower);
         }
 
 
