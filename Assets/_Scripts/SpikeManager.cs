@@ -24,7 +24,7 @@ public class SpikeManager : MonoBehaviour
     public Dictionary<Vector2, int> BlockPowerDict { get; private set; }
 
     [SerializeField] public float SpikeGap = 0.025f; // serialse field is not necessary here as it is public, it is just for clarity. also, ideal would be get;privateset, but this cannot be serialsed
-
+    private bool isSpikeMoving = false;
 
 
     private void Awake()
@@ -96,14 +96,15 @@ public class SpikeManager : MonoBehaviour
 
     public void SpikeAttackEffect()
     {
-
-        CoroutineRegistry.RunAndTrack(this, SpikeMovement(), true);
-
-
+        if (!isSpikeMoving) //only start the coroutine if the spikes are not currently moving
+        {
+            CoroutineRegistry.RunAndTrack(this, SpikeMovement(), true);
+        }
     }
     
     IEnumerator SpikeMovement()
     {
+        isSpikeMoving = true;
 
         float halfDuration = 0.1f;
         float distance = 0.1f;
@@ -166,6 +167,7 @@ public class SpikeManager : MonoBehaviour
         downT.localPosition = downStart;
         leftT.localPosition = leftStart;
 
+        isSpikeMoving = false;
     }
     
 }

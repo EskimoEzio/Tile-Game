@@ -48,7 +48,7 @@ public class MortarUpgrade: BlockUpgrade, ITargetReplacementUpgrade
         // Start Attack if there are targets
         if (targetsAndDirections.Count != 0)
         {
-            blockController.BaseAttack(targetsAndDirections); // fix this once I change how the whole attack process works
+            blockController.Attack(targetsAndDirections); // fix this once I change how the whole attack process works
         }
     }
 

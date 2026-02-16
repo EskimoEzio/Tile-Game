@@ -30,6 +30,9 @@ public class UpgradeManager : MonoBehaviour
     //Attack
     private List<IAttackUpgrade> attackUpgrades = new();
 
+    //OnHit
+    private List<IOnHitUpgrade> onHitUpgrades = new();
+
     #endregion
 
     private void OnEnable()
@@ -48,7 +51,7 @@ public class UpgradeManager : MonoBehaviour
     {
         blockController = GetComponent<BlockController>();
 
-        AddUpgrade(new MortarUpgrade()); //this is a test for new upgrades
+        //AddUpgrade(new TrampleUpgrade()); //this is a test for new upgrades
     }
 
 
@@ -81,16 +84,13 @@ public class UpgradeManager : MonoBehaviour
                 .ToList();
         }
 
+        if (upgrade is ITargetReplacementUpgrade tarRepUpgrade) // This is no longer a subset of target upgrades, as it it functionally different
+        {
+            targetReplacementUpgrade = tarRepUpgrade; // set this as the new targetReplacementUpgrade
+        }
 
         if (upgrade is ITargetUpgrade targetUpgrade) // currently extra work is needed for target upgrades as target replacements are a subset of targetUpgrades
-        {
-            if (targetUpgrade is ITargetReplacementUpgrade replacementUpgrade)
-            {
-                targetUpgrades.Remove(targetReplacementUpgrade); // remove the old replacement upgrade from the list
-                targetUpgrades.Add(replacementUpgrade); 
-                targetReplacementUpgrade = replacementUpgrade; // set this as the new targetReplacementUpgrade
-            }
-            
+        {           
             targetUpgrades.Add(targetUpgrade);
         }
 
@@ -106,11 +106,12 @@ public class UpgradeManager : MonoBehaviour
             attackConditionUpgrades.Add(attackConditionUpgrade);
         }
 
-
+        if (upgrade is IOnHitUpgrade onHitUpgrade)
+        {
+            onHitUpgrades.Add(onHitUpgrade);
+        }
 
     }
-
-
 
 
     public void CheckTurnStartUpgrades(GameTypes.Turn turn)
@@ -149,14 +150,8 @@ public class UpgradeManager : MonoBehaviour
 
     }
 
-    public void CheckTargetUpgrades() // Atm this is only checks target replacement
+    public void CheckTargetReplacementUpgrades() // Atm this is only checks target replacement
     {
-        if(targetUpgrades.Count == 0) // if there are no target upgrades
-        {
-            blockController.BaseTarget();
-            return;
-        }
-
         if(targetReplacementUpgrade != null)
         {
             // do the new target technique
@@ -192,7 +187,7 @@ public class UpgradeManager : MonoBehaviour
         foreach (IAttackConditionUpgrade conditionUpgrade in attackConditionUpgrades)
         {
 
-            print(conditionUpgrade.OverwriteAllyCheck);
+            //print(conditionUpgrade.OverwriteAllyCheck);
             if (conditionUpgrade.OverwriteAllyCheck)
             {
                 OverwriteBaseAllyCheck = true;
@@ -215,6 +210,19 @@ public class UpgradeManager : MonoBehaviour
 
 
         return true; // if it gets to this point, that means that none of the checks in the upgrades have failed
+    }
+
+
+    
+    public void CheckOnHitUpgrades(bool didCapture, int attackPower, Vector2 attackDir, BlockController defender)
+    {
+
+        foreach (IOnHitUpgrade onHitUpgrade in onHitUpgrades)
+        {
+            onHitUpgrade.OnHitBehaviour(didCapture, attackPower, attackDir, defender);
+
+        }
+
     }
 
 }

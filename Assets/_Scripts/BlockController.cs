@@ -51,7 +51,7 @@ public class BlockController : MonoBehaviour
 
 
     //STATS
-    public int attackRange { get; private set; } = 1;
+    public int attackRange { get; private set; } = 2;
     #endregion
 
 
@@ -111,8 +111,8 @@ public class BlockController : MonoBehaviour
     IEnumerator PlaceBehaviour() //Place shake, check place upgrades and move to targeting
     {
 
-        float shakeDuration = 0.2f;
-        float magnitude = 0.1f;
+        float shakeDuration = 0.15f;
+        float magnitude = 0.08f;
         Vector2 originalPos = transform.localPosition;
         float timeElapsed = 0f;
 
@@ -146,49 +146,24 @@ public class BlockController : MonoBehaviour
 
     public void Target() // This is the targeting step, it will be triggered by an event
     {
-        upgradeManager.CheckTargetUpgrades(); // if there is a replacement upgrade, do that instead
-        Attack();
+        upgradeManager.CheckTargetReplacementUpgrades(); // if there is a replacement upgrade, do that instead
+        Attack(targetsAndDirections);
     }
 
-
-    private void Attack() // This is the function that deicdes if each target should get hit or not
+    /// <summary>
+    /// This is the function that starts the attack process
+    /// </summary>
+    public void Attack(List<(BlockController target, Vector2 direction)> tarsAndDirs) // This is the function that deicdes if each target should get hit or not
     {
-        upgradeManager.CheckAttackUpgrades(); // upgrades that should happen just before the attack
-
-        foreach ((BlockController target, Vector2 direction) targetAndDir in targetsAndDirections)
+        foreach ((BlockController target, Vector2 direction) targetAndDir in tarsAndDirs)
         {
-
-            if (!upgradeManager.CheckAttackConditionUpgrades(targetAndDir.target)) // if it fails the upgrade can attack checks
-            {
- 
-                continue;
-            }
-
-            // Default Checks - these are handled differently to the replacement of targeting, becuse they are very simple and there are very few of them
-            if(!upgradeManager.OverwriteBaseAllyCheck && CurrentTeam == targetAndDir.target.CurrentTeam) // if the ally check has not been overwritten & if they are on the same team, continue
-            {
-                continue;
-            }
-
-            int power = PowerDict[targetAndDir.direction]; //power is onyl important at this point
-
-            if (!upgradeManager.OverwriteBaseNilPowerCheck && power == 0) // if the NilPower check has not been overwritten and if power is 0. This prevents sides with 0 power from hitting blocks
-            {
-                continue;
-            }
-            spikeManager.SpikeAttackEffect();
-
-            targetAndDir.target.BaseGetHit(targetAndDir.direction * -1, power); // This calls the "get hit" function on the target block. The target is the one that decides if it gets captured. This could maybe ue used later to trigger events
-
+            BaseAttack(targetAndDir.target, targetAndDir.direction);
         }
-
-
     }
 
 
     public void BaseTarget() // this resets the targetsAndDirections list then adds the targets (the adjacent blocks within attack range)
     {
-        print("base target");
         targetsAndDirections = new(); //this has to be a list of tuples, becuase i may eventually want to have functionality which which would require non unique keys which cant be don in a dictionary. 
         foreach (Vector2 direction in GameTypes.Directions) // this is for checking attacks in every direction
         {
@@ -230,28 +205,50 @@ public class BlockController : MonoBehaviour
     }
 
 
-    public void BaseAttack(List<(BlockController target, Vector2 direction)> targetsAndDirections)
-    {
 
-        foreach((BlockController target, Vector2 direction) targetAndDir in targetsAndDirections)
+    /// <summary>
+    /// This handles a single attack in a given direction
+    /// </summary>
+    /// <param name="target">The target block</param>
+    /// <param name="direction">The attack direction</param>
+    public void BaseAttack(BlockController target, Vector2 direction)
+    {
+        if (!upgradeManager.CheckAttackConditionUpgrades(target)) // if it fails the upgrade can attack checks
         {
-            int power = PowerDict[targetAndDir.direction];
-
-            if(power == 0)
-            {
-                continue;
-            }
-
-            targetAndDir.target.BaseGetHit(targetAndDir.direction * -1, power); // This calls the "get hit" function on the target block. The target is the one that decides if it gets captured. This could maybe ue used later to trigger events
-
+            return;
         }
+
+        // Default Checks - these are handled differently to the replacement of targeting, becuse they are very simple and there are very few of them
+        if (!upgradeManager.OverwriteBaseAllyCheck && CurrentTeam == target.CurrentTeam) // if the ally check has not been overwritten & if they are on the same team, continue
+        {
+            return;
+        }
+
+        int power = PowerDict[direction]; //power is only important at this point
+
+        if (!upgradeManager.OverwriteBaseNilPowerCheck && power == 0) // if the NilPower check has not been overwritten and if power is 0. This prevents sides with 0 power from hitting blocks
+        {
+            return;
+        }
+
+        upgradeManager.CheckAttackUpgrades(); //this check upgrades just before the actual attack
+
+        spikeManager.SpikeAttackEffect(); // i think that this may need to be changed to take a direction as an input
+
+        BaseOnHit(power, direction, target);
+
+
     }
 
 
-    private void BaseHit() // this handles each individual hit, the attack function applies this to every target
+    private void BaseOnHit(int power, Vector2 attackDir , BlockController defender) // this handles each individual hit, the attack function applies this to every target
     {
+        bool didCapture = defender.BaseGetHit(attackDir * -1, power);
+
+        upgradeManager.CheckOnHitUpgrades(didCapture, power, attackDir, defender);
 
     }
+
 
 
     /// <summary>

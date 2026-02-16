@@ -99,7 +99,6 @@ public class TurnManager : MonoBehaviour
     /// <param name="turn">The turn that is starting</param>
     void StartTurn(GameTypes.Turn turn)
     {
-        print("start turn");
         ActionCount = 0;
         TurnNumber++;
         CurrentTurn = turn;

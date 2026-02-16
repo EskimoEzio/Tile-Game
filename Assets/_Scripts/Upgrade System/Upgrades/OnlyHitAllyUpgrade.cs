@@ -13,12 +13,12 @@ public class OnlyHitAllyUpgrade : BlockUpgrade, IAttackConditionUpgrade
 
         if(attackingBlock.CurrentTeam == targetBlock.CurrentTeam)
         {
-            Debug.Log("tried to hit ally");
+            //Debug.Log("tried to hit ally");
             return true;
         }
         else
         {
-            Debug.Log("tried to hit enjemy");
+            //Debug.Log("tried to hit enjemy");
             return false;
         }
 
