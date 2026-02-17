@@ -67,6 +67,12 @@ public class DraggableTile : MonoBehaviour
 
     void HandleMouseDown(Vector2 screenPos)
     {
+        if (CoroutineRegistry.CheckIsGameplayBlocked()) // if there is currently a coroutine blocking gameplay do not allow the player to gab things
+        {
+            return;
+        }
+        
+        
         // if cannot be dragged (currently this is only when on a tile) then return (do not pick upt the tile)
         if (!canBeDragged)
         {

@@ -24,8 +24,6 @@ public class SpikeManager : MonoBehaviour
     public Dictionary<Vector2, int> BlockPowerDict { get; private set; }
 
     [SerializeField] public float SpikeGap = 0.025f; // serialse field is not necessary here as it is public, it is just for clarity. also, ideal would be get;privateset, but this cannot be serialsed
-    private bool isSpikeMoving = false;
-
 
     private void Awake()
     {
@@ -94,80 +92,32 @@ public class SpikeManager : MonoBehaviour
     }
 
 
-    public void SpikeAttackEffect()
+    /// <summary>
+    /// This is the fucntion that moves a single row of spikes
+    /// </summary>
+    /// <param name="rowToMove">This is which row should move, represented my a vector 2 with magnitude 1</param>
+    public void SpikeAttackEffect(Vector2 rowToMove)
     {
-        if (!isSpikeMoving) //only start the coroutine if the spikes are not currently moving
+        //determine which rowshould move and then start the coroutine on the respective row
+        if (rowToMove == Vector2.up)
         {
-            CoroutineRegistry.RunAndTrack(this, SpikeMovement(), true);
+            CoroutineRegistry.RunAndTrack(this, spikeRowManagers[0].SpikeMovement(rowToMove), true);
+        }
+        else if (rowToMove == Vector2.right)
+        {
+            CoroutineRegistry.RunAndTrack(this, spikeRowManagers[1].SpikeMovement(rowToMove), true);
+        }
+        else if (rowToMove == Vector2.down)
+        {
+            CoroutineRegistry.RunAndTrack(this, spikeRowManagers[2].SpikeMovement(rowToMove), true);
+        }
+        else if (rowToMove == Vector2.left)
+        {
+            CoroutineRegistry.RunAndTrack(this, spikeRowManagers[3].SpikeMovement(rowToMove), true);
+        }
+        else
+        {
+            Debug.LogError("Tried to move spikes but used incompatible direction/row to move input");
         }
     }
-    
-    IEnumerator SpikeMovement()
-    {
-        isSpikeMoving = true;
-
-        float halfDuration = 0.1f;
-        float distance = 0.1f;
-        float elapsedTime = 0f;
-
-        // Caching the transforms can help with performance
-        Transform upT = upSpikes.transform;
-        Transform rightT = rightSpikes.transform;
-        Transform downT = downSpikes.transform;
-        Transform leftT = leftSpikes.transform;
-
-        Vector2 upStart = upT.localPosition;
-        Vector2 rightStart = rightT.localPosition;
-        Vector2 downStart = downT.localPosition;
-        Vector2 leftStart = leftT.localPosition;
-
-        Vector2 upEnd = upStart + Vector2.up * distance;
-        Vector2 rightEnd = rightStart + Vector2.right * distance;
-        Vector2 downEnd = downStart + Vector2.down * distance;
-        Vector2 leftEnd = leftStart + Vector2.left * distance;
-
-        while (elapsedTime < halfDuration)
-        {
-            elapsedTime += Time.deltaTime;
-
-            float lerpT = elapsedTime / halfDuration;
-
-            upT.localPosition = Vector2.Lerp(upStart, upEnd, lerpT * lerpT); // doing lerpT * lerpT wil make it slow to start and then thrust quickly
-            rightT.localPosition = Vector2.Lerp(rightStart, rightEnd, lerpT * lerpT);
-            downT.localPosition = Vector2.Lerp(downStart, downEnd, lerpT * lerpT);
-            leftT.localPosition = Vector2.Lerp(leftStart, leftEnd, lerpT * lerpT);
-
-            yield return null;
-        }
-        //just in case the end of the animation is missed
-        upT.localPosition = upEnd;
-        rightT.localPosition = rightEnd;
-        downT.localPosition = downEnd;
-        leftT.localPosition = leftEnd;
-
-        elapsedTime = 0;
-
-        while (elapsedTime < halfDuration)
-        {
-            elapsedTime += Time.deltaTime;
-
-            float lerpT = elapsedTime / halfDuration;
-
-            upT.localPosition = Vector2.Lerp(upEnd, upStart, lerpT);
-            rightT.localPosition = Vector2.Lerp(rightEnd, rightStart, lerpT);
-            downT.localPosition = Vector2.Lerp(downEnd, downStart, lerpT);
-            leftT.localPosition = Vector2.Lerp(leftEnd, leftStart, lerpT);
-
-            yield return null;
-        }
-
-        // ensure that the sikes are put in their original positions
-        upT.localPosition = upStart;
-        rightT.localPosition = rightStart;
-        downT.localPosition = downStart;
-        leftT.localPosition = leftStart;
-
-        isSpikeMoving = false;
-    }
-    
 }

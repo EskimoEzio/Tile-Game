@@ -56,7 +56,7 @@ public class UpgradeManager : MonoBehaviour
     {
         blockController = GetComponent<BlockController>();
 
-        AddUpgrade(new RetalliateUpgrade()); //this is a test for new upgrades
+        //AddUpgrade(new TrampleUpgrade()); //this is a test for new upgrades
     }
 
 

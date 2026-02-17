@@ -14,7 +14,11 @@ public static class GameUtilities
         return (turn == GameTypes.Turn.Player && team == GameTypes.Team.Player) || (turn == GameTypes.Turn.Enemy && team == GameTypes.Team.Enemy);
     }
 
-
+    /// <summary>
+    /// Toggls the given enum between player and enemy
+    /// </summary>
+    /// <param name="curTeam"></param>
+    /// <returns></returns>
     public static GameTypes.Team ToggleTeam(GameTypes.Team curTeam) //this methd is purely for changing the enum between enemy & player
     {
         if (curTeam == GameTypes.Team.Player)
@@ -47,6 +51,16 @@ public static class GameUtilities
             Debug.LogError("current turn is not player or enemy");
             return curTurn;
         }
+    }
+
+    /// <summary>
+    /// Converts direction enum to standard Vector2
+    /// </summary>
+    /// <param name="direction"></param>
+    /// <returns></returns>
+    public static Vector2 ConvertDirectionEnumToVector(GameTypes.DirectionEnum direction)
+    {
+        return GameTypes.Directions[(int)direction];
     }
 
 }

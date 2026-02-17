@@ -235,7 +235,7 @@ public class BlockController : MonoBehaviour
 
         upgradeManager.CheckAttackUpgrades(); //this check upgrades just before the actual attack
 
-        spikeManager.SpikeAttackEffect(); // i think that this may need to be changed to take a direction as an input
+        spikeManager.SpikeAttackEffect(direction); // i think that this may need to be changed to take a direction as an input
 
         BaseOnHit(power, direction, target);
 
@@ -269,7 +269,7 @@ public class BlockController : MonoBehaviour
         bool isCaptured = attackPower > PowerDict[defendingDir]; //the defualt way of determining if is captured, ma be changed when I add upgrades that affect defense
         
         upgradeManager.CheckGetHitUpgrades(true, isCaptured, attackPower, defendingDir, attacker);
-        Debug.Log(BlockData.Sprite.name + " got hit at: " + Time.realtimeSinceStartupAsDouble);
+        //Debug.Log(BlockData.Sprite.name + " got hit at: " + Time.realtimeSinceStartupAsDouble);
         
 
         if (isCaptured)
@@ -298,7 +298,6 @@ public class BlockController : MonoBehaviour
         }
 
         CurrentTeam = GameUtilities.ToggleTeam(CurrentTeam);
-        print(BlockData.Sprite.name + " changed team");
 
         CoroutineRegistry.RunAndTrack(this, BlockFlip(defendingDir), true);
 

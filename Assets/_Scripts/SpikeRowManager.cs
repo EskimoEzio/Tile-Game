@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
 public class SpikeRowManager : MonoBehaviour
 {
@@ -98,6 +100,51 @@ public class SpikeRowManager : MonoBehaviour
         {
             spikeRenderers[i].color = colour;
         }
+    }
+
+    
+    public IEnumerator SpikeMovement(Vector2 rowToMove)
+    {
+
+        float halfDuration = .2f;
+        float distance = 0.1f;
+        float elapsedTime = 0f;
+
+        //Transform spikeRowTransform = upSpikes.transform; //by default use upspikes as this has to be assigned inorder to use it below
+        Vector2 rowStartPos = transform.localPosition;
+        Vector2 rowEndPos = rowStartPos + rowToMove.normalized * distance;
+
+
+        while (elapsedTime < halfDuration)
+        {
+            elapsedTime += Time.deltaTime;
+
+            float lerpT = elapsedTime / halfDuration;
+
+            transform.localPosition = Vector2.Lerp(rowStartPos, rowEndPos, lerpT * lerpT); // doing lerpT * lerpT wil make it slow to start and then thrust quickly
+
+
+            yield return null;
+        }
+        //just in case the end of the animation is missed
+        transform.localPosition = rowEndPos;
+
+
+        elapsedTime = 0;
+
+        while (elapsedTime < halfDuration)
+        {
+            elapsedTime += Time.deltaTime;
+
+            float lerpT = elapsedTime / halfDuration;
+
+            transform.localPosition = Vector2.Lerp(rowEndPos, rowStartPos, lerpT);
+
+            yield return null;
+        }
+
+        // ensure that the sikes are put in their original positions
+        transform.localPosition = rowStartPos;
     }
 
 
