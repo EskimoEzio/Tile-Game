@@ -11,7 +11,7 @@ public class OnlyHitAllyUpgrade : BlockUpgrade, IAttackConditionUpgrade
     public bool CheckCanAttack(BlockController attackingBlock, BlockController targetBlock)
     {
 
-        if(attackingBlock.CurrentTeam == targetBlock.CurrentTeam)
+        if(attackingBlock.blockProperties.CurrentTeam == targetBlock.blockProperties.CurrentTeam)
         {
             //Debug.Log("tried to hit ally");
             return true;

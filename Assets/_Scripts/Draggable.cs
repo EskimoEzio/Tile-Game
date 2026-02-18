@@ -11,6 +11,7 @@ public class DraggableTile : MonoBehaviour
     private HandManager ownerHand;
 
     private BlockController blockController;
+    private BlockProperties blockProperties;
 
     private LayerMask placeableLayers; // This layermask holds all of the places where a block could be dragged to
 
@@ -48,7 +49,7 @@ public class DraggableTile : MonoBehaviour
 
         allHands = new List<HandManager>(FindObjectsByType<HandManager>(FindObjectsSortMode.None));
         blockController = GetComponent<BlockController>();
-
+        blockProperties = GetComponent<BlockProperties>();
     }
 
 
@@ -58,7 +59,7 @@ public class DraggableTile : MonoBehaviour
         // Assign the correct hand to ownerHand
         foreach(HandManager hand in allHands)
         {
-            if(hand.handTeam == blockController.CurrentTeam)
+            if(hand.handTeam == blockProperties.CurrentTeam)
             {
                 ownerHand = hand;
             }
@@ -79,13 +80,13 @@ public class DraggableTile : MonoBehaviour
             return;
         }
 
-        if (blockController.IsPlaced)
+        if (blockProperties.IsPlaced)
         {
             canBeDragged = false;
             return;
         }
             
-        if (!GameUtilities.CheckTurnMatchTeam(TurnManager.Instance.ActivePlayer, blockController.CurrentTeam)) // this compares the Active player to the target block to see if they should be able to click it
+        if (!GameUtilities.CheckTurnMatchTeam(TurnManager.Instance.ActivePlayer, blockProperties.CurrentTeam)) // this compares the Active player to the target block to see if they should be able to click it
         {
             return;
         }
@@ -122,7 +123,7 @@ public class DraggableTile : MonoBehaviour
         Vector2 worldPos = mainCam.ScreenToWorldPoint(screenPos);
 
 
-        if(!GameUtilities.CheckTurnMatchTeam(TurnManager.Instance.ActivePlayer, blockController.CurrentTeam)) // if the block does not match the turn put this into ownerHand
+        if(!GameUtilities.CheckTurnMatchTeam(TurnManager.Instance.ActivePlayer, blockProperties.CurrentTeam)) // if the block does not match the turn put this into ownerHand
         {
             ownerHand.AddToHand(gameObject, screenPos);
             return;

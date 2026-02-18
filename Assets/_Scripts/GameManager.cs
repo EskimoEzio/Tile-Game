@@ -142,9 +142,9 @@ public class GameManager : MonoBehaviour
                 continue;
             }
             
-            if(posTile.Value.TileContents.TryGetComponent<BlockController>(out BlockController blockController))
+            if(posTile.Value.TileContents.TryGetComponent<BlockProperties>(out BlockProperties blockProperties))
             {                
-                if(blockController.CurrentTeam == GameTypes.Team.Player)
+                if(blockProperties.CurrentTeam == GameTypes.Team.Player)
                 {
                     playerScore++;
                 }

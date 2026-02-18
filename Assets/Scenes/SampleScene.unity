@@ -254,7 +254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df282654cdc179d4f8d4ea0181c71a94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsMultiplayer: 0
+  IsMultiplayer: 1
 --- !u!4 &397378035
 Transform:
   m_ObjectHideFlags: 0

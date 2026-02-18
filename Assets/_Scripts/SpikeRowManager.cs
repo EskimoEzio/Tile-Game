@@ -12,6 +12,8 @@ public class SpikeRowManager : MonoBehaviour
     private GameObject[] spikes = new GameObject[5]; // 5 is the max number of spikes per row
     private SpriteRenderer[] spikeRenderers = new SpriteRenderer[5]; // 5 is the max number of spikes per row
 
+    public GameTypes.DirectionEnum Direction;
+
     private float SpikeGap;
     //private float spikeWidth;
 
@@ -81,8 +83,8 @@ public class SpikeRowManager : MonoBehaviour
 
     void DisableExcessSpikes() //this function deactivates any excess spikes
     {
-        
-        int power = spikeManager.BlockPowerDict[(transform.position - transform.parent.position).normalized]; //this works out the relative position and uses that as the key for the dictionary
+
+        int power = spikeManager.BlockProperties.PowerDict[Direction]; //this finds the power by looking at the block properties
 
         for(int i = 0; i < spikes.Length; i++)
         {
@@ -103,7 +105,7 @@ public class SpikeRowManager : MonoBehaviour
     }
 
     
-    public IEnumerator SpikeMovement(Vector2 rowToMove)
+    public IEnumerator SpikeMovement(GameTypes.DirectionEnum direction)
     {
 
         float halfDuration = .2f;
@@ -112,7 +114,7 @@ public class SpikeRowManager : MonoBehaviour
 
         //Transform spikeRowTransform = upSpikes.transform; //by default use upspikes as this has to be assigned inorder to use it below
         Vector2 rowStartPos = transform.localPosition;
-        Vector2 rowEndPos = rowStartPos + rowToMove.normalized * distance;
+        Vector2 rowEndPos = rowStartPos + direction.ToVector2() * distance;
 
 
         while (elapsedTime < halfDuration)

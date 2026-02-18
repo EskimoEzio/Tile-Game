@@ -6,5 +6,5 @@ public interface IGetHitUpgrade
 
     bool isBeforeCapture { get; }
 
-    void GetHitBehaviour(bool isCaptured, int attackPower, Vector2 defendDir, BlockController attacker); // what parameters do i want (maybe the same as the on hit)
+    void GetHitBehaviour(bool isCaptured, int attackPower, GameTypes.DirectionEnum defendDir, BlockController attacker); // what parameters do i want (maybe the same as the on hit)
 }

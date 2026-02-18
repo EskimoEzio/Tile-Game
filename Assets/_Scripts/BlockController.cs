@@ -5,6 +5,7 @@ using UnityEngine;
 
 
 [RequireComponent(typeof(Collider2D))] // require a collider2d as this is important for knowing if the mouse is over the block
+[RequireComponent(typeof(BlockProperties))]
 public class BlockController : MonoBehaviour
 {
 
@@ -20,11 +21,13 @@ public class BlockController : MonoBehaviour
 
     #region Fields/Variables
     private UpgradeManager upgradeManager;
+    public BlockProperties blockProperties { get; private set; }
 
     [SerializeField] private GameObject spikeHolder;
     private SpikeManager spikeManager;
 
-    public BlockData BlockData { get; private set; }
+    [Header("Stats")]
+    //public BlockData BlockData { get; private set; }
     [SerializeField] private BlockData defaultData;
 
     private SpriteRenderer blockRenderer;
@@ -34,11 +37,9 @@ public class BlockController : MonoBehaviour
     private SpriteRenderer artHolderRenderer;
 
 
-    public Dictionary<Vector2, int> PowerDict { get; private set; } // this dictionary holds the power of each block in a given direction, represented by a Vector2 of that direction
+    //public Dictionary<Vector2, int> PowerDict { get; private set; } // this dictionary holds the power of each block in a given direction, represented by a Vector2 of that direction
 
-    public GameTypes.Team CurrentTeam { get; private set; }
-
-    public bool IsPlaced { get; private set; }
+    //public GameTypes.Team CurrentTeam { get; private set; }
 
     public Color EnemyColour = Color.red;
     public Color PlayerColour = Color.blue;
@@ -46,12 +47,14 @@ public class BlockController : MonoBehaviour
     [SerializeField] private float flipSpeed = 360f;
 
 
-
-    private List<(BlockController target, Vector2 direction)> targetsAndDirections = new();  //this has to be a list of tuples, becuase i may eventually want to have functionality which which would require non unique keys which cant be don in a dictionary. 
+    /// <summary>
+    /// This is a list of the targeted blocks and the side that will attack it
+    /// </summary>
+    private List<(BlockController target, GameTypes.DirectionEnum direction)> targetsAndDirections = new();  //this has to be a list of tuples, becuase i may eventually want to have functionality which which would require non unique keys which cant be don in a dictionary. 
 
 
     //STATS
-    public int attackRange { get; private set; } = 1;
+    //public int attackRange { get; private set; } = 1;
     #endregion
 
 
@@ -59,8 +62,9 @@ public class BlockController : MonoBehaviour
     {
         blockRenderer = GetComponent<SpriteRenderer>();
         artHolderRenderer = artHolderObject.GetComponent<SpriteRenderer>();
-        BlockData = defaultData;
+        //BlockData = defaultData;
         upgradeManager = GetComponent<UpgradeManager>();
+        blockProperties = GetComponent<BlockProperties>();
         spikeManager = spikeHolder.GetComponent<SpikeManager>();
         
 
@@ -68,7 +72,7 @@ public class BlockController : MonoBehaviour
 
     private void Start()
     {
-        InitialiseBlock(null, CurrentTeam);
+        InitialiseBlock(null, blockProperties.CurrentTeam);
     }
 
     /// <summary>
@@ -80,21 +84,13 @@ public class BlockController : MonoBehaviour
     {
         if(newData != null)
         {
-            BlockData = newData;
+            blockProperties.BlockData = newData;
         }
 
-        CurrentTeam = team;
+        blockProperties.CurrentTeam = team;
+        blockProperties.InitialiseStats();
 
-        // Assign the power values based on the values in the BockData scriptable object
-        PowerDict = new Dictionary<Vector2, int>()
-        {
-            { GameTypes.Directions[0],  BlockData.PowerValues[0] },
-            { GameTypes.Directions[1], BlockData.PowerValues[1] },
-            { GameTypes.Directions[2], BlockData.PowerValues[2] },
-            { GameTypes.Directions[3], BlockData.PowerValues[3] }
-        };
-
-        artHolderRenderer.sprite = BlockData.Sprite;
+        artHolderRenderer.sprite = blockProperties.BlockData.Sprite;
 
         SetBlockColour();
     }
@@ -102,7 +98,7 @@ public class BlockController : MonoBehaviour
 
     public void PlaceBlock(Vector2 tilePos)
     {
-        IsPlaced = true;
+        blockProperties.IsPlaced = true;
 
         CoroutineRegistry.RunAndTrack(this, PlaceBehaviour(), true); // this handles shaking, place upgrades and and moves to targeting
         
@@ -153,9 +149,9 @@ public class BlockController : MonoBehaviour
     /// <summary>
     /// This is the function that starts the attack process
     /// </summary>
-    public void Attack(List<(BlockController target, Vector2 direction)> tarsAndDirs) // This is the function that deicdes if each target should get hit or not
+    public void Attack(List<(BlockController target, GameTypes.DirectionEnum direction)> tarsAndDirs) // This is the function that deicdes if each target should get hit or not
     {
-        foreach ((BlockController target, Vector2 direction) targetAndDir in tarsAndDirs)
+        foreach ((BlockController target, GameTypes.DirectionEnum direction) targetAndDir in tarsAndDirs)
         {
             BaseAttack(targetAndDir.target, targetAndDir.direction);
         }
@@ -165,16 +161,16 @@ public class BlockController : MonoBehaviour
     public void BaseTarget() // this resets the targetsAndDirections list then adds the targets (the adjacent blocks within attack range)
     {
         targetsAndDirections = new(); //this has to be a list of tuples, becuase i may eventually want to have functionality which which would require non unique keys which cant be don in a dictionary. 
-        foreach (Vector2 direction in GameTypes.Directions) // this is for checking attacks in every direction
+        foreach (GameTypes.DirectionEnum direction in GameTypes.AllDirections) // this is for checking attacks in every direction
         {
+            Vector2 vectorDirection = direction.ToVector2(); // storing it in memory to avoid calling the function repeatedly
 
-
-            Vector2 targetLocation = (Vector2)transform.position + direction;
+            Vector2 targetLocation = (Vector2)transform.position + vectorDirection;
             bool targetAquired = false;
 
-            for(int i = 0; i < attackRange; i++) //if it finds a non-empty tile within range, make that the new target location 
+            for(int i = 0; i < blockProperties.AttackRange; i++) //if it finds a non-empty tile within range, make that the new target location 
             {
-                targetLocation += direction * i;
+                targetLocation += vectorDirection * i;
                 if (!GridManager.Instance.Tiles.ContainsKey(targetLocation)) 
                 {
                     continue;
@@ -212,21 +208,23 @@ public class BlockController : MonoBehaviour
     /// <param name="target">The target block</param>
     /// <param name="direction">The attack direction</param>
     /// <param name="presetPower">If the attack should use a specific power instead of teh usual PowDict value</param>
-    public void BaseAttack(BlockController target, Vector2 direction, int? presetPower = null)
+    public void BaseAttack(BlockController target, GameTypes.DirectionEnum direction, int? presetPower = null)
     {
+        BlockProperties targetBlockProperties = target.blockProperties; //get a reference to the block attributes at this point, as may be important for attack upgrades later
+        
         if (!upgradeManager.CheckAttackConditionUpgrades(target)) // if it fails the upgrade can attack checks
         {
             return;
         }
 
         // Default Checks - these are handled differently to the replacement of targeting, becuse they are very simple and there are very few of them
-        if (!upgradeManager.OverwriteBaseAllyCheck && CurrentTeam == target.CurrentTeam) // if the ally check has not been overwritten & if they are on the same team, continue
+        if (!upgradeManager.OverwriteBaseAllyCheck && blockProperties.CurrentTeam == targetBlockProperties.CurrentTeam) // if the ally check has not been overwritten & if they are on the same team, do not attack
         {
             return;
         }
 
 
-        int power = presetPower?? PowerDict[direction]; // if a preset power has been input, then use this instead of the powerDict value
+        int power = presetPower?? blockProperties.PowerDict[direction]; // if a preset power has been input, then use this instead of the powerDict value
 
         if (!upgradeManager.OverwriteBaseNilPowerCheck && power == 0) // if the NilPower check has not been overwritten and if power is 0. This prevents sides with 0 power from hitting blocks
         {
@@ -248,9 +246,10 @@ public class BlockController : MonoBehaviour
     /// <param name="power"></param>
     /// <param name="attackDir"></param>
     /// <param name="defender"></param>
-    public void BaseOnHit(int power, Vector2 attackDir , BlockController defender) // this handles each individual hit, the attack function applies this to every target
+    public void BaseOnHit(int power, GameTypes.DirectionEnum attackDir , BlockController defender) // this handles each individual hit, the attack function applies this to every target
     {
-        bool didCapture = defender.BaseGetHit(attackDir * -1, power, this);
+
+        bool didCapture = defender.BaseGetHit(attackDir.Invert(), power, this); // the side that gets hit is the opposite side than the attacker, e.g. an attack on the right side hits the defender's left
 
         upgradeManager.CheckOnHitUpgrades(didCapture, power, attackDir, defender);
 
@@ -264,10 +263,10 @@ public class BlockController : MonoBehaviour
     /// <param name="defendingDir">This is the direction of the defending block, usually the opposite to the attack direction</param>
     /// <param name="attackPower">The Power of the attack</param>
     /// <returns></returns>
-    public bool BaseGetHit(Vector2 defendingDir, int attackPower, BlockController attacker) //I am not certain i want this to return a value, I will have to think about this a bit more
+    public bool BaseGetHit(GameTypes.DirectionEnum defendingDir, int attackPower, BlockController attacker) //I am not certain i want this to return a value, I will have to think about this a bit more
     {
-        bool isCaptured = attackPower > PowerDict[defendingDir]; //the defualt way of determining if is captured, ma be changed when I add upgrades that affect defense
-        
+        bool isCaptured = attackPower > blockProperties.PowerDict[defendingDir]; //the defualt way of determining if is captured, ma be changed when I add upgrades that affect defense
+
         upgradeManager.CheckGetHitUpgrades(true, isCaptured, attackPower, defendingDir, attacker);
         //Debug.Log(BlockData.Sprite.name + " got hit at: " + Time.realtimeSinceStartupAsDouble);
         
@@ -289,15 +288,10 @@ public class BlockController : MonoBehaviour
     /// <summary>
     /// This changes the blocks current team & flips it
     /// </summary>
-    public void ChangeTeam(Vector2 defendingDir = default) //this is currently called to make the enemy's blocks on the correct team, this may have to be changed as it is broadcasting events that may be needed elsewhere
+    public void ChangeTeam(GameTypes.DirectionEnum defendingDir = GameTypes.DirectionEnum.Down) //this is currently called to make the enemy's blocks on the correct team, this may have to be changed as it is broadcasting events that may be needed elsewhere
     {
         
-        if(defendingDir == default)
-        {
-            defendingDir = Vector2.down;
-        }
-
-        CurrentTeam = GameUtilities.ToggleTeam(CurrentTeam);
+        blockProperties.CurrentTeam = GameUtilities.ToggleTeam(blockProperties.CurrentTeam);
 
         CoroutineRegistry.RunAndTrack(this, BlockFlip(defendingDir), true);
 
@@ -307,7 +301,7 @@ public class BlockController : MonoBehaviour
     /// Captures this block, changing its team & flips it
     /// </summary>
     /// <param name="defendingDir">The direction the of the defending side</param>
-    public void GetCaptured(Vector2 defendingDir) // Is this function necessary now? I may just be able to use the chage team funciton
+    public void GetCaptured(GameTypes.DirectionEnum defendingDir) // Is this function necessary now? I may just be able to use the chage team funciton
     {
         // as it is now, becuase the blocks are 2D and have no depth, you cannot distinguish flipping left or right, however i am making it change so that when i later switch to a 3d block it will be easier
         // Trigger onCaptured event
@@ -321,10 +315,10 @@ public class BlockController : MonoBehaviour
     /// </summary>
     /// <param name="defDir">The defending direction</param>
     /// <returns></returns>
-    IEnumerator BlockFlip(Vector2 defDir)
+    IEnumerator BlockFlip(GameTypes.DirectionEnum defDir)
     {
 
-        Vector2 axis = -Vector2.Perpendicular(-defDir);
+        Vector2 axis = -Vector2.Perpendicular(defDir.Invert().ToVector2());
 
         float amountRotated = 0f;
         
@@ -358,7 +352,7 @@ public class BlockController : MonoBehaviour
 
     private void SetBlockColour()
     {
-        if (CurrentTeam == GameTypes.Team.Player)
+        if (blockProperties.CurrentTeam == GameTypes.Team.Player)
         {
             blockRenderer.color = PlayerColour;
             spikeManager.SetSpikeRowColour(PlayerColour);

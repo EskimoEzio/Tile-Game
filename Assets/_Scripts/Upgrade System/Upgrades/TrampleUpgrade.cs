@@ -6,20 +6,22 @@ public class TrampleUpgrade : BlockUpgrade, IOnHitUpgrade
 
     public int onHitBehaviourPriority => 0;
 
-    public void OnHitBehaviour(bool didCapture, int attackPower, Vector2 attackDir, BlockController defender)
+    public void OnHitBehaviour(bool didCapture, int attackPower, GameTypes.DirectionEnum attackDir, BlockController defender)
     {
         if (!didCapture) return; //if it did not capture the one it hit then return
 
-        int excessPower = attackPower - defender.PowerDict[attackDir * -1];
+        BlockProperties defenderBlockProperties = defender.blockProperties;
 
-        Debug.Log(defender.BlockData.Sprite.name + " got hit! Excess power: " + excessPower);
+        int excessPower = attackPower - defenderBlockProperties.PowerDict[attackDir.Invert()];
+
+        //Debug.Log(defender.BlockData.Sprite.name + " got hit! Excess power: " + excessPower);
 
         if(excessPower <= 0) return; // if there is no excess power return
 
 
         //try target the next tile in the attack direction
 
-        Vector2 targetLocation = (Vector2)defender.transform.position + attackDir;
+        Vector2 targetLocation = (Vector2)defender.transform.position + attackDir.ToVector2();
 
         if (!GridManager.Instance.Tiles.ContainsKey(targetLocation)) return; // if the tile would fall outside of the grid then return
 

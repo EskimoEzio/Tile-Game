@@ -57,6 +57,11 @@ public class UpgradeManager : MonoBehaviour
         blockController = GetComponent<BlockController>();
 
         //AddUpgrade(new TrampleUpgrade()); //this is a test for new upgrades
+        //AddUpgrade(new BetrayalUpgrade()); //this is a test for new upgrades
+        //AddUpgrade(new MortarUpgrade()); //this is a test for new upgrades
+        //AddUpgrade(new OnlyHitAllyUpgrade()); //this is a test for new upgrades
+        //AddUpgrade(new AttackDelay()); //this is a test for new upgrades
+        //AddUpgrade(new RetalliateUpgrade()); //this is a test for new upgrades
     }
 
 
@@ -223,7 +228,7 @@ public class UpgradeManager : MonoBehaviour
     }
 
 
-    public void CheckOnHitUpgrades(bool didCapture, int attackPower, Vector2 attackDir, BlockController defender)
+    public void CheckOnHitUpgrades(bool didCapture, int attackPower, GameTypes.DirectionEnum attackDir, BlockController defender)
     {
         foreach (IOnHitUpgrade onHitUpgrade in onHitUpgrades)
         {
@@ -232,7 +237,7 @@ public class UpgradeManager : MonoBehaviour
     }
 
 
-    public void CheckGetHitUpgrades(bool isBeforeCapture, bool isCaptured, int attackPower, Vector2 defendDir, BlockController attacker)
+    public void CheckGetHitUpgrades(bool isBeforeCapture, bool isCaptured, int attackPower, GameTypes.DirectionEnum defendDir, BlockController attacker)
     {
         foreach (IGetHitUpgrade getHitUpgrade in getHitUpgrades)
         {

@@ -178,24 +178,28 @@ public class HandManager : MonoBehaviour
  
             GameObject newBlock = Instantiate<GameObject>(blockPrefab, new Vector2(20, 20), Quaternion.identity);
             BlockController blockController = newBlock.GetComponent<BlockController>();
+            BlockProperties blockProperties = newBlock.GetComponent<BlockProperties>();
 
             blockController.InitialiseBlock(library[randIndex], handTeam);
 
             AddToHand(newBlock);
 
-            TrackLuck(blockController);
+            TrackLuck(blockProperties);
         }
 
         
     }
 
-    void TrackLuck(BlockController blockCon) //This is a mostly useless function that will count the total number of spikes drawn
+    /// <summary>
+    /// Updates the players current luck value given a set of BlockProperties
+    /// </summary>
+    /// <param name="blockProperties"></param>
+    void TrackLuck(BlockProperties blockProperties) //This is a mostly useless function that will count the total number of spikes drawn
     {
 
-        foreach(KeyValuePair<Vector2, int> dirPow in blockCon.PowerDict)
+        foreach(int power in blockProperties.PowerDict.Values)
         {
-            luck += dirPow.Value;
-
+            luck += power;
         }
         
     }

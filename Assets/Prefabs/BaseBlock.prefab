@@ -1693,6 +1693,7 @@ GameObject:
   - component: {fileID: 6449904755252482099}
   - component: {fileID: 4284860765220304643}
   - component: {fileID: 2479526111038716778}
+  - component: {fileID: -5995587429653568548}
   - component: {fileID: 2826350406474960174}
   m_Layer: 0
   m_Name: BaseBlock
@@ -1850,7 +1851,21 @@ MonoBehaviour:
   EnemyColour: {r: 1, g: 0, b: 0, a: 1}
   PlayerColour: {r: 0, g: 0, b: 1, a: 1}
   flipSpeed: 360
-  attackRange: 1
+--- !u!114 &-5995587429653568548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7122137912856460361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa7af997cc1876247badded1470b1083, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultData: {fileID: 11400000, guid: f1c3884f07a322e408b6a368fdf56dee, type: 2}
+  IsPlaced: 0
+  CurrentTeam: 0
 --- !u!114 &2826350406474960174
 MonoBehaviour:
   m_ObjectHideFlags: 0

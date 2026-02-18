@@ -53,14 +53,28 @@ public static class GameUtilities
         }
     }
 
+
     /// <summary>
-    /// Converts direction enum to standard Vector2
+    /// This converts a direction enum to a normalised Vector2
     /// </summary>
     /// <param name="direction"></param>
     /// <returns></returns>
-    public static Vector2 ConvertDirectionEnumToVector(GameTypes.DirectionEnum direction)
+    public static Vector2 ToVector2(this GameTypes.DirectionEnum direction)
     {
-        return GameTypes.Directions[(int)direction];
+        switch (direction)
+        {
+            case GameTypes.DirectionEnum.Up: return Vector2.up;
+            case GameTypes.DirectionEnum.Right: return Vector2.right;
+            case GameTypes.DirectionEnum.Down: return Vector2.down;
+            case GameTypes.DirectionEnum.Left: return Vector2.left;
+            default: return Vector2.zero;
+        }
     }
+
+    public static GameTypes.DirectionEnum Invert(this GameTypes.DirectionEnum direction)
+    {
+        return (GameTypes.DirectionEnum)(((int)direction + 2) % 4); //doing it this way aboids a dwitch statement. basically adds 2 to the enum index then divides by 4 and uses the remainder as the output index 
+    }
+
 
 }

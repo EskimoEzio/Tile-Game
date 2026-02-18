@@ -17,11 +17,10 @@ public class SpikeManager : MonoBehaviour
 
 
     private GameObject blockObject; // this is the parent game object
-    private BlockController blockController; 
+    private BlockController blockController;
+    public BlockProperties BlockProperties;
     private SpriteRenderer blockRenderer;
 
-
-    public Dictionary<Vector2, int> BlockPowerDict { get; private set; }
 
     [SerializeField] public float SpikeGap = 0.025f; // serialse field is not necessary here as it is public, it is just for clarity. also, ideal would be get;privateset, but this cannot be serialsed
 
@@ -29,6 +28,7 @@ public class SpikeManager : MonoBehaviour
     {
         blockObject = this.transform.parent.gameObject;
         blockController = blockObject.GetComponent<BlockController>();
+        BlockProperties = blockController.blockProperties;
         blockRenderer = blockObject.GetComponent<SpriteRenderer>();
 
         InitialiseArrays();
@@ -37,14 +37,11 @@ public class SpikeManager : MonoBehaviour
 
     private void Start()
     {
-        BlockPowerDict = blockController.PowerDict;
-        
-
 
 
         SetRowPositions();
 
-        if(blockController.CurrentTeam == GameTypes.Team.Player)
+        if(BlockProperties.CurrentTeam == GameTypes.Team.Player)
         {
             SetSpikeRowColour(blockController.PlayerColour);
         }
@@ -78,7 +75,7 @@ public class SpikeManager : MonoBehaviour
         for (int i = 0; i < spikeRowManagers.Length; i++)
         {
             spikeRowManagers[i] = spikeRows[i].GetComponent<SpikeRowManager>();
-
+            spikeRowManagers[i].Direction = (GameTypes.DirectionEnum)i; //this should automatically set the dirction to the matching enum, becuase I always go clockwise sstarting from up
         }
     }
 
@@ -96,8 +93,17 @@ public class SpikeManager : MonoBehaviour
     /// This is the fucntion that moves a single row of spikes
     /// </summary>
     /// <param name="rowToMove">This is which row should move, represented my a vector 2 with magnitude 1</param>
-    public void SpikeAttackEffect(Vector2 rowToMove)
+    public void SpikeAttackEffect(GameTypes.DirectionEnum rowToMove)
     {
+
+        //CoroutineRegistry.RunAndTrack(this, spikeRowManagers[0].SpikeMovement(rowToMove), true);
+
+        int index = (int)rowToMove; //doing it this way allows me to avoid having a switch statement for each case, as the index for the enum and the rows match by design
+        CoroutineRegistry.RunAndTrack(this, spikeRowManagers[index].SpikeMovement(rowToMove), true);
+
+
+
+        /*
         //determine which rowshould move and then start the coroutine on the respective row
         if (rowToMove == Vector2.up)
         {
@@ -118,6 +124,6 @@ public class SpikeManager : MonoBehaviour
         else
         {
             Debug.LogError("Tried to move spikes but used incompatible direction/row to move input");
-        }
+        }*/
     }
 }

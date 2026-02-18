@@ -12,7 +12,7 @@ public class RetalliateUpgrade : BlockUpgrade, IGetHitUpgrade, ITurnStartUpgrade
 
     private bool hasRetaliatedThisTurn = false;
 
-    public void GetHitBehaviour(bool isCaptured, int attackPower, Vector2 defendDir, BlockController attacker)
+    public void GetHitBehaviour(bool isCaptured, int attackPower, GameTypes.DirectionEnum defendDir, BlockController attacker)
     {
         if (hasRetaliatedThisTurn) return; // do not retaliate if you have already retaliated once this turn
 

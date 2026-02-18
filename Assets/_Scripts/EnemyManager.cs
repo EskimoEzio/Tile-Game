@@ -11,7 +11,7 @@ public class EnemyManager : MonoBehaviour
 
 
     private BlockData nextBlock; //currently, i am iterating through the list
-    private Dictionary<Vector2, int> PowerDict;
+    private Dictionary<GameTypes.DirectionEnum, int> PowerDict;
     private BlockController nextBlockController;
     [SerializeField] private GameObject blockPrefab;
     private GameObject blockObject;
@@ -91,13 +91,22 @@ public class EnemyManager : MonoBehaviour
         nextBlockController.InitialiseBlock(nextBlock, GameTypes.Team.Enemy);
 
 
-        PowerDict = new Dictionary<Vector2, int>()
+
+        /*
         {
-            { Vector2.up,  nextBlock.PowerValues[0] },
-            { Vector2.right, nextBlock.PowerValues[1] },
-            { Vector2.down, nextBlock.PowerValues[2] },
-            { Vector2.left, nextBlock.PowerValues[3] }
+            { GameTypes.DirectionEnum.Up,  nextBlock.PowerValues[0] },
+            { GameTypes.DirectionEnum.Right, nextBlock.PowerValues[1] },
+            { GameTypes.DirectionEnum.Down, nextBlock.PowerValues[2] },
+            { GameTypes.DirectionEnum.Left, nextBlock.PowerValues[3] }
         };
+        */
+        PowerDict = new Dictionary<GameTypes.DirectionEnum, int>(); // clear the dictionary
+
+        for (int i = 0; i < 4; i++) // 4 is used becuase there are 4 directions
+        {
+            PowerDict.Add((GameTypes.DirectionEnum)i, nextBlock.PowerValues[i]); //Create the base power dictionary
+        }
+
     }
 
     private Vector2 ChooseTile() // I will add a lot more to this, including looking at position and block combination
@@ -164,37 +173,39 @@ public class EnemyManager : MonoBehaviour
 
 
         // first work out how many tiles it could potentially caputure
-        foreach (KeyValuePair<Vector2, int> dirPow in PowerDict)
+        foreach (KeyValuePair<GameTypes.DirectionEnum, int> dirPow in PowerDict)
         {
-            if (!GridManager.Instance.Tiles.ContainsKey(tilePos + dirPow.Key)) // if the direction has no tile, the power that way is wasted
+            Vector2 directionVector = dirPow.Key.ToVector2();
+            
+            if (!GridManager.Instance.Tiles.ContainsKey(tilePos + directionVector)) // if the direction has no tile, the power that way is wasted
             {
                 score += CalcWastedPowerScore(dirPow.Value);
                 continue;
             }
 
-            if (GridManager.Instance.Tiles[tilePos + dirPow.Key].TileContents == null) // if the direction is empty, the power is not going to waste as it defends, that is why i do not increase wasted power here
+            if (GridManager.Instance.Tiles[tilePos + directionVector].TileContents == null) // if the direction is empty, the power is not going to waste as it defends, that is why i do not increase wasted power here
             {
                 continue;
             }
 
 
             // if the tile contains a gameobject with block controller then proceed with checks, i have done this the other way so that i can make use of TryGetComponents "out" (i am checking for block controller atm, as this is the script with the power values)
-            if (GridManager.Instance.Tiles[tilePos + dirPow.Key].TileContents.TryGetComponent<BlockController>(out BlockController targetBlockController))
+            if (GridManager.Instance.Tiles[tilePos + directionVector].TileContents.TryGetComponent<BlockController>(out BlockController targetBlockController))
             {
 
                 // if the defending block is on the same team as the attacking block, then do not try to attack
-                if (targetBlockController.CurrentTeam == GameTypes.Team.Enemy)
+                if (targetBlockController.blockProperties.CurrentTeam == GameTypes.Team.Enemy)
                 {
                     score += CalcWastedPowerScore(dirPow.Value);
                     continue;
                 }
 
-                if (dirPow.Value > targetBlockController.PowerDict[dirPow.Key * -1]) //if it wins in the given directon
+                if (dirPow.Value > targetBlockController.blockProperties.PowerDict[dirPow.Key.Invert()]) //if it wins in the given directon
                 {
                     //print(gameObject.name + " beats " + targetBlockController.gameObject.name);
                     //score += BaseGameTypes.TeameValue * (1+(GameTypes.TeameStrengthBonus* targetBlockController.PowerDict[dirPow.Key * -1]));
 
-                    score += CalcCaptureScore(dirPow.Value, targetBlockController.PowerDict[dirPow.Key * -1]);
+                    score += CalcCaptureScore(dirPow.Value, targetBlockController.blockProperties.PowerDict[dirPow.Key.Invert()]);
 
 
                 }
