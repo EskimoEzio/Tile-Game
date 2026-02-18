@@ -15,3 +15,4 @@ MonoBehaviour:
   BlockName: Fox
   Sprite: {fileID: 301389031, guid: 748dbb09c30783f4eb2c51cf3bedca50, type: 3}
   PowerValues: 03000000030000000300000003000000
+  attackRange: 1

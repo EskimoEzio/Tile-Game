@@ -41,25 +41,29 @@ public class BlockProperties : MonoBehaviour
 
     private void Start()
     {
-        InitialiseStats();
+        //InitialiseStats();
         
     }
 
     public void InitialiseStats()
     {
+
+        print("initialise " + BlockData.BlockName);
         // Base Attack Range
         baseAttackRange = BlockData.attackRange;
 
         // Base Power Dictionary
         Debug.Assert(BlockData.PowerValues.Length == 4, "The length of the power list is not 4" + gameObject.name); //raises an error if the power list length is not 4
-        for(int i = 0; i<4; i++) // 4 is used becuase there are 4 directions
+
+        //print(BasePowerDict[GameTypes.DirectionEnum.Up]);
+
+        foreach (GameTypes.DirectionEnum direction in GameTypes.AllDirections)
         {
-            BasePowerDict.Add((GameTypes.DirectionEnum)i, BlockData.PowerValues[i]); //Create the base power dictionary
-            PowerDict.Add((GameTypes.DirectionEnum)i, BlockData.PowerValues[i]); // create the empty dictionary for the final power values, the values will be filled when upgrades are checked
+            BasePowerDict.Add(direction, BlockData.PowerValues[(int)direction]); //Create the base power dictionary
+            PowerDict.Add(direction, BlockData.PowerValues[(int)direction]); // create the empty dictionary for the final power values, the values will be filled when upgrades are checked
         }
-
-
-        UpdateStats();
+        
+       UpdateStats();
     }
 
     /// <summary>

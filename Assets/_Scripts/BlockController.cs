@@ -72,7 +72,7 @@ public class BlockController : MonoBehaviour
 
     private void Start()
     {
-        InitialiseBlock(null, blockProperties.CurrentTeam);
+        //InitialiseBlock(null, blockProperties.CurrentTeam); //this is not needed atm, as I initialise blocks when creating them
     }
 
     /// <summary>
