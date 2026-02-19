@@ -10,7 +10,7 @@ public class TrampleUpgrade : BlockUpgrade, IOnHitUpgrade
     {
         if (!didCapture) return; //if it did not capture the one it hit then return
 
-        BlockProperties defenderBlockProperties = defender.blockProperties;
+        BlockProperties defenderBlockProperties = defender.BlockProperties;
 
         int excessPower = attackPower - defenderBlockProperties.PowerDict[attackDir.Invert()];
 

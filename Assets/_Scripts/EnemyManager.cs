@@ -194,18 +194,18 @@ public class EnemyManager : MonoBehaviour
             {
 
                 // if the defending block is on the same team as the attacking block, then do not try to attack
-                if (targetBlockController.blockProperties.CurrentTeam == GameTypes.Team.Enemy)
+                if (targetBlockController.BlockProperties.CurrentTeam == GameTypes.Team.Enemy)
                 {
                     score += CalcWastedPowerScore(dirPow.Value);
                     continue;
                 }
 
-                if (dirPow.Value > targetBlockController.blockProperties.PowerDict[dirPow.Key.Invert()]) //if it wins in the given directon
+                if (dirPow.Value > targetBlockController.BlockProperties.PowerDict[dirPow.Key.Invert()]) //if it wins in the given directon
                 {
                     //print(gameObject.name + " beats " + targetBlockController.gameObject.name);
                     //score += BaseGameTypes.TeameValue * (1+(GameTypes.TeameStrengthBonus* targetBlockController.PowerDict[dirPow.Key * -1]));
 
-                    score += CalcCaptureScore(dirPow.Value, targetBlockController.blockProperties.PowerDict[dirPow.Key.Invert()]);
+                    score += CalcCaptureScore(dirPow.Value, targetBlockController.BlockProperties.PowerDict[dirPow.Key.Invert()]);
 
 
                 }

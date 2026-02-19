@@ -21,7 +21,7 @@ public class BlockController : MonoBehaviour
 
     #region Fields/Variables
     private UpgradeManager upgradeManager;
-    public BlockProperties blockProperties { get; private set; }
+    public BlockProperties BlockProperties { get; private set; }
 
     [SerializeField] private GameObject spikeHolder;
     public SpikeManager spikeManager { get; private set; }
@@ -64,7 +64,7 @@ public class BlockController : MonoBehaviour
         artHolderRenderer = artHolderObject.GetComponent<SpriteRenderer>();
         //BlockData = defaultData;
         upgradeManager = GetComponent<UpgradeManager>();
-        blockProperties = GetComponent<BlockProperties>();
+        BlockProperties = GetComponent<BlockProperties>();
         spikeManager = spikeHolder.GetComponent<SpikeManager>();
         
 
@@ -84,13 +84,13 @@ public class BlockController : MonoBehaviour
     {
         if(newData != null)
         {
-            blockProperties.BlockData = newData;
+            BlockProperties.BlockData = newData;
         }
 
-        blockProperties.CurrentTeam = team;
-        blockProperties.InitialiseStats();
+        BlockProperties.CurrentTeam = team;
+        BlockProperties.InitialiseStats();
 
-        artHolderRenderer.sprite = blockProperties.BlockData.Sprite;
+        artHolderRenderer.sprite = BlockProperties.BlockData.Sprite;
 
         SetBlockColour();
     }
@@ -98,8 +98,6 @@ public class BlockController : MonoBehaviour
 
     public void PlaceBlock(Vector2 tilePos)
     {
-        blockProperties.IsPlaced = true;
-
         CoroutineRegistry.RunAndTrack(this, PlaceBehaviour(), true); // this handles shaking, place upgrades and and moves to targeting
         
     }
@@ -168,7 +166,7 @@ public class BlockController : MonoBehaviour
             Vector2 targetLocation = (Vector2)transform.position + vectorDirection;
             bool targetAquired = false;
 
-            for(int i = 0; i < blockProperties.AttackRange; i++) //if it finds a non-empty tile within range, make that the new target location 
+            for(int i = 0; i < BlockProperties.AttackRange; i++) //if it finds a non-empty tile within range, make that the new target location 
             {
                 targetLocation += vectorDirection * i;
                 if (!GridManager.Instance.Tiles.ContainsKey(targetLocation)) 
@@ -210,7 +208,7 @@ public class BlockController : MonoBehaviour
     /// <param name="presetPower">If the attack should use a specific power instead of teh usual PowDict value</param>
     public void BaseAttack(BlockController target, GameTypes.DirectionEnum direction, int? presetPower = null)
     {
-        BlockProperties targetBlockProperties = target.blockProperties; //get a reference to the block attributes at this point, as may be important for attack upgrades later
+        BlockProperties targetBlockProperties = target.BlockProperties; //get a reference to the block attributes at this point, as may be important for attack upgrades later
         
         if (!upgradeManager.CheckAttackConditionUpgrades(target)) // if it fails the upgrade can attack checks
         {
@@ -218,13 +216,13 @@ public class BlockController : MonoBehaviour
         }
 
         // Default Checks - these are handled differently to the replacement of targeting, becuse they are very simple and there are very few of them
-        if (!upgradeManager.OverwriteBaseAllyCheck && blockProperties.CurrentTeam == targetBlockProperties.CurrentTeam) // if the ally check has not been overwritten & if they are on the same team, do not attack
+        if (!upgradeManager.OverwriteBaseAllyCheck && BlockProperties.CurrentTeam == targetBlockProperties.CurrentTeam) // if the ally check has not been overwritten & if they are on the same team, do not attack
         {
             return;
         }
 
 
-        int power = presetPower?? blockProperties.PowerDict[direction]; // if a preset power has been input, then use this instead of the powerDict value
+        int power = presetPower?? BlockProperties.PowerDict[direction]; // if a preset power has been input, then use this instead of the powerDict value
 
         if (!upgradeManager.OverwriteBaseNilPowerCheck && power == 0) // if the NilPower check has not been overwritten and if power is 0. This prevents sides with 0 power from hitting blocks
         {
@@ -265,7 +263,7 @@ public class BlockController : MonoBehaviour
     /// <returns></returns>
     public bool BaseGetHit(GameTypes.DirectionEnum defendingDir, int attackPower, BlockController attacker) //I am not certain i want this to return a value, I will have to think about this a bit more
     {
-        bool isCaptured = attackPower > blockProperties.PowerDict[defendingDir]; //the defualt way of determining if is captured, ma be changed when I add upgrades that affect defense
+        bool isCaptured = attackPower > BlockProperties.PowerDict[defendingDir]; //the defualt way of determining if is captured, ma be changed when I add upgrades that affect defense
 
         upgradeManager.CheckGetHitUpgrades(true, isCaptured, attackPower, defendingDir, attacker);
         //Debug.Log(BlockData.Sprite.name + " got hit at: " + Time.realtimeSinceStartupAsDouble);
@@ -290,8 +288,8 @@ public class BlockController : MonoBehaviour
     /// </summary>
     public void ChangeTeam(GameTypes.DirectionEnum defendingDir = GameTypes.DirectionEnum.Down) //this is currently called to make the enemy's blocks on the correct team, this may have to be changed as it is broadcasting events that may be needed elsewhere
     {
-        
-        blockProperties.CurrentTeam = GameUtilities.ToggleTeam(blockProperties.CurrentTeam);
+
+        BlockProperties.CurrentTeam = GameUtilities.ToggleTeam(BlockProperties.CurrentTeam);
 
         CoroutineRegistry.RunAndTrack(this, BlockFlip(defendingDir), true);
 
@@ -352,7 +350,7 @@ public class BlockController : MonoBehaviour
 
     private void SetBlockColour()
     {
-        if (blockProperties.CurrentTeam == GameTypes.Team.Player)
+        if (BlockProperties.CurrentTeam == GameTypes.Team.Player)
         {
             blockRenderer.color = PlayerColour;
             spikeManager.SetSpikeRowColour(PlayerColour);

@@ -28,7 +28,7 @@ public class SpikeManager : MonoBehaviour
     {
         blockObject = this.transform.parent.gameObject;
         blockController = blockObject.GetComponent<BlockController>();
-        BlockProperties = blockController.blockProperties;
+        BlockProperties = blockController.BlockProperties;
         blockRenderer = blockObject.GetComponent<SpriteRenderer>();
 
         InitialiseArrays();

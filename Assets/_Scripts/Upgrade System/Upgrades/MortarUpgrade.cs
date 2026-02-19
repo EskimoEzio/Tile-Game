@@ -18,7 +18,7 @@ public class MortarUpgrade: BlockUpgrade, ITargetReplacementUpgrade
         foreach (GameTypes.DirectionEnum direction in GameTypes.AllDirections) // this is for checking attacks in every direction
         {
 
-            Vector2 targetLocation = (Vector2)blockController.gameObject.transform.position + direction.ToVector2() * blockController.blockProperties.AttackRange; // target location is exactly attack range away
+            Vector2 targetLocation = (Vector2)blockController.gameObject.transform.position + direction.ToVector2() * blockController.BlockProperties.AttackRange; // target location is exactly attack range away
 
             if (!GridManager.Instance.Tiles.ContainsKey(targetLocation)) //if tile doesnt exist check next direction
             {
@@ -34,7 +34,7 @@ public class MortarUpgrade: BlockUpgrade, ITargetReplacementUpgrade
 
             if (GridManager.Instance.Tiles[targetLocation].TileContents.TryGetComponent<BlockController>(out BlockController targetBlockController))
             {
-                if (targetBlockController.blockProperties.CurrentTeam == blockController.blockProperties.CurrentTeam) // if the defending block is on the same team as the attacking block, then do not try to attack
+                if (targetBlockController.BlockProperties.CurrentTeam == blockController.BlockProperties.CurrentTeam) // if the defending block is on the same team as the attacking block, then do not try to attack
                 {
                     continue;
                 }

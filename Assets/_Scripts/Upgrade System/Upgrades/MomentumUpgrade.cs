@@ -15,11 +15,11 @@ public class MomentumUpgrade : BlockUpgrade, ITurnStartUpgrade, IStatUpgrade
 
     public void TurnStartBehaviour(GameTypes.Turn turn)
     {
-        if (!BlockController.blockProperties.IsPlaced) return; //if the block is not placed then skip, this will be changed when i change how block states work
+        if (BlockController.BlockProperties.CurrentLocation != GameTypes.BlockLocation.Board) return; //if the block is not on the board then skip
         
-        if(GameUtilities.CheckTurnMatchTeam(turn, BlockController.blockProperties.CurrentTeam)) 
+        if(GameUtilities.CheckTurnMatchTeam(turn, BlockController.BlockProperties.CurrentTeam)) 
         {
-            ApplyStatUpgrade(BlockController.blockProperties);
+            ApplyStatUpgrade(BlockController.BlockProperties);
         }
     }
 

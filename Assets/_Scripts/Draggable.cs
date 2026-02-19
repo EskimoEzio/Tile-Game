@@ -80,7 +80,7 @@ public class DraggableTile : MonoBehaviour
             return;
         }
 
-        if (blockProperties.IsPlaced)
+        if (blockProperties.CurrentLocation == GameTypes.BlockLocation.Board)
         {
             canBeDragged = false;
             return;

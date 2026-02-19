@@ -29,8 +29,29 @@ public class BlockProperties : MonoBehaviour
     private int minimumPower = 0;
     private int maximumPower = 5;
 
-    public bool IsPlaced; 
     public GameTypes.Team CurrentTeam;
+
+    /// <summary>
+    /// This is for internal data, do not use this directily, use public CurrentLocation
+    /// </summary>
+    private GameTypes.BlockLocation _currentLocation;
+    public GameTypes.BlockLocation CurrentLocation
+    {
+        get
+        {
+            return _currentLocation;
+        }
+        set
+        {
+            if (_currentLocation == value) return;
+
+            _currentLocation = value; // Save the new data
+
+            //OnLocationChanged(value); later this will allow me to have an event thattriggers when a block changes location
+        }
+    }
+
+
 
 
     private void Awake()
