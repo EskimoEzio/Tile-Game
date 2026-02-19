@@ -11,6 +11,9 @@ public class UpgradeManager : MonoBehaviour
 
     private List<BlockUpgrade> blockUpgrades = new();
 
+    //Stats
+    private List<IStatUpgrade> statUpgrades = new();
+
     //Turn Start
     private List<ITurnStartUpgrade> turnStartUpgrades = new();
 
@@ -38,6 +41,7 @@ public class UpgradeManager : MonoBehaviour
     private List<IGetHitUpgrade> getHitUpgrades = new();
 
 
+
     #endregion
 
     private void OnEnable()
@@ -56,12 +60,15 @@ public class UpgradeManager : MonoBehaviour
     {
         blockController = GetComponent<BlockController>();
 
-        //AddUpgrade(new TrampleUpgrade()); //this is a test for new upgrades
-        //AddUpgrade(new BetrayalUpgrade()); //this is a test for new upgrades
-        //AddUpgrade(new MortarUpgrade()); //this is a test for new upgrades
-        //AddUpgrade(new OnlyHitAllyUpgrade()); //this is a test for new upgrades
-        //AddUpgrade(new AttackDelay()); //this is a test for new upgrades
-        //AddUpgrade(new RetalliateUpgrade()); //this is a test for new upgrades
+
+        // Test for upgrades
+        //AddUpgrade(new TrampleUpgrade());
+        //AddUpgrade(new BetrayalUpgrade());
+        //AddUpgrade(new MortarUpgrade());
+        //AddUpgrade(new OnlyHitAllyUpgrade()); 
+        //AddUpgrade(new AttackDelay()); 
+        //AddUpgrade(new RetalliateUpgrade()); 
+        AddUpgrade(new MomentumUpgrade()); 
     }
 
 

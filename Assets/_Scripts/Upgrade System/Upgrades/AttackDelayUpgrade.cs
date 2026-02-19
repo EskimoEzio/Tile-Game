@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class AttackDelay: BlockUpgrade, IPlaceUpgrade, ITurnStartUpgrade
+public class AttackDelayUpgrade : BlockUpgrade, IPlaceUpgrade, ITurnStartUpgrade
 {
 
     public override int UpgradeID { get; } = 1;

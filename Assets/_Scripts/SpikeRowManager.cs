@@ -29,14 +29,9 @@ public class SpikeRowManager : MonoBehaviour
 
     private void Start()
     {
-        
-
-
-
         SetBaseSpikeSprite(); // this is not strickly necessary atm, as i have already set the sprites, however this is good if i want to chage the spike sprite
         SpreadSpikes();
-        DisableExcessSpikes();
-
+        UpdateVisibleSpikes();
     }
 
     void InitialiseArrays()
@@ -81,7 +76,7 @@ public class SpikeRowManager : MonoBehaviour
         }
     }
 
-    void DisableExcessSpikes() //this function deactivates any excess spikes
+    public void UpdateVisibleSpikes() //this function deactivates any excess spikes
     {
 
         int power = spikeManager.BlockProperties.PowerDict[Direction]; //this finds the power by looking at the block properties
@@ -91,6 +86,10 @@ public class SpikeRowManager : MonoBehaviour
             if(i>= power)
             {
                 spikes[i].SetActive(false);
+            }
+            else
+            {
+                spikes[i].SetActive(true);
             }
         }
 

@@ -89,41 +89,24 @@ public class SpikeManager : MonoBehaviour
     }
 
 
+    public void UpdateVisibleSpikes()
+    {
+        foreach(SpikeRowManager spikeRowManager in spikeRowManagers)
+        {
+            spikeRowManager.UpdateVisibleSpikes();
+        }
+    }
+
+
+
     /// <summary>
     /// This is the fucntion that moves a single row of spikes
     /// </summary>
     /// <param name="rowToMove">This is which row should move, represented my a vector 2 with magnitude 1</param>
     public void SpikeAttackEffect(GameTypes.DirectionEnum rowToMove)
     {
-
-        //CoroutineRegistry.RunAndTrack(this, spikeRowManagers[0].SpikeMovement(rowToMove), true);
-
         int index = (int)rowToMove; //doing it this way allows me to avoid having a switch statement for each case, as the index for the enum and the rows match by design
         CoroutineRegistry.RunAndTrack(this, spikeRowManagers[index].SpikeMovement(rowToMove), true);
 
-
-
-        /*
-        //determine which rowshould move and then start the coroutine on the respective row
-        if (rowToMove == Vector2.up)
-        {
-            CoroutineRegistry.RunAndTrack(this, spikeRowManagers[0].SpikeMovement(rowToMove), true);
-        }
-        else if (rowToMove == Vector2.right)
-        {
-            CoroutineRegistry.RunAndTrack(this, spikeRowManagers[1].SpikeMovement(rowToMove), true);
-        }
-        else if (rowToMove == Vector2.down)
-        {
-            CoroutineRegistry.RunAndTrack(this, spikeRowManagers[2].SpikeMovement(rowToMove), true);
-        }
-        else if (rowToMove == Vector2.left)
-        {
-            CoroutineRegistry.RunAndTrack(this, spikeRowManagers[3].SpikeMovement(rowToMove), true);
-        }
-        else
-        {
-            Debug.LogError("Tried to move spikes but used incompatible direction/row to move input");
-        }*/
     }
 }

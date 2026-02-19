@@ -24,7 +24,7 @@ public class BlockController : MonoBehaviour
     public BlockProperties blockProperties { get; private set; }
 
     [SerializeField] private GameObject spikeHolder;
-    private SpikeManager spikeManager;
+    public SpikeManager spikeManager { get; private set; }
 
     [Header("Stats")]
     //public BlockData BlockData { get; private set; }
