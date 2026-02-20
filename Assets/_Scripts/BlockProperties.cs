@@ -9,28 +9,27 @@ public class BlockProperties : MonoBehaviour
     private BlockController blockController;
     public BlockData BlockData;
 
+
+    #region Stats
     [Header("Base Stats")]
     private int baseAttackRange;
     public Dictionary<GameTypes.DirectionEnum, int> BasePowerDict { get; private set; }
-
 
     [Header("Bonus Stats")]
     private int bonusAttackRange = 0;
     public Dictionary<GameTypes.DirectionEnum, int> BonusPowerDict { get; private set; }
 
-
     [Header("Final Stats")]
     public int AttackRange { get; private set; }
     public Dictionary<GameTypes.DirectionEnum, int> PowerDict { get; private set; }
 
-
-
     private int minimumRange = 1;
     private int minimumPower = 0;
     private int maximumPower = 5;
+    #endregion
+
 
     public GameTypes.Team CurrentTeam;
-
     /// <summary>
     /// This is for internal data, do not use this directily, use public CurrentLocation
     /// </summary>
@@ -47,7 +46,7 @@ public class BlockProperties : MonoBehaviour
 
             _currentLocation = value; // Save the new data
 
-            //OnLocationChanged(value); later this will allow me to have an event thattriggers when a block changes location
+            HandleLocationChange(value);
         }
     }
 
@@ -64,6 +63,8 @@ public class BlockProperties : MonoBehaviour
         PowerDict = new Dictionary<GameTypes.DirectionEnum, int>();
     }
 
+
+    #region Stat Functions
     public void InitialiseStats()
     {
         baseAttackRange = BlockData.attackRange;
@@ -173,5 +174,34 @@ public class BlockProperties : MonoBehaviour
         //BonusPowerDict[direction] += modifier;
         UpdateStats(); // This seems like an inefficient way of doing this, maube i will just remove the updateStats function
     }
+
+    #endregion
+
+
+    private void HandleLocationChange(GameTypes.BlockLocation location)
+    {
+
+        switch (location)
+        {
+            case GameTypes.BlockLocation.Hand:
+                break;
+            case GameTypes.BlockLocation.Board:
+                // what should happen
+                break;
+            case GameTypes.BlockLocation.Graveyard:
+                print(BlockData.name + " has been sent to the graveyard");
+
+                gameObject.transform.position = new Vector2(100, 100); // this is an arbitrary location for now so that it is no longer visible. This will be changed when i implement a proper graveyard
+
+                SpriteRenderer[] spriteRenderers = gameObject.GetComponentsInChildren<SpriteRenderer>(); //Hide the art for the block
+                foreach (SpriteRenderer spriteRenderer in spriteRenderers)
+                {
+                    spriteRenderer.enabled = false;
+                }
+                break;
+        }
+
+    }
+
 
 }

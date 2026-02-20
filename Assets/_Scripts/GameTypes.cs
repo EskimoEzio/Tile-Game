@@ -12,5 +12,5 @@ public static class GameTypes
 
     public static readonly DirectionEnum[] AllDirections = { DirectionEnum.Up, DirectionEnum.Right, DirectionEnum.Down, DirectionEnum.Left };
 
-    public enum BlockLocation { Hand, Board } //what other locations might I need, library, discard/graveyard, none?
+    public enum BlockLocation { Hand, Board, Graveyard } //what other locations might I need, library, discard/graveyard, none?
 }

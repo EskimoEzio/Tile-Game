@@ -15,8 +15,15 @@ public class Tile : MonoBehaviour
 
     public bool IsOffset; // this is set when the grid generation runs, it is not changed again. I tis easier to have it be public
 
-    
 
+    private void OnEnable()
+    {
+        InputHandler.Instance.OnMouseMove += HandleMouseMove;
+    }
+    private void OnDisable()
+    {
+        InputHandler.Instance.OnMouseMove -= HandleMouseMove;
+    }
 
 
     private void Awake()
@@ -34,15 +41,7 @@ public class Tile : MonoBehaviour
     }
 
 
-    private void OnEnable()
-    {
-        InputHandler.Instance.OnMouseMove += HandleMouseMove;
-    }
 
-    private void OnDisable()
-    {
-        InputHandler.Instance.OnMouseMove -= HandleMouseMove;
-    }
 
     public void SetInitialColor()
     {
@@ -96,11 +95,36 @@ public class Tile : MonoBehaviour
     public void AddToTile(GameObject block)
     {
         // I have made this into a method as there will be extra stuff to add to this later
-        TileContents = block;
+        if(TileContents == null)
+        {
+            TileContents = block;
+        }
+        else
+        {
+            print("Tile is not empty!");
+        }
+        
+        
         block.transform.position = new Vector2(transform.position.x, transform.position.y);
        
         // I input the position as this is matches the Vector2 key in the tile dictionary
         block.GetComponent<BlockController>().PlaceBlock(transform.position);
+    }
+
+    /// <summary>
+    /// Remove the object that was stored on this tile
+    /// </summary>
+    /// <param name="block"></param>
+    public void ClearTileContents()
+    {
+        if(TileContents == null)
+        {
+            print("Tile is altrady empty");
+            return;
+        }
+        
+        TileContents = null;
+
     }
 
 

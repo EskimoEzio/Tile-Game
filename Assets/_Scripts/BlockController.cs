@@ -67,7 +67,6 @@ public class BlockController : MonoBehaviour
         BlockProperties = GetComponent<BlockProperties>();
         spikeManager = spikeHolder.GetComponent<SpikeManager>();
         
-
     }
 
     private void Start()
@@ -279,6 +278,21 @@ public class BlockController : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Break the block, removing it from the board and putting it in the graveyard
+    /// </summary>
+    public void GetBroken()
+    {
+        // Trigger an on break event
+        RemoveFromTile();
+        BlockProperties.CurrentLocation = GameTypes.BlockLocation.Graveyard;
+    }
+
+    public void RemoveFromTile()
+    {
+        Tile tile = GridManager.Instance.Tiles[transform.position];
+        tile.ClearTileContents();
+    }
 
 
     #region Team Management

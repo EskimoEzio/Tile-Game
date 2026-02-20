@@ -29,6 +29,8 @@ public class AttackDelayUpgrade : BlockUpgrade, IPlaceUpgrade, ITurnStartUpgrade
     {
         remainingTurns--;
 
+        if (BlockController.BlockProperties.CurrentLocation != GameTypes.BlockLocation.Board) return; //if the block is not on the board then skip
+
         if (remainingTurns <= 0)
         {
             BlockController.Target();  // by default when the delay is over, it will continue to targeting (followed by attacking)
