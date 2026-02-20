@@ -4,7 +4,7 @@ public class RetalliateUpgrade : BlockUpgrade, IGetHitUpgrade, ITurnStartUpgrade
 {
     public override int UpgradeID => 6;
     public int getHitBehaviourPriority => 0;
-    public bool isBeforeCapture => false; //this has to happen after capture, as it only retaliates if the capture failed
+    public bool isBeforeCapture => false; //this has to happen after capture, as it only retaliates if the capture failed - Iactually think this is incorrect now, as i can pass in the isCaptured bool to determine, this. However, i am leaving it as it is atm, becuase it having it after also seems okay for now
 
     public int turnStartBehaviourPriority => 0;
 

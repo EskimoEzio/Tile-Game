@@ -68,7 +68,8 @@ public class UpgradeManager : MonoBehaviour
         //AddUpgrade(new OnlyHitAllyUpgrade()); 
         //AddUpgrade(new AttackDelay()); 
         //AddUpgrade(new RetalliateUpgrade()); 
-        AddUpgrade(new MomentumUpgrade()); 
+        //AddUpgrade(new MomentumUpgrade()); 
+        //AddUpgrade(new FragileUpgrade()); 
     }
 
 

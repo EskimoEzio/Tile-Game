@@ -189,7 +189,7 @@ public class BlockProperties : MonoBehaviour
                 // what should happen
                 break;
             case GameTypes.BlockLocation.Graveyard:
-                print(BlockData.name + " has been sent to the graveyard");
+                print(BlockData.BlockName + " has been sent to the graveyard");
 
                 gameObject.transform.position = new Vector2(100, 100); // this is an arbitrary location for now so that it is no longer visible. This will be changed when i implement a proper graveyard
 
