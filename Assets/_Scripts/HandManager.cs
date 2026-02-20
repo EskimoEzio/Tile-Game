@@ -196,12 +196,7 @@ public class HandManager : MonoBehaviour
     /// <param name="blockProperties"></param>
     void TrackLuck(BlockProperties blockProperties) //This is a mostly useless function that will count the total number of spikes drawn
     {
-
-        foreach(int power in blockProperties.PowerDict.Values)
-        {
-            luck += power;
-        }
-        
+        luck += blockProperties.TotalPower;
     }
 
 

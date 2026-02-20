@@ -104,8 +104,8 @@ public class BlockController : MonoBehaviour
     IEnumerator PlaceBehaviour() //Place shake, check place upgrades and move to targeting
     {
 
-        float shakeDuration = 0.15f;
-        float magnitude = 0.08f;
+        float shakeDuration = 0.1f + BlockProperties.TotalPower * 0.0025f;
+        float magnitude = 0.05f + BlockProperties.TotalPower * 0.004f;
         Vector2 originalPos = transform.localPosition;
         float timeElapsed = 0f;
 

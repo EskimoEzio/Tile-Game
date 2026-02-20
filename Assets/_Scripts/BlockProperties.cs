@@ -26,6 +26,8 @@ public class BlockProperties : MonoBehaviour
     private int minimumRange = 1;
     private int minimumPower = 0;
     private int maximumPower = 5;
+    public int TotalPower { get; private set; }
+
     #endregion
 
 
@@ -97,11 +99,11 @@ public class BlockProperties : MonoBehaviour
 
         blockController.spikeManager.UpdateVisibleSpikes();
 
-        int counter = 0;
+        TotalPower = 0;
 
         foreach(int pow in PowerDict.Values)
         {
-            counter += pow;
+            TotalPower += pow;
         }
 
     }
