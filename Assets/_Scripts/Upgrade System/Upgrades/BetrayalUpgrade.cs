@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 
+[Serializable]
 public class BetrayalUpgrade : BlockUpgrade, IPlaceUpgrade, ITurnStartUpgrade
 {
     public override int UpgradeID { get; } = 4;
@@ -10,7 +12,8 @@ public class BetrayalUpgrade : BlockUpgrade, IPlaceUpgrade, ITurnStartUpgrade
     public int turnStartBehaviourPriority { get; private set; } = 5; // thus is the highest priority atm, so it will change team before anything else at the start of turn
     public bool isCurrentlyTrackingTurnStart { get; set; } = false;
 
-    public int turnDelay = 2; // this means by default it will change on your next turn
+
+    [SerializeField] private int turnDelay = 2; // this means by default it will change on your next turn
     private int remainingTurns;
 
     // After n turns, at the start of the turn, change team. 1 means change team at the start of the next turn. This does not inherently cause an attack

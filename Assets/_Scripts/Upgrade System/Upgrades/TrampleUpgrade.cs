@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 
+[Serializable]
 public class TrampleUpgrade : BlockUpgrade, IOnHitUpgrade
 {
     public override int UpgradeID => 5;

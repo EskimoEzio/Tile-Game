@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 
+[Serializable]
 public class OnlyHitAllyUpgrade : BlockUpgrade, IAttackConditionUpgrade
 {
     public override int UpgradeID => 0;

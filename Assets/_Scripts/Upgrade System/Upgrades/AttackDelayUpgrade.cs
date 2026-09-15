@@ -13,8 +13,7 @@ public class AttackDelayUpgrade : BlockUpgrade, IPlaceUpgrade, ITurnStartUpgrade
     public int turnStartBehaviourPriority { get; private set; } = 0;
     public bool isCurrentlyTrackingTurnStart { get; set; } = false;
 
-    [SerializeField]
-    private int turnDelay = 2; // this needs to be serialised as it is for configuration
+    [SerializeField] private int turnDelay = 2; // this needs to be serialised as it is for configuration
 
     private int remainingTurns; // this doesn't need to be serialised as it is runtime data, that does not need to be changed in the inspector
 
@@ -37,7 +36,6 @@ public class AttackDelayUpgrade : BlockUpgrade, IPlaceUpgrade, ITurnStartUpgrade
 
         if (remainingTurns <= 0)
         {
-            Debug.Log("Attack");
             BlockController.Target();  // by default when the delay is over, it will continue to targeting (followed by attacking)
             isCurrentlyTrackingTurnStart = false;
             

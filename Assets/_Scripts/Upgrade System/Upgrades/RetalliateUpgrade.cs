@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 
+[Serializable]
 public class RetalliateUpgrade : BlockUpgrade, IGetHitUpgrade, ITurnStartUpgrade
 {
     public override int UpgradeID => 6;

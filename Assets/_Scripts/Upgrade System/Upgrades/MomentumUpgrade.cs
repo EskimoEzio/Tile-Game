@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 
+[Serializable]
 public class MomentumUpgrade : BlockUpgrade, ITurnStartUpgrade, IStatUpgrade
 {
 
@@ -8,8 +10,9 @@ public class MomentumUpgrade : BlockUpgrade, ITurnStartUpgrade, IStatUpgrade
     public int turnStartBehaviourPriority { get; private set; } = 0;
     public bool isCurrentlyTrackingTurnStart { get; set; } = true;
 
-    int powerIncrease = 1;
-    int numberOfIncreases = 2; // this means that it will pick a random side and add 1 power, then repeat 2 times
+
+    [SerializeField] private int powerIncrease = 1;
+    [SerializeField] private int numberOfIncreases = 2; // this means that it will pick a random side and add 1 power, then repeat 2 times
 
     
 

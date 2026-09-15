@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
+[Serializable]
 public class MortarUpgrade: BlockUpgrade, ITargetReplacementUpgrade
 {
     public override int UpgradeID => 2;

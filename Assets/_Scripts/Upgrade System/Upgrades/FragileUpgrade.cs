@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 
+[Serializable]
 public class FragileUpgrade : BlockUpgrade, IGetHitUpgrade
 {
     public override int UpgradeID => 7;
