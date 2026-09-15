@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 
+[Serializable]
 public class AttackDelayUpgrade : BlockUpgrade, IPlaceUpgrade, ITurnStartUpgrade
 {
 
@@ -11,8 +13,10 @@ public class AttackDelayUpgrade : BlockUpgrade, IPlaceUpgrade, ITurnStartUpgrade
     public int turnStartBehaviourPriority { get; private set; } = 0;
     public bool isCurrentlyTrackingTurnStart { get; set; } = false;
 
-    public int turnDelay = 2;
-    private int remainingTurns;
+    [SerializeField]
+    private int turnDelay = 2; // this needs to be serialised as it is for configuration
+
+    private int remainingTurns; // this doesn't need to be serialised as it is runtime data, that does not need to be changed in the inspector
 
     // This upgrade causes the block to wait n turns before targeting and then attacking.
     // The block will attack at the start of the turn, before you can make an action. for this purpose waiting 1 turn will cause it to activate at the start of the enemies turn. waiting 2 will cause it to attack at the start of players next turn
