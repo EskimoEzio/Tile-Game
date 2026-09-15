@@ -128,8 +128,7 @@ public class {className} : BlockUpgrade
 {{
     public override int UpgradeID {{ get; }} = {nextUpgradeID};
 
-    [SerializeField]
-    private int exampleValue = 0;
+    [SerializeField] private int exampleValue = 0;
 }}
 ";
 

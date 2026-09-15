@@ -4,7 +4,7 @@ using UnityEngine;
 [Serializable]
 public class MomentumUpgrade : BlockUpgrade, ITurnStartUpgrade, IStatUpgrade
 {
-    // this grants an increase of x power on y number of sides at every n turns. it focuses on turns not round 
+    // this grants an increase of x every n turns. it focuses on turns not rounds
     public override int UpgradeID { get; } = 3;
 
     public int turnStartBehaviourPriority { get; private set; } = 0;

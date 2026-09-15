@@ -30,9 +30,9 @@ public class AttackDelayUpgrade : BlockUpgrade, IPlaceUpgrade, ITurnStartUpgrade
 
     public void TurnStartBehaviour(GameTypes.Turn turn)
     {
-        remainingTurns--;
-
         if (BlockController.BlockProperties.CurrentLocation != GameTypes.BlockLocation.Board) return; //if the block is not on the board then skip
+
+        remainingTurns--;
 
         if (remainingTurns <= 0)
         {

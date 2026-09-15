@@ -173,6 +173,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bd72b71c8dd04e342bc624634087d80f, type: 2}
   - {fileID: 11400000, guid: fd71c2ad4f30ca24192b0c12b5813aa9, type: 2}
   - {fileID: 11400000, guid: 522c6a6893ed058408ddfc0aac983d48, type: 2}
+  - {fileID: 11400000, guid: 1f2945d917f149f4ebd54ddbf4544774, type: 2}
+  - {fileID: 11400000, guid: 1f2945d917f149f4ebd54ddbf4544774, type: 2}
   blockPrefab: {fileID: 7122137912856460361, guid: df82d0d1940e2434c800a6996f89a1ed, type: 3}
   handTeam: 0
   blockGap: 0.2

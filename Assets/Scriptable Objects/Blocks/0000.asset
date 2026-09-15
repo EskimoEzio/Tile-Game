@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 646e434ff1c50854e959755b287c92c3, type: 3}
-  m_Name: 1531
+  m_Name: 0000
   m_EditorClassIdentifier: 
-  BlockName: Cat
-  Sprite: {fileID: 1287677828, guid: 748dbb09c30783f4eb2c51cf3bedca50, type: 3}
-  PowerValues: 01000000050000000300000001000000
+  BlockName: Egg
+  Sprite: {fileID: 8336837381610036703, guid: a06925e394f9aac4088cb0eb7a77aa0b, type: 3}
+  PowerValues: 00000000000000000000000000000000
   attackRange: 1
   DefaultUpgrades: []
   references:

@@ -93,6 +93,9 @@ public class BlockController : MonoBehaviour
 
         SetBlockColour();
 
+        // ensure that upgrade list is cleared
+        upgradeManager.RemoveAllUpgrades();
+
         // Add default upgrades
         foreach (BlockUpgrade upgrade in BlockProperties.BlockData.CreateRuntimeUpgrades())
         {

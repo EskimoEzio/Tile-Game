@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 [RequireComponent(typeof(BlockController))]
 public class BlockProperties : MonoBehaviour
@@ -72,13 +73,30 @@ public class BlockProperties : MonoBehaviour
 
         Debug.Assert(BlockData.PowerValues.Length == 4, "The length of the power list is not 4" + gameObject.name); //raises an error if the power list length is not 4
 
-        foreach (GameTypes.DirectionEnum direction in GameTypes.AllDirections)
+        if(PowerDict.Keys.Count == 0) // if there is not already a power dicitonary create an populate it
         {
-            BasePowerDict.Add(direction, BlockData.PowerValues[(int)direction]); //Create the base power dictionary
-            BonusPowerDict.Add(direction, 0); //Bonus values start at 0, adjusted in the other functions
-            PowerDict.Add(direction, BlockData.PowerValues[(int)direction]); // create the empty dictionary for the final power values, the values will be filled when upgrades are checked
+            foreach (GameTypes.DirectionEnum direction in GameTypes.AllDirections)
+            {
+                BasePowerDict.Add(direction, 0); //Create the base power dictionary
+                BonusPowerDict.Add(direction, 0); //Bonus values start at 0, adjusted in the other functions
+                PowerDict.Add(direction, 0); // create the empty dictionary for the final power values, the values will be filled when upgrades are checked
+            }
         }
         
+        if(BasePowerDict.Count != 4)
+        {
+            Debug.Assert(BasePowerDict.Keys.Count == 4, "The length of the BasePowerDict is not 4" + gameObject.name); // the base power dict does not 4 exactly 4 keyvalue pairs, this will is a fundamental issue
+            Debug.Assert(BonusPowerDict.Keys.Count == 4, "The length of the BonusPowerDict is not 4" + gameObject.name); // the bonus power dict does not 4 exactly 4 keyvalue pairs, this will is a fundamental issue
+            Debug.Assert(PowerDict.Keys.Count == 4, "The length of the PowerDict is not 4" + gameObject.name); // the  power dict does not 4 exactly 4 keyvalue pairs, this will is a fundamental issue
+        }
+
+        //populate the powerdicts, this is seperated for the case where a block is being initialised for a second time, so it already has a power dict but needs to update values (e.g. evolve upgrade)
+        foreach (GameTypes.DirectionEnum direction in GameTypes.AllDirections)
+        {
+            BasePowerDict[direction] = BlockData.PowerValues[(int)direction]; //Create the base power dictionary
+            PowerDict[direction] = BlockData.PowerValues[(int)direction]; // create the empty dictionary for the final power values, the values will be filled when upgrades are checked
+        }
+
        UpdateStats();
 
     }

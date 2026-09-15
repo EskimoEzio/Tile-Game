@@ -5,10 +5,12 @@ using UnityEngine;
 using System.Linq; // This is necessary for the sorting of the lists by two values
 public class UpgradeManager : MonoBehaviour
 {
-    #region Fields/Variables
+    
     private BlockController blockController;
 
 
+    //keep in mind that any additions to this will need to be reflected i nthe AddUpgrad and RemoveUpgrade methods
+    #region Upgrade Lists & Fields 
     private List<BlockUpgrade> blockUpgrades = new();
 
     //Stats
@@ -16,6 +18,10 @@ public class UpgradeManager : MonoBehaviour
 
     //Turn Start
     private List<ITurnStartUpgrade> turnStartUpgrades = new();
+
+    //Turn End
+    private List<ITurnEndUpgrade> turnEndUpgrades = new();
+
 
     //Place
     private List<IPlaceUpgrade> placeUpgrades = new();
@@ -40,18 +46,18 @@ public class UpgradeManager : MonoBehaviour
     //GetHit
     private List<IGetHitUpgrade> getHitUpgrades = new();
 
-
-
-    #endregion
+    #endregion 
 
     private void OnEnable()
     {
         TurnManager.Instance.OnTurnStarted += CheckTurnStartUpgrades;
+        TurnManager.Instance.OnTurnEnded += CheckTurnEndUpgrades;
     }
 
     private void OnDisable()
     {
         TurnManager.Instance.OnTurnStarted -= CheckTurnStartUpgrades;
+        TurnManager.Instance.OnTurnEnded -= CheckTurnEndUpgrades;
     }
 
 
@@ -90,6 +96,16 @@ public class UpgradeManager : MonoBehaviour
                 .ToList();
         }
 
+        // this was copied/altered from the turnstart code above
+        if (upgrade is ITurnEndUpgrade turnEndUpgrade)
+        {
+            turnEndUpgrades.Add(turnEndUpgrade);
+
+            turnEndUpgrades = turnEndUpgrades // This sorts the list by priority bracket, then by block ID (within brackets)
+                .OrderByDescending(u => u.turnEndBehaviourPriority)
+                .ThenBy(u => (u as BlockUpgrade)?.UpgradeID ?? int.MaxValue) // the extra is needed as the UpgradeID is in the base class, not the Interface
+                .ToList();
+        }
 
 
         if (upgrade is IPlaceUpgrade placeUpgrade)
@@ -137,15 +153,106 @@ public class UpgradeManager : MonoBehaviour
     }
 
 
+    public void RemoveUpgrade(BlockUpgrade upgrade)
+    {
+        if (!blockUpgrades.Contains(upgrade)) // if the upgrade is not in the list of upgrades then return
+        {
+            return;
+        }
+
+        blockUpgrades.Remove(upgrade);
+
+        // Remove from specific upgrade type lists
+
+        if (upgrade is ITurnStartUpgrade turnStartUpgrade)
+        {
+            turnStartUpgrades.Remove(turnStartUpgrade);
+        }
+        if (upgrade is ITurnEndUpgrade turnEndUpgrade)
+        {
+            turnEndUpgrades.Remove(turnEndUpgrade);
+        }
+
+
+        if (upgrade is IPlaceUpgrade placeUpgrade)
+        {
+            placeUpgrades.Remove(placeUpgrade);
+        }
+
+        if (upgrade is ITargetReplacementUpgrade tarRepUpgrade) 
+        {
+            targetReplacementUpgrade = null; 
+        }
+
+        if (upgrade is ITargetUpgrade targetUpgrade)
+        {
+            targetUpgrades.Remove(targetUpgrade);
+        }
+
+        if (upgrade is IAttackUpgrade attackUpgrade)
+        {
+            attackUpgrades.Remove(attackUpgrade);
+        }
+
+
+        if (upgrade is IAttackConditionUpgrade attackConditionUpgrade)
+        {
+            attackConditionUpgrades.Remove(attackConditionUpgrade);
+        }
+
+        if (upgrade is IOnHitUpgrade onHitUpgrade)
+        {
+            onHitUpgrades.Remove(onHitUpgrade);
+        }
+
+        if (upgrade is IGetHitUpgrade getHitUpgrade)
+        {
+            getHitUpgrades.Remove(getHitUpgrade);
+        }
+    }
+
+    /// <summary>
+    /// Removes all upgrades from main and sub lists
+    /// </summary>
+    public void RemoveAllUpgrades()
+    {
+        blockUpgrades.Clear();
+
+        turnStartUpgrades.Clear();
+        turnEndUpgrades.Clear();
+        placeUpgrades.Clear();
+        targetReplacementUpgrade = null;
+        targetUpgrades.Clear();
+        attackUpgrades.Clear();
+        attackConditionUpgrades.Clear();
+        onHitUpgrades.Clear();
+        getHitUpgrades.Clear();
+
+    }
+
+
+
     public void CheckTurnStartUpgrades(GameTypes.Turn turn)
     {
-        foreach(ITurnStartUpgrade turnStartUpgrade in turnStartUpgrades)
+        foreach(ITurnStartUpgrade turnStartUpgrade in turnStartUpgrades.ToList()) // the .ToList() creates a copy so that any changes to the original list will not prevent this from running, this allows for upgrades to be deleted, but still counted the final time
         {
             if (turnStartUpgrade.isCurrentlyTrackingTurnStart)
             {
                 turnStartUpgrade.TurnStartBehaviour(turn);
             }
             
+        }
+    }
+
+    public void CheckTurnEndUpgrades(GameTypes.Turn turn)
+    {
+        foreach (ITurnEndUpgrade turnEndUpgrade in turnEndUpgrades.ToList())
+        {
+            if (turnEndUpgrade.isCurrentlyTrackingTurnEnd)
+            {
+                turnEndUpgrade.TurnEndBehaviour(turn);
+            }
+
         }
     }
 
@@ -158,7 +265,7 @@ public class UpgradeManager : MonoBehaviour
     {
         bool preventInitialTargeting = false; //this is the invers of what will be returned
 
-        foreach(IPlaceUpgrade placeUpgrade in placeUpgrades)
+        foreach(IPlaceUpgrade placeUpgrade in placeUpgrades.ToList())
         {
             if (placeUpgrade.preventInitialTargeting)
             {
@@ -207,7 +314,7 @@ public class UpgradeManager : MonoBehaviour
     public bool CheckAttackConditionUpgrades(BlockController targetBlockController) // I may choose to separate atack conditions so that they arte not a subset of attackUpgrades as i suspect they will be handled completly differently
     {
 
-        foreach (IAttackConditionUpgrade conditionUpgrade in attackConditionUpgrades)
+        foreach (IAttackConditionUpgrade conditionUpgrade in attackConditionUpgrades.ToList())
         {
 
             //print(conditionUpgrade.OverwriteAllyCheck);
@@ -238,7 +345,7 @@ public class UpgradeManager : MonoBehaviour
 
     public void CheckOnHitUpgrades(bool didCapture, int attackPower, GameTypes.DirectionEnum attackDir, BlockController defender)
     {
-        foreach (IOnHitUpgrade onHitUpgrade in onHitUpgrades)
+        foreach (IOnHitUpgrade onHitUpgrade in onHitUpgrades.ToList())
         {
             onHitUpgrade.OnHitBehaviour(didCapture, attackPower, attackDir, defender);
         }
@@ -247,7 +354,7 @@ public class UpgradeManager : MonoBehaviour
 
     public void CheckGetHitUpgrades(bool isBeforeCapture, bool isCaptured, int attackPower, GameTypes.DirectionEnum defendDir, BlockController attacker)
     {
-        foreach (IGetHitUpgrade getHitUpgrade in getHitUpgrades)
+        foreach (IGetHitUpgrade getHitUpgrade in getHitUpgrades.ToList())
         {
             if(isBeforeCapture == getHitUpgrade.isBeforeCapture) //if the bool passed into hte function matches when the upgrade says it should apply then run the upgrade
             {
