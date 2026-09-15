@@ -123,4 +123,46 @@ public class BlockDataEditor : Editor
         serializedObject.ApplyModifiedProperties();
     }
 
+
+    private void DrawUpgrade(SerializedProperty element, int index)
+    {
+        EditorGUILayout.BeginVertical("box");
+
+        // Upgrade name
+        if (element.managedReferenceValue != null)
+        {
+            string upgradeName =
+                element.managedReferenceValue.GetType().Name;
+
+            EditorGUILayout.LabelField(
+                upgradeName,
+                EditorStyles.boldLabel);
+        }
+
+        // Draw the upgrade's actual fields
+        SerializedProperty childProperty = element.Copy();
+        SerializedProperty endProperty = childProperty.GetEndProperty();
+
+        childProperty.NextVisible(true);
+
+        while (!SerializedProperty.EqualContents(childProperty, endProperty))
+        {
+            EditorGUILayout.PropertyField(childProperty, true);
+            childProperty.NextVisible(false);
+        }
+
+        EditorGUILayout.Space();
+
+        if (GUILayout.Button("Remove"))
+        {
+            Undo.RecordObject(target, "Remove Block Upgrade");
+
+            upgradesProp.DeleteArrayElementAtIndex(index);
+            GUIUtility.ExitGUI();
+        }
+
+        EditorGUILayout.EndVertical();
+    }
+
+
 }
