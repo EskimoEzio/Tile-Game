@@ -5,6 +5,10 @@ using UnityEngine;
 [CustomEditor(typeof(BlockData))]
 public class BlockDataEditor : Editor
 {
+
+    private bool upgradesFoldout = true;
+
+
     private SerializedProperty blockNameProp;
     private SerializedProperty spriteProp;
     private SerializedProperty powerValuesProp;
@@ -35,66 +39,79 @@ public class BlockDataEditor : Editor
 
         // This is for the upgrades which Unity could not Serialise by default
 
-        EditorGUILayout.LabelField("Default Upgrades", EditorStyles.boldLabel);
+        //EditorGUILayout.LabelField("Default Upgrades", EditorStyles.boldLabel);
 
-        for (int i = 0; i < upgradesProp.arraySize; i++)
+        upgradesFoldout = EditorGUILayout.Foldout(upgradesFoldout, "Default Upgrades", true, EditorStyles.foldoutHeader);
+
+        if (upgradesFoldout)
         {
-            SerializedProperty element = upgradesProp.GetArrayElementAtIndex(i);
 
-            EditorGUILayout.BeginVertical("box");
-
-            if (element.managedReferenceValue != null)
+            for (int i = 0; i < upgradesProp.arraySize; i++)
             {
-                EditorGUILayout.LabelField(
-                    element.managedReferenceValue.GetType().Name,
-                    EditorStyles.boldLabel);
-            }
-            else
-            {
-                EditorGUILayout.LabelField("Empty Upgrade", EditorStyles.boldLabel);
-            }
+                SerializedProperty element = upgradesProp.GetArrayElementAtIndex(i);
 
-            EditorGUILayout.PropertyField(element, true);
+                EditorGUILayout.BeginVertical("box");
 
+                EditorGUILayout.BeginHorizontal();
+
+                if (element.managedReferenceValue != null)
+                {
+                    string upgradeName =
+                        GetUpgradeDisplayName(
+                            (BlockUpgrade)element.managedReferenceValue);
+
+                    EditorGUILayout.LabelField(
+                        upgradeName,
+                        EditorStyles.boldLabel);
+                }
+                else
+                {
+                    EditorGUILayout.LabelField(
+                        "Empty Upgrade",
+                        EditorStyles.boldLabel);
+                }
+
+                if (GUILayout.Button("X", GUILayout.Width(25)))
+                {
+                    Undo.RecordObject(target, "Remove Block Upgrade");
+
+                    upgradesProp.DeleteArrayElementAtIndex(i);
+                    break;
+                }
+
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.PropertyField(element, GUIContent.none, true);
+
+
+                EditorGUILayout.EndVertical();
+            }
 
             EditorGUILayout.Space();
-            // to remove upgrades through the inspector
-            if (GUILayout.Button("Remove"))
-            {
-                Undo.RecordObject(target, "Remove Block Upgrade");
 
-                upgradesProp.DeleteArrayElementAtIndex(i);
-                break;
+            // This handles the "Add Upgrade button"
+            if (GUILayout.Button("+ Add Upgrade"))
+            {
+                GenericMenu menu = new GenericMenu();
+
+                foreach (Type type in TypeCache.GetTypesDerivedFrom<BlockUpgrade>())
+                {
+                    if (type.IsAbstract)
+                        continue;
+
+                    Type selectedType = type;
+
+                    menu.AddItem(
+                        new GUIContent(selectedType.Name),
+                        false,
+                        () => AddUpgrade(selectedType)
+                    );
+                }
+
+                menu.ShowAsContext();
             }
 
-
-            EditorGUILayout.EndVertical();
         }
-
-        EditorGUILayout.Space();
-
-        // This handles the "Add Upgrade button"
-        if (GUILayout.Button("+ Add Upgrade"))
-        {
-            GenericMenu menu = new GenericMenu();
-
-            foreach (Type type in TypeCache.GetTypesDerivedFrom<BlockUpgrade>())
-            {
-                if (type.IsAbstract)
-                    continue;
-
-                Type selectedType = type;
-
-                menu.AddItem(
-                    new GUIContent(selectedType.Name),
-                    false,
-                    () => AddUpgrade(selectedType)
-                );
-            }
-
-            menu.ShowAsContext();
-        }
-
 
         serializedObject.ApplyModifiedProperties();
 
@@ -124,45 +141,25 @@ public class BlockDataEditor : Editor
     }
 
 
-    private void DrawUpgrade(SerializedProperty element, int index)
+    // This method is soley to make upgrade names display in a nicer way in the incpector (with spaces in between words)
+    private string GetUpgradeDisplayName(BlockUpgrade upgrade)
     {
-        EditorGUILayout.BeginVertical("box");
+        string name = upgrade.GetType().Name;
 
-        // Upgrade name
-        if (element.managedReferenceValue != null)
+        if (name.EndsWith("Upgrade"))
         {
-            string upgradeName =
-                element.managedReferenceValue.GetType().Name;
-
-            EditorGUILayout.LabelField(
-                upgradeName,
-                EditorStyles.boldLabel);
+            name = name.Substring(
+                0,
+                name.Length - "Upgrade".Length);
         }
 
-        // Draw the upgrade's actual fields
-        SerializedProperty childProperty = element.Copy();
-        SerializedProperty endProperty = childProperty.GetEndProperty();
+        //This part finds capital Letters
+        System.Text.RegularExpressions.Regex regex =
+            new System.Text.RegularExpressions.Regex(
+                "(?<!^)([A-Z])");
 
-        childProperty.NextVisible(true);
+        name = regex.Replace(name, " $1");
 
-        while (!SerializedProperty.EqualContents(childProperty, endProperty))
-        {
-            EditorGUILayout.PropertyField(childProperty, true);
-            childProperty.NextVisible(false);
-        }
-
-        EditorGUILayout.Space();
-
-        if (GUILayout.Button("Remove"))
-        {
-            Undo.RecordObject(target, "Remove Block Upgrade");
-
-            upgradesProp.DeleteArrayElementAtIndex(index);
-            GUIUtility.ExitGUI();
-        }
-
-        EditorGUILayout.EndVertical();
+        return name ; // This originally contained "+ Upgrade" but i think it is better without
     }
-
-
 }
