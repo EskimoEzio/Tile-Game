@@ -4,8 +4,8 @@ using UnityEngine;
 [Serializable]
 public class MomentumUpgrade : BlockUpgrade, ITurnStartUpgrade, IStatUpgrade
 {
-
-    public override int UpgradeID { get; } = 6;
+    // this grants an increase of x power on y number of sides at every n turns. it focuses on turns not round 
+    public override int UpgradeID { get; } = 3;
 
     public int turnStartBehaviourPriority { get; private set; } = 0;
     public bool isCurrentlyTrackingTurnStart { get; set; } = true;
@@ -19,11 +19,8 @@ public class MomentumUpgrade : BlockUpgrade, ITurnStartUpgrade, IStatUpgrade
     public void TurnStartBehaviour(GameTypes.Turn turn)
     {
         if (BlockController.BlockProperties.CurrentLocation != GameTypes.BlockLocation.Board) return; //if the block is not on the board then skip
-        
-        if(GameUtilities.CheckTurnMatchTeam(turn, BlockController.BlockProperties.CurrentTeam)) 
-        {
-            ApplyStatUpgrade(BlockController.BlockProperties);
-        }
+
+        ApplyStatUpgrade(BlockController.BlockProperties);
     }
 
     public void ApplyStatUpgrade(BlockProperties blockProperties)
