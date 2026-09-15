@@ -37,7 +37,6 @@ public class BlockData : ScriptableObject
             JsonUtility.FromJsonOverwrite(json, runtimeUpgrade);
 
             runtimeUpgrades.Add(runtimeUpgrade);
-            Debug.Log($"Creating runtime upgrade: {configuredUpgrade.GetType().Name}");
 
         }
 

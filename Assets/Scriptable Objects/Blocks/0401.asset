@@ -17,11 +17,11 @@ MonoBehaviour:
   PowerValues: 00000000040000000000000001000000
   attackRange: 1
   DefaultUpgrades:
-  - rid: 2704476804372234308
+  - rid: 2704476804372234314
   references:
     version: 2
     RefIds:
-    - rid: 2704476804372234308
+    - rid: 2704476804372234314
       type: {class: AttackDelayUpgrade, ns: , asm: Assembly-CSharp}
       data:
         turnDelay: 1
