@@ -92,11 +92,18 @@ public class BlockController : MonoBehaviour
         artHolderRenderer.sprite = BlockProperties.BlockData.Sprite;
 
         SetBlockColour();
+
+        // Add default upgrades
+        foreach (BlockUpgrade upgrade in BlockProperties.BlockData.CreateRuntimeUpgrades())
+        {
+            upgradeManager.AddUpgrade(upgrade);
+        }
     }
 
 
     public void PlaceBlock(Vector2 tilePos)
     {
+        BlockProperties.CurrentLocation = GameTypes.BlockLocation.Board;
         CoroutineRegistry.RunAndTrack(this, PlaceBehaviour(), true); // this handles shaking, place upgrades and and moves to targeting
         
     }

@@ -47,7 +47,6 @@ public class BlockProperties : MonoBehaviour
             if (_currentLocation == value) return;
 
             _currentLocation = value; // Save the new data
-
             HandleLocationChange(value);
         }
     }

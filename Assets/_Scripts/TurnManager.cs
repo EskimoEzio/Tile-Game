@@ -104,7 +104,7 @@ public class TurnManager : MonoBehaviour
         CurrentTurn = turn;
         NextTurn = GameUtilities.ToggleTurn(turn); //by default the next players turn is the opposite of this players turn - this may change (allowing for multiple turns in a row
 
-        print(CurrentTurn + "'s Turn");
+        //print(CurrentTurn + "'s Turn");
 
         OnTurnStarted?.Invoke(CurrentTurn);
 

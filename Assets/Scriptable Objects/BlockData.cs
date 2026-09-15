@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "BlockData", menuName = "Scriptable Objects/BlockData")]
@@ -14,5 +15,33 @@ public class BlockData : ScriptableObject
     
     [SerializeReference] //serialise reference is used instead of field as the upgrade types can vary (block upgrade is abstract)
     public List<BlockUpgrade> DefaultUpgrades = new(); //This is the list of the upgrades held by a blick by default.
+
+    
+    // This creates the runtime copies of the upgrades that actually get added to the upgrade manager
+    public List<BlockUpgrade> CreateRuntimeUpgrades()
+    {
+        List<BlockUpgrade> runtimeUpgrades = new();
+
+        foreach (BlockUpgrade configuredUpgrade in DefaultUpgrades)
+        {
+            if (configuredUpgrade == null)
+                continue;
+
+            BlockUpgrade runtimeUpgrade =
+                (BlockUpgrade)Activator.CreateInstance(
+                    configuredUpgrade.GetType());
+
+            // THis gets the serialised upgrade info and converts it into a usable form
+            string json = JsonUtility.ToJson(configuredUpgrade);
+
+            JsonUtility.FromJsonOverwrite(json, runtimeUpgrade);
+
+            runtimeUpgrades.Add(runtimeUpgrade);
+            Debug.Log($"Creating runtime upgrade: {configuredUpgrade.GetType().Name}");
+
+        }
+
+        return runtimeUpgrades;
+    }
 
 }

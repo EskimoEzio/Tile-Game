@@ -16,3 +16,12 @@ MonoBehaviour:
   Sprite: {fileID: -918905371, guid: 748dbb09c30783f4eb2c51cf3bedca50, type: 3}
   PowerValues: 00000000040000000000000001000000
   attackRange: 1
+  DefaultUpgrades:
+  - rid: 2704476804372234308
+  references:
+    version: 2
+    RefIds:
+    - rid: 2704476804372234308
+      type: {class: AttackDelayUpgrade, ns: , asm: Assembly-CSharp}
+      data:
+        turnDelay: 1

@@ -32,13 +32,16 @@ public class AttackDelayUpgrade : BlockUpgrade, IPlaceUpgrade, ITurnStartUpgrade
     public void TurnStartBehaviour(GameTypes.Turn turn)
     {
         remainingTurns--;
-
+        Debug.Log(remainingTurns);
+        Debug.Log(BlockController.BlockProperties.CurrentLocation);
         if (BlockController.BlockProperties.CurrentLocation != GameTypes.BlockLocation.Board) return; //if the block is not on the board then skip
 
         if (remainingTurns <= 0)
         {
+            Debug.Log("Attack");
             BlockController.Target();  // by default when the delay is over, it will continue to targeting (followed by attacking)
             isCurrentlyTrackingTurnStart = false;
+            
         }
     }
 }

@@ -66,14 +66,14 @@ public class UpgradeManager : MonoBehaviour
         //AddUpgrade(new BetrayalUpgrade());
         //AddUpgrade(new MortarUpgrade());
         //AddUpgrade(new OnlyHitAllyUpgrade()); 
-        //AddUpgrade(new AttackDelay()); 
+        //AddUpgrade(new AttackDelayUpgrade()); 
         //AddUpgrade(new RetalliateUpgrade()); 
         //AddUpgrade(new MomentumUpgrade()); 
         //AddUpgrade(new FragileUpgrade()); 
     }
 
 
-    private void AddUpgrade(BlockUpgrade upgrade)
+    public void AddUpgrade(BlockUpgrade upgrade)
     {
         blockUpgrades.Add(upgrade);
         upgrade.BlockController = blockController;
