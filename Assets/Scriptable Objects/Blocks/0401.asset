@@ -24,4 +24,4 @@ MonoBehaviour:
     - rid: 2704476804372234314
       type: {class: AttackDelayUpgrade, ns: , asm: Assembly-CSharp}
       data:
-        turnDelay: 1
+        turnDelay: 2

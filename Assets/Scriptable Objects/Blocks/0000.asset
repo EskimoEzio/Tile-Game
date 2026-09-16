@@ -13,10 +13,20 @@ MonoBehaviour:
   m_Name: 0000
   m_EditorClassIdentifier: 
   BlockName: Egg
-  Sprite: {fileID: 8336837381610036703, guid: a06925e394f9aac4088cb0eb7a77aa0b, type: 3}
+  Sprite: {fileID: 6540703491721742574, guid: c3a6e41e8895a9248a31ac95bdaaed9a, type: 3}
   PowerValues: 00000000000000000000000000000000
   attackRange: 1
-  DefaultUpgrades: []
+  DefaultUpgrades:
+  - rid: 2704476804372234326
+  - rid: 2704476804372234327
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2704476804372234326
+      type: {class: SuperFragileUpgrade, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 2704476804372234327
+      type: {class: EvolveUpgrade, ns: , asm: Assembly-CSharp}
+      data:
+        turnDelay: 2
+        evolveBlockData: {fileID: 11400000, guid: e105a9ff17f0cae4998973ba24a26846, type: 2}
