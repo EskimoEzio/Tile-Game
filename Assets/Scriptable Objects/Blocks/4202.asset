@@ -16,3 +16,11 @@ MonoBehaviour:
   Sprite: {fileID: 1435558958, guid: 748dbb09c30783f4eb2c51cf3bedca50, type: 3}
   PowerValues: 04000000020000000000000002000000
   attackRange: 1
+  DefaultUpgrades:
+  - rid: 2704476804372234329
+  references:
+    version: 2
+    RefIds:
+    - rid: 2704476804372234329
+      type: {class: FragileUpgrade, ns: , asm: Assembly-CSharp}
+      data: 

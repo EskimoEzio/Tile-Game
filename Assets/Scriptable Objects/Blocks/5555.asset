@@ -18,13 +18,14 @@ MonoBehaviour:
   attackRange: 1
   DefaultUpgrades:
   - rid: 2704476804372234321
-  - rid: 2704476804372234325
+  - rid: 2704476804372234334
   references:
     version: 2
     RefIds:
     - rid: 2704476804372234321
       type: {class: TrampleUpgrade, ns: , asm: Assembly-CSharp}
       data: 
-    - rid: 2704476804372234325
-      type: {class: SuperFragileUpgrade, ns: , asm: Assembly-CSharp}
-      data: 
+    - rid: 2704476804372234334
+      type: {class: BetrayalUpgrade, ns: , asm: Assembly-CSharp}
+      data:
+        turnDelay: 1

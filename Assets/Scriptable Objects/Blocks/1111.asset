@@ -24,5 +24,5 @@ MonoBehaviour:
     - rid: 2704476804372234322
       type: {class: MomentumUpgrade, ns: , asm: Assembly-CSharp}
       data:
-        powerIncrease: 4
-        numberOfIncreases: 1
+        powerIncrease: 2
+        numberOfIncreases: 2
