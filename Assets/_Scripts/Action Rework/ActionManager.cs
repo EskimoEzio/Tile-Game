@@ -7,7 +7,7 @@ public class ActionManager
 
 
 
-    void AttackAction(BlockController attacker)
+    public void AttackAction(BlockController attacker)
     {
         //Create Attack infor and fill it with side attack info
         AttackInfo attackInfo = new AttackInfo(attacker);
@@ -130,6 +130,11 @@ public class ActionManager
 
         foreach(TargetInfo targetInfo in sideAttackInfo.Targets)
         {
+            if (targetInfo.TargetTile.TileContents == null)
+            {
+                continue;
+            }
+
             // get the blockController on the target
             BlockController target;
             if(targetInfo.TargetTile.TileContents.TryGetComponent<BlockController>(out BlockController blockController))
