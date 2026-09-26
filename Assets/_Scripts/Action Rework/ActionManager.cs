@@ -43,7 +43,7 @@ public class ActionManager
 
 
         #region Search
-        // If there is a replacement do that instead, else do default
+        // If there is a replacement do that instead, else do default (below)
         // This does not currnetly support dynamic/conditional changes to attackrange, it only uses the static range
         for (int i = 0; i < attackInfo.Attacker.BlockProperties.AttackRange; i++)
         {
@@ -54,9 +54,10 @@ public class ActionManager
             {
                 continue;
             }
-            if(GridManager.Instance.Tiles[targetLocation] != null)
+            if(GridManager.Instance.Tiles[targetLocation].TileContents != null) // if the tile is note empty, add it to the list
             {
                 targets.Add(new TargetInfo(GridManager.Instance.Tiles[targetLocation]));
+                break;
             }
 
         }
@@ -64,7 +65,7 @@ public class ActionManager
 
 
         #region Eligibility
-        // This is only a default check for of the tile contains a block (it should as currently onlyblocks can be added to the targets list) and is the target a different team, upgrades will be able to modify/ stack on this
+        // This is only a default check for of the tile contains a block (it should as currently onlyblocks should have reached this point) and is the target a different team, upgrades will be able to modify/ stack on this
 
         List<TargetInfo> targetsToRemove = new List<TargetInfo>();
 
@@ -124,14 +125,82 @@ public class ActionManager
 
     }
 
-    void HitSequence(AttackInfo attack, SideAttackInfo sideAttack)
+    void HitSequence(AttackInfo attackInfo, SideAttackInfo sideAttackInfo)
     {
 
+        foreach(TargetInfo targetInfo in sideAttackInfo.Targets)
+        {
+            // get the blockController on the target
+            BlockController target;
+            if(targetInfo.TargetTile.TileContents.TryGetComponent<BlockController>(out BlockController blockController))
+            {
+                target = blockController;
+            }
+            else
+            {
+                continue; // if there is no block controller, move to the next targetInfo
+            }
+
+            HitInfo hitInfo = new HitInfo(attackInfo.Attacker, target, sideAttackInfo.Direction, attackInfo.Attacker.BlockProperties.PowerDict[sideAttackInfo.Direction]);
+
+            Hit(hitInfo);
+        }
 
     }
 
 
+    HitResultInfo Hit(HitInfo hitInfo)
+    {
+        HitResultInfo hitResultInfo = new HitResultInfo(false, HitOutcome.NoChange); //default values for teh hitResult
 
-#endregion
+        // Check Hit Conditions
+        // this will be further changed through upgrades, similar to serach eligibility
+        //defaul team check is below
+
+        if (hitInfo.Attacker.BlockProperties.CurrentTeam == hitInfo.Target.BlockProperties.CurrentTeam)
+        {
+            hitResultInfo.FinalOutcome = HitOutcome.NoChange;
+            hitResultInfo.HitOccurred = false;
+            return hitResultInfo;
+        }
+        
+
+        // Apply Hit Effects
+        // this is based on upgreades
+
+        hitResultInfo =  GetHit(hitInfo);
+
+        //
+
+        return hitResultInfo;
+    }
+
+
+    HitResultInfo GetHit(HitInfo hitInfo)
+    {
+        HitResultInfo hitResultInfo = new HitResultInfo(true, HitOutcome.NoChange);
+
+        // Immediate Get Hit responses
+
+        // Calculate base result - using default power check
+        if (hitInfo.CurrentPower > hitInfo.Target.BlockProperties.PowerDict[hitInfo.AttackDirection.Invert()])
+        {
+            hitResultInfo.FinalOutcome = HitOutcome.Captured;
+
+        }else
+        {
+            hitResultInfo.FinalOutcome = HitOutcome.NoChange;
+        }
+
+        // Result Get Hit responses
+
+        // Determine final result
+
+        // Resolve final result
+
+        return hitResultInfo;
+    }
+
+    #endregion
 
 }

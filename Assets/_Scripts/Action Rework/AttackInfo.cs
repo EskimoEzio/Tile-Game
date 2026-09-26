@@ -47,9 +47,34 @@ public class HitInfo
 
 
     //create constructor
+
+    public HitInfo(BlockController attacker, BlockController target, GameTypes.DirectionEnum attackDirection, int currentPower)
+    {
+        Attacker = attacker;
+        Target = target;
+        AttackDirection = attackDirection;
+        CurrentPower = currentPower;
+    }
+
 }
 
-public class HitResult
+public enum HitOutcome
 {
+    NoChange,
+    Captured,
+    Broken
+}
+
+public class HitResultInfo
+{
+
+    public bool HitOccurred;
+    public HitOutcome FinalOutcome;
+
+    public HitResultInfo(bool hitOccurred, HitOutcome finalOutcome)
+    {
+        HitOccurred = hitOccurred;
+        FinalOutcome = finalOutcome;
+    }
 
 }
