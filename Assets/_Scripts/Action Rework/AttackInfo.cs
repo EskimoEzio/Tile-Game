@@ -39,6 +39,19 @@ public class TargetInfo
 
 }
 
+public class SearchParameters
+{
+    public int Range;
+    public bool StopAtFirstOccupied = true; // this is the default behaviour
+    //public bool AlliesBlock = true; // i am not certain how i want to incorporate this, so i will ignore it for now
+
+
+    public SearchParameters(int range)
+    {
+        Range = range;
+    }
+}
+
 public class HitInfo
 {
     public BlockController Attacker;

@@ -57,6 +57,12 @@ public class UpgradeManager : MonoBehaviour
     }
 
 
+    private List<ISearchModifierUpgrade> searchModifierUpgrades = new();
+    public List<ISearchModifierUpgrade> GetSearchModifierUpgrades()
+    {
+        return searchModifierUpgrades;
+    }
+
     private void OnEnable()
     {
         TurnManager.Instance.OnTurnStarted += CheckTurnStartUpgrades;
@@ -157,6 +163,21 @@ public class UpgradeManager : MonoBehaviour
         if (upgrade is IGetHitUpgrade getHitUpgrade)
         {
             getHitUpgrades.Add(getHitUpgrade);
+        }
+
+
+
+        // New upgrade system - there has to be a better way than manually doing this
+
+        if(upgrade is ISearchReplacementUpgrade searchRep)
+        {
+            searchReplacementUpgrade = searchRep;
+
+        }
+
+        if(upgrade is ISearchModifierUpgrade searchMod)
+        {
+            searchModifierUpgrades.Add(searchMod);
         }
 
     }

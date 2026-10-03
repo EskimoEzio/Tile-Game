@@ -46,7 +46,11 @@ public class ActionManager : MonoBehaviour
     List<TargetInfo> SideTarget(AttackInfo attackInfo, GameTypes.DirectionEnum direction)
     {
         List<TargetInfo> targets = new List<TargetInfo>();
-        int modifiedRange = attackInfo.Attacker.BlockProperties.AttackRange; //by default it is the default range, it is only different if upgrades modify it below
+        //int modifiedRange = attackInfo.Attacker.BlockProperties.AttackRange; //by default it is the default range, it is only different if upgrades modify it below
+
+        SearchParameters searchParameters = new SearchParameters(attackInfo.Attacker.BlockProperties.AttackRange);
+
+        ApplySearchModifyUpgrades(attackInfo, searchParameters, direction);
 
 
         #region Search
@@ -55,11 +59,11 @@ public class ActionManager : MonoBehaviour
 
         if(attackInfo.Attacker.UpgradeManager.GetSearchReplacementUpgrade() != null)
         {
-            targets = attackInfo.Attacker.UpgradeManager.GetSearchReplacementUpgrade().Search(attackInfo, direction, modifiedRange);
+            targets = attackInfo.Attacker.UpgradeManager.GetSearchReplacementUpgrade().Search(attackInfo, direction, searchParameters);
         }
         else
         {
-            targets = DefaultSearch(attackInfo, direction, modifiedRange);
+            targets = DefaultSearch(attackInfo, direction, searchParameters);
         }
 
         
@@ -112,13 +116,12 @@ public class ActionManager : MonoBehaviour
         return targets;
     }
 
-
-    List<TargetInfo> DefaultSearch(AttackInfo attackInfo, GameTypes.DirectionEnum direction, int range)
+    List<TargetInfo> DefaultSearch(AttackInfo attackInfo, GameTypes.DirectionEnum direction, SearchParameters searchParameters)
     {
 
         List<TargetInfo> targets = new List<TargetInfo>();
 
-        for (int i = 0; i < range; i++)
+        for (int i = 0; i < searchParameters.Range; i++)
         {
             Vector2 directionOffset = direction.ToVector2() * (i + 1); // +1 as it has to start with directionVec + 1 not 0
             Vector2 targetLocation = (Vector2)attackInfo.Attacker.BlockProperties.transform.position + directionOffset;
@@ -127,10 +130,21 @@ public class ActionManager : MonoBehaviour
             {
                 continue;
             }
-            if (GridManager.Instance.Tiles[targetLocation].TileContents != null) // if the tile is note empty, add it to the list
+            if (GridManager.Instance.Tiles[targetLocation].TileContents != null) // if the tile is note empty
             {
+                //if(searchParameters.AlliesBlock)
+                
+                
                 targets.Add(new TargetInfo(GridManager.Instance.Tiles[targetLocation]));
-                break;
+
+                if (searchParameters.StopAtFirstOccupied)
+                {
+                    break;
+                }
+                else
+                {
+                    continue;
+                }
             }
 
         }
@@ -138,7 +152,15 @@ public class ActionManager : MonoBehaviour
         return targets;
     }
 
+    void ApplySearchModifyUpgrades(AttackInfo attackInfo, SearchParameters searchParameters, GameTypes.DirectionEnum direction)
+    {
 
+        List<ISearchModifierUpgrade> searchModifierUpgrades = attackInfo.Attacker.upgradeManager.GetSearchModifierUpgrades();
+        foreach(ISearchModifierUpgrade searchModifierUpgrade in searchModifierUpgrades)
+        {
+            searchModifierUpgrade.ModifySearch(searchParameters, direction);
+        }
+    }
 
     #endregion
 
