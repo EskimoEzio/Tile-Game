@@ -1,9 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
-public class ActionManager
+public class ActionManager : MonoBehaviour
 {
-    
+    public static ActionManager Instance;
 
+    private void Awake()
+    {
+        Instance = this;
+    }
 
 
 

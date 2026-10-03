@@ -139,11 +139,13 @@ public class BlockController : MonoBehaviour
         transform.localPosition = originalPos;
 
         // --- PLACE UPGRADES AND TARGETING ---
+        /*
         if (upgradeManager.CheckPlaceUpgrades()) // if all upgrades allow continuing targeting
         {
             Target();
         }
-
+        */
+        ActionManager.Instance.AttackAction(this);
     }
 
 
