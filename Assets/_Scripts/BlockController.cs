@@ -280,7 +280,7 @@ public class BlockController : MonoBehaviour
 
         if (isCaptured)
         {
-            GetCaptured(defendingDir);
+            ChangeTeam(defendingDir);
         }
 
         upgradeManager.CheckGetHitUpgrades(false ,isCaptured, attackPower, defendingDir, attacker);
@@ -319,18 +319,6 @@ public class BlockController : MonoBehaviour
 
     }
 
-    /// <summary>
-    /// Captures this block, changing its team & flips it
-    /// </summary>
-    /// <param name="defendingDir">The direction the of the defending side</param>
-    public void GetCaptured(GameTypes.DirectionEnum defendingDir) // Is this function necessary now? I may just be able to use the chage team funciton
-    {
-        // as it is now, becuase the blocks are 2D and have no depth, you cannot distinguish flipping left or right, however i am making it change so that when i later switch to a 3d block it will be easier
-        // Trigger onCaptured event
-
-        ChangeTeam(defendingDir);
-
-    }
 
     /// <summary>
     /// This handles the flip animation & colourchange when a block changes team. It should not be called directly.

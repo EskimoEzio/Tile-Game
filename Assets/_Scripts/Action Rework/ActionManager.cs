@@ -15,6 +15,9 @@ public class ActionManager
 
         // Resolve all side attacks
 
+        PerformAllSideAttacks(attackInfo);
+        ResolveAllHitResults(attackInfo);
+
         // Resolve post hit effects
 
         // Resolve post attack reactions
@@ -115,14 +118,40 @@ public class ActionManager
 #region Attack Resolution
 
 
-    void ResolveAllSideAttacks(AttackInfo attackInfo)
+    void PerformAllSideAttacks(AttackInfo attackInfo)
     {
 
-        foreach(SideAttackInfo sideAttack in attackInfo.SideAttacks)
+        foreach(SideAttackInfo sideAttack in attackInfo.SideAttacks) //calculate the hits and queue the outcomes
         {
             HitSequence(attackInfo, sideAttack);
         }
+    }
 
+    void ResolveAllHitResults(AttackInfo attackInfo)
+    {
+
+        foreach (HitResolutionInfo hitResolutionInfo in attackInfo.PendingHitResults)
+        {
+            // do i need to chekc for hitOccurred?
+            if (hitResolutionInfo.HitResultInfo.HitOccurred == false)
+            {
+                continue;
+            }
+
+            switch (hitResolutionInfo.HitResultInfo.FinalOutcome)
+            {
+                case HitOutcome.NoChange:
+                    break;
+                case HitOutcome.Captured:
+                    hitResolutionInfo.HitInfo.Target.ChangeTeam(hitResolutionInfo.HitInfo.AttackDirection.Invert());
+                    break;
+                case HitOutcome.Broken:
+                    hitResolutionInfo.HitInfo.Target.GetBroken();
+                    break;
+            }
+
+
+        }
     }
 
     void HitSequence(AttackInfo attackInfo, SideAttackInfo sideAttackInfo)
@@ -148,7 +177,10 @@ public class ActionManager
 
             HitInfo hitInfo = new HitInfo(attackInfo.Attacker, target, sideAttackInfo.Direction, attackInfo.Attacker.BlockProperties.PowerDict[sideAttackInfo.Direction]);
 
-            Hit(hitInfo);
+            HitResultInfo hitResultInfo =  Hit(hitInfo);
+
+            attackInfo.PendingHitResults.Add(new HitResolutionInfo(hitInfo, hitResultInfo));
+
         }
 
     }

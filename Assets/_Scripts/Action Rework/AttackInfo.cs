@@ -5,11 +5,12 @@ public class AttackInfo
 {
     public BlockController Attacker;
     public List<SideAttackInfo> SideAttacks;
-
+    public List<HitResolutionInfo> PendingHitResults; //this contains the hitInfo and the hitResultInfo
 
     public AttackInfo(BlockController attacker) //at a later point i may wish to change this to accept a sideAttackInfo object so that i can do attacks in single directiosn - but that is unnecessaru at this point
     {
         Attacker = attacker;
+        PendingHitResults = new List<HitResolutionInfo>();
     }
 }
 
@@ -77,4 +78,16 @@ public class HitResultInfo
         FinalOutcome = finalOutcome;
     }
 
+}
+
+public class HitResolutionInfo
+{
+    public HitInfo HitInfo;
+    public HitResultInfo HitResultInfo;
+
+    public HitResolutionInfo(HitInfo hitInfo, HitResultInfo hitResultInfo)
+    {
+        HitInfo = hitInfo;
+        HitResultInfo = hitResultInfo;
+    }
 }
