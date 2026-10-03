@@ -48,6 +48,15 @@ public class UpgradeManager : MonoBehaviour
 
     #endregion 
 
+    //New upgrades - these have not got the proper add/remove functionality yet
+
+    private ISearchReplacementUpgrade searchReplacementUpgrade;
+    public ISearchReplacementUpgrade GetSearchReplacementUpgrade()
+    {
+        return searchReplacementUpgrade;
+    }
+
+
     private void OnEnable()
     {
         TurnManager.Instance.OnTurnStarted += CheckTurnStartUpgrades;

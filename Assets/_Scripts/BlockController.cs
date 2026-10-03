@@ -20,7 +20,8 @@ public class BlockController : MonoBehaviour
     //public event Action<BlockController> OnThisBlockGetHit; 
 
     #region Fields/Variables
-    private UpgradeManager upgradeManager;
+    public UpgradeManager upgradeManager { get; private set; }
+    public UpgradeManager UpgradeManager { get; private set; }
     public BlockProperties BlockProperties { get; private set; }
 
     [SerializeField] private GameObject spikeHolder;
@@ -64,6 +65,7 @@ public class BlockController : MonoBehaviour
         artHolderRenderer = artHolderObject.GetComponent<SpriteRenderer>();
         //BlockData = defaultData;
         upgradeManager = GetComponent<UpgradeManager>();
+        UpgradeManager = GetComponent<UpgradeManager>();
         BlockProperties = GetComponent<BlockProperties>();
         spikeManager = spikeHolder.GetComponent<SpikeManager>();
         

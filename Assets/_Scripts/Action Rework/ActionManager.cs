@@ -46,28 +46,24 @@ public class ActionManager : MonoBehaviour
     List<TargetInfo> SideTarget(AttackInfo attackInfo, GameTypes.DirectionEnum direction)
     {
         List<TargetInfo> targets = new List<TargetInfo>();
-
+        int modifiedRange = attackInfo.Attacker.BlockProperties.AttackRange; //by default it is the default range, it is only different if upgrades modify it below
 
 
         #region Search
         // If there is a replacement do that instead, else do default (below)
         // This does not currnetly support dynamic/conditional changes to attackrange, it only uses the static range
-        for (int i = 0; i < attackInfo.Attacker.BlockProperties.AttackRange; i++)
+
+        if(attackInfo.Attacker.UpgradeManager.GetSearchReplacementUpgrade() != null)
         {
-            Vector2 directionOffset = direction.ToVector2() * (i+1); // +1 as it has to start with directionVec * 1 not 0
-            Vector2 targetLocation = (Vector2)attackInfo.Attacker.BlockProperties.transform.position + directionOffset;
-
-            if (!GridManager.Instance.Tiles.ContainsKey(targetLocation)) // if the grid does NOT contain the key
-            {
-                continue;
-            }
-            if(GridManager.Instance.Tiles[targetLocation].TileContents != null) // if the tile is note empty, add it to the list
-            {
-                targets.Add(new TargetInfo(GridManager.Instance.Tiles[targetLocation]));
-                break;
-            }
-
+            targets = attackInfo.Attacker.UpgradeManager.GetSearchReplacementUpgrade().Search(attackInfo, direction, modifiedRange);
         }
+        else
+        {
+            targets = DefaultSearch(attackInfo, direction, modifiedRange);
+        }
+
+        
+
         #endregion
 
 
@@ -115,11 +111,40 @@ public class ActionManager : MonoBehaviour
 
         return targets;
     }
+
+
+    List<TargetInfo> DefaultSearch(AttackInfo attackInfo, GameTypes.DirectionEnum direction, int range)
+    {
+
+        List<TargetInfo> targets = new List<TargetInfo>();
+
+        for (int i = 0; i < range; i++)
+        {
+            Vector2 directionOffset = direction.ToVector2() * (i + 1); // +1 as it has to start with directionVec + 1 not 0
+            Vector2 targetLocation = (Vector2)attackInfo.Attacker.BlockProperties.transform.position + directionOffset;
+
+            if (!GridManager.Instance.Tiles.ContainsKey(targetLocation)) // if the grid does NOT contain the key
+            {
+                continue;
+            }
+            if (GridManager.Instance.Tiles[targetLocation].TileContents != null) // if the tile is note empty, add it to the list
+            {
+                targets.Add(new TargetInfo(GridManager.Instance.Tiles[targetLocation]));
+                break;
+            }
+
+        }
+
+        return targets;
+    }
+
+
+
     #endregion
 
 
 
-#region Attack Resolution
+    #region Attack Resolution
 
 
     void PerformAllSideAttacks(AttackInfo attackInfo)
