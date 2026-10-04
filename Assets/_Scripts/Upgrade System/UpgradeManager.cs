@@ -70,6 +70,29 @@ public class UpgradeManager : MonoBehaviour
     }
 
 
+    private ISelectionSortUpgrade selectionSortUpgrade;
+    public ISelectionSortUpgrade GetSelectionSortUpgrade()
+    {
+        return selectionSortUpgrade;
+    }
+
+
+    private List<ISelectionCountUpgrade> selectionCountUpgrades = new();
+    public List<ISelectionCountUpgrade> GetSelectionCountUpgrades()
+    {
+        return selectionCountUpgrades;
+    }
+
+
+
+    private List<ITargetModifierUpgrade> targetModifierUpgrades = new();
+    public List<ITargetModifierUpgrade> GetTargetModifierUpgrades()
+    {
+        return targetModifierUpgrades;
+    }
+
+
+
 
 
 
@@ -195,6 +218,21 @@ public class UpgradeManager : MonoBehaviour
             eligibilityUpgrades.Add(eligMod);
         }
 
+
+        if(upgrade is ISelectionSortUpgrade selSortMod)
+        {
+            selectionSortUpgrade = selSortMod;
+        }
+
+        if(upgrade is ISelectionCountUpgrade selCountMod)
+        {
+            selectionCountUpgrades.Add(selCountMod);
+        }
+
+        if(upgrade is ITargetModifierUpgrade targetMod)
+        {
+            targetModifierUpgrades.Add(targetMod);
+        }
     }
 
 

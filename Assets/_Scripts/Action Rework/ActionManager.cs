@@ -46,14 +46,15 @@ public class ActionManager : MonoBehaviour
     List<TargetInfo> SideTarget(AttackInfo attackInfo, GameTypes.DirectionEnum direction)
     {
         List<TargetInfo> targets = new List<TargetInfo>();
-        //int modifiedRange = attackInfo.Attacker.BlockProperties.AttackRange; //by default it is the default range, it is only different if upgrades modify it below
+
+        #region Search
 
         SearchParameters searchParameters = new SearchParameters(attackInfo.Attacker.BlockProperties.AttackRange);
 
         ApplySearchModifyUpgrades(attackInfo, searchParameters, direction);
 
 
-        #region Search
+        
         // If there is a replacement do that instead, else do default (below)
         // This does not currnetly support dynamic/conditional changes to attackrange, it only uses the static range
 
@@ -118,13 +119,34 @@ public class ActionManager : MonoBehaviour
 
 
         #endregion
-        
-        
+
+
+        #region Selection
+
         // Selection - this only becomes relevant with upgrades that allow for targeting.hitting more than 1 block (not relevant for defaut so will figure it out later)
 
 
-        // Modifiers - this only becomes relevant with upgrades that change the targets, by default this will od nothing
+        if (attackInfo.Attacker.upgradeManager.GetSelectionSortUpgrade() != null) // apply sort upgrade if there is one, otherwise, by default targets are sorted in the order they were added to the list
+        {
+            attackInfo.Attacker.upgradeManager.GetSelectionSortUpgrade().SortTargets(attackInfo, direction, targets);
+        }
 
+
+
+        int targetCount = 1; // by default, there will only be 1 target per direction, this is directly modified below by using the ref keyword
+
+        ApplySelectionCountUpgrades(attackInfo, targets, direction, ref targetCount);
+
+        if(targets.Count > targetCount)
+        {
+            targets.RemoveRange(targetCount, targets.Count - targetCount);
+        }
+
+
+        #endregion
+
+        // Modifiers - this only becomes relevant with upgrades that change the targets, by default this will od nothing
+        ApplyTargetModiferUpgrades(attackInfo, direction, targets);
 
 
         return targets;
@@ -185,6 +207,30 @@ public class ActionManager : MonoBehaviour
             eligibilityUpgrade.ModifyEligibility(attackInfo, targetInfo, direction, ref isElgibile);
         }
     }
+
+    void ApplySelectionCountUpgrades(AttackInfo attackInfo, List<TargetInfo> targets, GameTypes.DirectionEnum direction, ref int targetCount)
+    {
+        List<ISelectionCountUpgrade> selectionCountUpgrades = attackInfo.Attacker.upgradeManager.GetSelectionCountUpgrades();
+
+        foreach(ISelectionCountUpgrade selectionCountUpgrade in selectionCountUpgrades)
+        {
+            selectionCountUpgrade.ModifySelectionCount(attackInfo, direction, ref targetCount);
+        }
+
+
+    }
+
+    void ApplyTargetModiferUpgrades(AttackInfo attackInfo, GameTypes.DirectionEnum direction, List<TargetInfo> targets)
+    {
+        List<ITargetModifierUpgrade> targetModifierUpgrades = attackInfo.Attacker.upgradeManager.GetTargetModifierUpgrades();
+
+        foreach(ITargetModifierUpgrade targetModifierUpgrade in targetModifierUpgrades)
+        {
+            targetModifierUpgrade.ModifyTargets(attackInfo, direction, targets);
+        }
+    }
+
+
 
     #endregion
 

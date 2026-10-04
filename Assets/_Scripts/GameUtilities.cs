@@ -76,5 +76,36 @@ public static class GameUtilities
         return (GameTypes.DirectionEnum)(((int)direction + 2) % 4); //doing it this way aboids a dwitch statement. basically adds 2 to the enum index then divides by 4 and uses the remainder as the output index 
     }
 
+    /// <summary>
+    /// This will return the direction rotated a given number of steps either clockwise or anticlockwise
+    /// </summary>
+    /// <param name="direction"></param>
+    /// <param name="steps"></param>
+    /// <param name="clockwise"></param>
+    /// <returns></returns>
+    public static GameTypes.DirectionEnum Rotate(this GameTypes.DirectionEnum direction, int steps = 1, bool clockwise = true)
+    {
+
+        int offset;
+
+        if (clockwise)
+        {
+            offset = steps;
+        }
+        else
+        {
+            offset = -steps;
+        }
+
+        int newIndex =
+        ((int)direction + offset) % GameTypes.AllDirections.Length;
+
+        if (newIndex < 0)
+        {
+            newIndex += GameTypes.AllDirections.Length;
+        }
+
+        return (GameTypes.DirectionEnum)newIndex;
+    }
 
 }
