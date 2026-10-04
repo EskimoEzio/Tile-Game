@@ -16,7 +16,6 @@ public class DirectionalRangeIncreaseUpgrade : BlockUpgrade, ISearchModifierUpgr
         if (buffDirections.Contains(direction))
         {
             searchParameters.Range += rangeIncrease;
-            Debug.Log("buff");
         }
 
     }

@@ -63,6 +63,16 @@ public class UpgradeManager : MonoBehaviour
         return searchModifierUpgrades;
     }
 
+    private List<IEligibilityUpgrade> eligibilityUpgrades = new();
+    public List<IEligibilityUpgrade> GetEligibilityUpgrades()
+    {
+        return eligibilityUpgrades;
+    }
+
+
+
+
+
     private void OnEnable()
     {
         TurnManager.Instance.OnTurnStarted += CheckTurnStartUpgrades;
@@ -178,6 +188,11 @@ public class UpgradeManager : MonoBehaviour
         if(upgrade is ISearchModifierUpgrade searchMod)
         {
             searchModifierUpgrades.Add(searchMod);
+        }
+
+        if(upgrade is IEligibilityUpgrade eligMod)
+        {
+            eligibilityUpgrades.Add(eligMod);
         }
 
     }

@@ -76,9 +76,12 @@ public class ActionManager : MonoBehaviour
 
         List<TargetInfo> targetsToRemove = new List<TargetInfo>();
 
+
+
         foreach (TargetInfo targetInfo in targets)
         {
             BlockController targetBlockController;
+            bool isEligible = true;
 
             if(targetInfo.TargetTile.TileContents.TryGetComponent<BlockController>(out BlockController blockController)) //checking for properties here, but this will probably be changed to controller at some point
             {
@@ -88,14 +91,25 @@ public class ActionManager : MonoBehaviour
             {
                 //remove this target as it does not have a block controller - is this the best way?
                 targetsToRemove.Add(targetInfo);
+                isEligible = false;
                 continue;
             }
 
             if(attackInfo.Attacker.BlockProperties.CurrentTeam == targetBlockController.BlockProperties.CurrentTeam)
             {
                 targetsToRemove.Add(targetInfo);
+                isEligible = false;
+            }
+
+            ApplyEligibilityUpgrades(attackInfo, targetInfo, direction, ref isEligible);
+
+            if (!isEligible)
+            {
+                targetsToRemove.Add(targetInfo);
             }
         }
+
+
 
         foreach(TargetInfo invalidTarget in targetsToRemove)
         {
@@ -159,6 +173,16 @@ public class ActionManager : MonoBehaviour
         foreach(ISearchModifierUpgrade searchModifierUpgrade in searchModifierUpgrades)
         {
             searchModifierUpgrade.ModifySearch(searchParameters, direction);
+        }
+    }
+
+    void ApplyEligibilityUpgrades(AttackInfo attackInfo, TargetInfo targetInfo, GameTypes.DirectionEnum direction, ref bool isElgibile)
+    {
+        List<IEligibilityUpgrade> eligibilityUpgrades = attackInfo.Attacker.upgradeManager.GetEligibilityUpgrades();
+
+        foreach(IEligibilityUpgrade eligibilityUpgrade in eligibilityUpgrades)
+        {
+            eligibilityUpgrade.ModifyEligibility(attackInfo, targetInfo, direction, ref isElgibile);
         }
     }
 
