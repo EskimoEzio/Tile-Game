@@ -98,7 +98,6 @@ public class ActionManager : MonoBehaviour
 
             if(attackInfo.Attacker.BlockProperties.CurrentTeam == targetBlockController.BlockProperties.CurrentTeam)
             {
-                targetsToRemove.Add(targetInfo);
                 isEligible = false;
             }
 
@@ -241,7 +240,6 @@ public class ActionManager : MonoBehaviour
 
     void PerformAllSideAttacks(AttackInfo attackInfo)
     {
-
         foreach(SideAttackInfo sideAttack in attackInfo.SideAttacks) //calculate the hits and queue the outcomes
         {
             HitSequence(attackInfo, sideAttack);
@@ -277,7 +275,6 @@ public class ActionManager : MonoBehaviour
 
     void HitSequence(AttackInfo attackInfo, SideAttackInfo sideAttackInfo)
     {
-
         foreach(TargetInfo targetInfo in sideAttackInfo.Targets)
         {
             if (targetInfo.TargetTile.TileContents == null)
@@ -309,30 +306,51 @@ public class ActionManager : MonoBehaviour
 
     HitResultInfo Hit(HitInfo hitInfo)
     {
-        HitResultInfo hitResultInfo = new HitResultInfo(false, HitOutcome.NoChange); //default values for teh hitResult
+        //HitResultInfo hitResultInfo = new HitResultInfo(false, HitOutcome.NoChange); //default values for the hitResult
 
         // Check Hit Conditions
         // this will be further changed through upgrades, similar to serach eligibility
         //defaul team check is below
 
-        if (hitInfo.Attacker.BlockProperties.CurrentTeam == hitInfo.Target.BlockProperties.CurrentTeam)
-        {
-            hitResultInfo.FinalOutcome = HitOutcome.NoChange;
-            hitResultInfo.HitOccurred = false;
-            return hitResultInfo;
-        }
+        bool canHit = BaseHitCondition(hitInfo);
+
+        ApplyHitConditionUpgrades(hitInfo, ref canHit);
+
         
+
+        if (!canHit)
+        {
+            return new HitResultInfo(false, HitOutcome.NoChange);
+
+        }
+
+
 
         // Apply Hit Effects
         // this is based on upgreades
 
-        hitResultInfo =  GetHit(hitInfo);
-
-        //
-
-        return hitResultInfo;
+        return GetHit(hitInfo);
     }
 
+    bool BaseHitCondition(HitInfo hitInfo)
+    {
+        if (hitInfo.Attacker.BlockProperties.CurrentTeam != hitInfo.Target.BlockProperties.CurrentTeam && hitInfo.CurrentPower > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    void ApplyHitConditionUpgrades(HitInfo hitInfo, ref bool canHit)
+    {
+        foreach (IHitConditionUpgrade hitConditionUpgrade in hitInfo.Attacker.upgradeManager.GetHitConditionUpgrades())
+        {
+            hitConditionUpgrade.ModifyHitCondtion(hitInfo, ref canHit);
+        }
+    }
 
     HitResultInfo GetHit(HitInfo hitInfo)
     {

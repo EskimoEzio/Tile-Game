@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class OnlyHitAlly2 : BlockUpgrade, IEligibilityUpgrade // this will also need to be a hitcondition upgrade
+public class OnlyHitAlly2 : BlockUpgrade, IEligibilityUpgrade, IHitConditionUpgrade // this will also need to be a hitcondition upgrade
 {
     public override int UpgradeID { get; } = 13;
 
@@ -20,4 +20,15 @@ public class OnlyHitAlly2 : BlockUpgrade, IEligibilityUpgrade // this will also 
         }
     }
 
+    public void ModifyHitCondtion(HitInfo hitInfo, ref bool canHit)
+    {
+        if (hitInfo.Attacker.BlockProperties.CurrentTeam == hitInfo.Target.BlockProperties.CurrentTeam)
+        {
+            canHit = true;
+        }
+        else //if the teams do not match then it cannot hit
+        {
+            canHit = false;
+        }
+    }
 }

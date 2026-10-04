@@ -93,6 +93,12 @@ public class UpgradeManager : MonoBehaviour
 
 
 
+    private List<IHitConditionUpgrade> hitConditionUpgrades = new();
+    public List<IHitConditionUpgrade> GetHitConditionUpgrades()
+    {
+        return hitConditionUpgrades;
+    }
+
 
 
 
@@ -233,6 +239,14 @@ public class UpgradeManager : MonoBehaviour
         {
             targetModifierUpgrades.Add(targetMod);
         }
+
+
+        if(upgrade is IHitConditionUpgrade hitCondition)
+        {
+            hitConditionUpgrades.Add(hitCondition);
+        }
+
+
     }
 
 
