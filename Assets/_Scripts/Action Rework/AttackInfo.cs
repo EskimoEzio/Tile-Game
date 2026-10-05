@@ -55,22 +55,38 @@ public class SearchParameters
 public class HitInfo
 {
     public BlockController Attacker;
-    public BlockController Target;
+    public BlockController Defender;
     public GameTypes.DirectionEnum AttackDirection;
     public int CurrentPower;
 
 
     //create constructor
 
-    public HitInfo(BlockController attacker, BlockController target, GameTypes.DirectionEnum attackDirection, int currentPower)
+    public HitInfo(BlockController attacker, BlockController defender, GameTypes.DirectionEnum attackDirection, int currentPower)
     {
         Attacker = attacker;
-        Target = target;
+        Defender = defender;
         AttackDirection = attackDirection;
         CurrentPower = currentPower;
     }
 
 }
+
+
+public class ReceiveHitContext
+{
+    public HitInfo HitInfo;
+    public int AttackerPower;
+    public int DefenderPower;
+
+    public ReceiveHitContext(HitInfo hitInfo, int attackerPower, int defenderPower)
+    {
+        HitInfo = hitInfo;
+        AttackerPower = attackerPower;
+        DefenderPower = defenderPower;
+    }
+}
+
 
 public enum HitOutcome
 {

@@ -106,6 +106,11 @@ public class UpgradeManager : MonoBehaviour
     }
 
 
+    private List<IReceiveHitModifierUpgrade> receiveHitModifierUpgrades = new();
+    public List<IReceiveHitModifierUpgrade> GetReceiveHitModifiers()
+    {
+        return receiveHitModifierUpgrades;
+    }
 
 
     private void OnEnable()
@@ -256,6 +261,12 @@ public class UpgradeManager : MonoBehaviour
         {
             hitModifierUpgrades.Add(hitMod);
         }
+
+        if(upgrade is IReceiveHitModifierUpgrade receiveHitMod)
+        {
+            receiveHitModifierUpgrades.Add(receiveHitMod);
+        }
+
 
     }
 

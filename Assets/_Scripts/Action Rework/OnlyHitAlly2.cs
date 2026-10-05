@@ -22,7 +22,7 @@ public class OnlyHitAlly2 : BlockUpgrade, IEligibilityUpgrade, IHitConditionUpgr
 
     public void ModifyHitCondtion(HitInfo hitInfo, ref bool canHit)
     {
-        if (hitInfo.Attacker.BlockProperties.CurrentTeam == hitInfo.Target.BlockProperties.CurrentTeam)
+        if (hitInfo.Attacker.BlockProperties.CurrentTeam == hitInfo.Defender.BlockProperties.CurrentTeam)
         {
             canHit = true;
         }

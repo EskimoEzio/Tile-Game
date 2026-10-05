@@ -262,10 +262,10 @@ public class ActionManager : MonoBehaviour
                 case HitOutcome.NoChange:
                     break;
                 case HitOutcome.Captured:
-                    hitResolutionInfo.HitInfo.Target.ChangeTeam(hitResolutionInfo.HitInfo.AttackDirection.Invert());
+                    hitResolutionInfo.HitInfo.Defender.ChangeTeam(hitResolutionInfo.HitInfo.AttackDirection.Invert());
                     break;
                 case HitOutcome.Broken:
-                    hitResolutionInfo.HitInfo.Target.GetBroken();
+                    hitResolutionInfo.HitInfo.Defender.GetBroken();
                     break;
             }
 
@@ -326,12 +326,12 @@ public class ActionManager : MonoBehaviour
         ApplyHitModifierUpgrades(hitInfo);
 
 
-        return GetHit(hitInfo);
+        return ReceiveHit(hitInfo);
     }
 
     bool BaseHitCondition(HitInfo hitInfo)
     {
-        if (hitInfo.Attacker.BlockProperties.CurrentTeam != hitInfo.Target.BlockProperties.CurrentTeam && hitInfo.CurrentPower > 0)
+        if (hitInfo.Attacker.BlockProperties.CurrentTeam != hitInfo.Defender.BlockProperties.CurrentTeam && hitInfo.CurrentPower > 0)
         {
             return true;
         }
@@ -357,14 +357,22 @@ public class ActionManager : MonoBehaviour
         }
     }
 
-    HitResultInfo GetHit(HitInfo hitInfo)
+    HitResultInfo ReceiveHit(HitInfo hitInfo)
     {
         HitResultInfo hitResultInfo = new HitResultInfo(true, HitOutcome.NoChange);
 
-        // Immediate Get Hit responses
+        int attackerPower = hitInfo.CurrentPower;
+        int defenderPower = hitInfo.Defender.BlockProperties.PowerDict[hitInfo.AttackDirection.Invert()];
+
+        ReceiveHitContext receiveHitContext = new(hitInfo, attackerPower, defenderPower);
+
+        // Immediate responses
+
+        ApplyReceiveHitModifierUpgrades(hitInfo, receiveHitContext);
+
 
         // Calculate base result - using default power check
-        if (hitInfo.CurrentPower > hitInfo.Target.BlockProperties.PowerDict[hitInfo.AttackDirection.Invert()])
+        if (receiveHitContext.AttackerPower > receiveHitContext.DefenderPower)
         {
             hitResultInfo.FinalOutcome = HitOutcome.Captured;
 
@@ -373,13 +381,27 @@ public class ActionManager : MonoBehaviour
             hitResultInfo.FinalOutcome = HitOutcome.NoChange;
         }
 
-        // Result Get Hit responses
+        // Result responses
+
+
 
         // Determine final result
+
+
 
         // Resolve final result
 
         return hitResultInfo;
+    }
+
+
+
+    void ApplyReceiveHitModifierUpgrades(HitInfo hitInfo, ReceiveHitContext receiveHitContext)
+    {
+        foreach(IReceiveHitModifierUpgrade receiveHitModifierUpgrade in hitInfo.Defender.upgradeManager.GetReceiveHitModifiers())
+        {
+            receiveHitModifierUpgrade.ModifyReceiveHit(hitInfo, receiveHitContext);
+        }
     }
 
     #endregion
