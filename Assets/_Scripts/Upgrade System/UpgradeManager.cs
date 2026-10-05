@@ -99,6 +99,12 @@ public class UpgradeManager : MonoBehaviour
         return hitConditionUpgrades;
     }
 
+    private List<IHitModifierUpgrade> hitModifierUpgrades = new();
+    public List<IHitModifierUpgrade> GetHitModifierUpgrades()
+    {
+        return hitModifierUpgrades;
+    }
+
 
 
 
@@ -246,6 +252,10 @@ public class UpgradeManager : MonoBehaviour
             hitConditionUpgrades.Add(hitCondition);
         }
 
+        if(upgrade is IHitModifierUpgrade hitMod)
+        {
+            hitModifierUpgrades.Add(hitMod);
+        }
 
     }
 

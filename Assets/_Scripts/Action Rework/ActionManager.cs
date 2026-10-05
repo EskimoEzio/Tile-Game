@@ -28,7 +28,7 @@ public class ActionManager : MonoBehaviour
 
     }
 
-#region Attack Preparation
+    #region Attack Preparation
     List<SideAttackInfo> PrepareAllSideAttacks(AttackInfo attackInfo)
     {
 
@@ -306,12 +306,8 @@ public class ActionManager : MonoBehaviour
 
     HitResultInfo Hit(HitInfo hitInfo)
     {
-        //HitResultInfo hitResultInfo = new HitResultInfo(false, HitOutcome.NoChange); //default values for the hitResult
 
         // Check Hit Conditions
-        // this will be further changed through upgrades, similar to serach eligibility
-        //defaul team check is below
-
         bool canHit = BaseHitCondition(hitInfo);
 
         ApplyHitConditionUpgrades(hitInfo, ref canHit);
@@ -327,7 +323,8 @@ public class ActionManager : MonoBehaviour
 
 
         // Apply Hit Effects
-        // this is based on upgreades
+        ApplyHitModifierUpgrades(hitInfo);
+
 
         return GetHit(hitInfo);
     }
@@ -349,6 +346,14 @@ public class ActionManager : MonoBehaviour
         foreach (IHitConditionUpgrade hitConditionUpgrade in hitInfo.Attacker.upgradeManager.GetHitConditionUpgrades())
         {
             hitConditionUpgrade.ModifyHitCondtion(hitInfo, ref canHit);
+        }
+    }
+
+    void ApplyHitModifierUpgrades(HitInfo hitInfo)
+    {
+        foreach(IHitModifierUpgrade hitModifierUpgrade in hitInfo.Attacker.UpgradeManager.GetHitModifierUpgrades())
+        {
+            hitModifierUpgrade.ModifyHit(hitInfo);
         }
     }
 

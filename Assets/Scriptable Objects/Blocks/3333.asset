@@ -18,6 +18,7 @@ MonoBehaviour:
   attackRange: 1
   DefaultUpgrades:
   - rid: 2704476804372234328
+  - rid: 7562644468249133124
   references:
     version: 2
     RefIds:
@@ -26,3 +27,6 @@ MonoBehaviour:
       data:
         powerIncrease: 1
         numberOfIncreases: 1
+    - rid: 7562644468249133124
+      type: {class: OnlyHitAlly2, ns: , asm: Assembly-CSharp}
+      data: 
