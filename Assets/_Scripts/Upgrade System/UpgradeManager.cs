@@ -113,6 +113,19 @@ public class UpgradeManager : MonoBehaviour
     }
 
 
+    private List<IHitOutcomeModifierUpgrade> attackerHitOutcomeModifierUpgrades = new();
+    public List<IHitOutcomeModifierUpgrade> GetAttackerHitOutcomeModifierUpgrades()
+    {
+        return attackerHitOutcomeModifierUpgrades;
+    }
+
+    private List<IHitOutcomeModifierUpgrade> defenderHitOutcomeModifierUpgrades = new();
+    public List<IHitOutcomeModifierUpgrade> GetDefenderHitOutcomeModifierUpgrades()
+    {
+        return defenderHitOutcomeModifierUpgrades;
+    }
+
+
     private void OnEnable()
     {
         TurnManager.Instance.OnTurnStarted += CheckTurnStartUpgrades;
@@ -267,6 +280,20 @@ public class UpgradeManager : MonoBehaviour
             receiveHitModifierUpgrades.Add(receiveHitMod);
         }
 
+        if(upgrade is IHitOutcomeModifierUpgrade hitOutcomeMod)
+        {
+            if (hitOutcomeMod.applyOnAttack)
+            {
+                attackerHitOutcomeModifierUpgrades.Add(hitOutcomeMod);
+            }
+
+            if (hitOutcomeMod.applyOnDefend)
+            {
+                defenderHitOutcomeModifierUpgrades.Add(hitOutcomeMod);
+            }
+
+
+        }
 
     }
 

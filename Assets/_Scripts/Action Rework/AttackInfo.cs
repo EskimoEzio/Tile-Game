@@ -72,7 +72,9 @@ public class HitInfo
 
 }
 
-
+/// <summary>
+/// This holds the HitInfo aswell as the effective powers for teh attacker aand defender
+/// </summary>
 public class ReceiveHitContext
 {
     public HitInfo HitInfo;
@@ -95,6 +97,9 @@ public enum HitOutcome
     Broken
 }
 
+/// <summary>
+/// Stores the basic information regarding the result of a hit
+/// </summary>
 public class HitResultInfo
 {
 
@@ -109,6 +114,9 @@ public class HitResultInfo
 
 }
 
+/// <summary>
+/// This contains the HitInfo aswell as the HitResultInfo
+/// </summary>
 public class HitResolutionInfo
 {
     public HitInfo HitInfo;

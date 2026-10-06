@@ -381,8 +381,10 @@ public class ActionManager : MonoBehaviour
             hitResultInfo.FinalOutcome = HitOutcome.NoChange;
         }
 
-        // Result responses
 
+
+        // Result responses
+        ApplyHitOutcomeModifierUpgrades(receiveHitContext, hitResultInfo);
 
 
         // Determine final result
@@ -402,6 +404,23 @@ public class ActionManager : MonoBehaviour
         {
             receiveHitModifierUpgrade.ModifyReceiveHit(hitInfo, receiveHitContext);
         }
+    }
+
+    void ApplyHitOutcomeModifierUpgrades(ReceiveHitContext receiveHitContext, HitResultInfo hitResultInfo)
+    {
+        // Attacker upgrades first - no priority system yet
+        foreach(IHitOutcomeModifierUpgrade attackerHitOutcomeModifierUpgrade in receiveHitContext.HitInfo.Attacker.upgradeManager.GetAttackerHitOutcomeModifierUpgrades())
+        {
+            attackerHitOutcomeModifierUpgrade.ModifyHitOutcome(receiveHitContext, hitResultInfo);
+        }
+
+        // Then defender upgrades
+        foreach (IHitOutcomeModifierUpgrade defenderHitOutcomeModifierUpgrade in receiveHitContext.HitInfo.Defender.upgradeManager.GetDefenderHitOutcomeModifierUpgrades())
+        {
+            defenderHitOutcomeModifierUpgrade.ModifyHitOutcome(receiveHitContext, hitResultInfo);
+        }
+
+
     }
 
     #endregion
